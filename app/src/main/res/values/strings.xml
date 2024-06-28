@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">TimelineApplication</string>
+
+    <string name="title_1_lvl">1 lvl</string>
+    <string name="title_2_lvl">2 lvl</string>
+    <string name="title_3_lvl">3 lvl</string>
+    <string name="title_4_lvl">4 lvl</string>
+    <string name="title_5_lvl">5 lvl</string>
+
+    <string name="description_1_9_steps">1-9 steps</string>
+    <string name="description_10_99_steps">10-99 steps</string>
+    <string name="description_100_999_steps">100-999 steps</string>
+    <string name="description_1000_9999_steps">1000-9999 steps</string>
+    <string name="description_10000_99999_steps">10000-99999 steps</string>
+</resources>
