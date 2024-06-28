@@ -1,0 +1,49 @@
+package com.dmitrypokrasov.timeline
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.dmitrypokrasov.timelineview.TimelineStep
+import com.dmitrypokrasov.timelineview.TimelineView
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val timeLineView = findViewById<TimelineView>(R.id.timeline)
+        timeLineView.replaceSteps(
+            ArrayList(
+                listOf(
+                    TimelineStep(
+                        title = R.string.title_1_lvl,
+                        description = R.string.description_1_9_steps,
+                        icon = R.drawable.ic_active,
+                        count = 9,
+                        maxCount = 9
+                    ), TimelineStep(
+                        title = R.string.title_2_lvl,
+                        description = R.string.description_10_99_steps,
+                        icon = R.drawable.ic_active,
+                        count = 50,
+                        maxCount = 99
+                    ), TimelineStep(
+                        title = R.string.title_3_lvl,
+                        description = R.string.description_100_999_steps,
+                        icon = R.drawable.ic_active,
+                        maxCount = 999
+                    ), TimelineStep(
+                        title = R.string.title_4_lvl,
+                        description = R.string.description_1000_9999_steps,
+                        icon = R.drawable.ic_active,
+                        maxCount = 9999
+                    ), TimelineStep(
+                        title = R.string.title_5_lvl,
+                        description = R.string.description_10000_99999_steps,
+                        icon = R.drawable.ic_unactive,
+                        maxCount = 99999
+                    )
+                )
+            )
+        )
+    }
+}
