@@ -20,6 +20,8 @@ import com.dmitrypokrasov.timelineview.TimelineConstants.DEFAULT_TITLE_SIZE
 data class TimelineConfig(
     val startPosition: StartPosition,
 
+    val steps: List<TimelineStep>,
+
     val stepY: Float,
     val radius: Float,
     val stepYFirst: Float,
@@ -50,6 +52,8 @@ data class TimelineConfig(
 
     class Builder {
         private var startPosition: StartPosition = StartPosition.CENTER
+
+        private var steps: List<TimelineStep> = listOf()
 
         private var stepY: Float = DEFAULT_STEP_Y_SIZE.toFloat()
         private var radius: Float = DEFAULT_RADIUS_SIZE.toFloat()
@@ -86,6 +90,7 @@ data class TimelineConfig(
         private var sizeImageLvl: Int = DEFAULT_IMAGE_LVL_SIZE
         private var sizeIconProgress: Int = DEFAULT_ICON_PROGRESS_SIZE
 
+        fun setSteps(steps: List<TimelineStep>) = apply { this.steps = steps }
         fun setStartPosition(value: StartPosition) = apply { startPosition = value }
         fun setStepY(value: Float) = apply { stepY = value }
         fun setRadius(value: Float) = apply { radius = value }
@@ -111,6 +116,7 @@ data class TimelineConfig(
         fun build(): TimelineConfig {
             return TimelineConfig(
                 startPosition = startPosition,
+                steps = steps,
                 stepY = stepY,
                 radius = radius,
                 stepYFirst = stepYFirst,

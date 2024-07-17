@@ -54,6 +54,8 @@ class TimelineView @JvmOverloads constructor(
         if (this.config == timelineConfig) return
 
         this.config = timelineConfig
+        this.steps.clear()
+        this.steps.addAll(timelineConfig.steps)
 
         initTools(timelineConfig)
         requestLayout()
@@ -319,7 +321,6 @@ class TimelineView @JvmOverloads constructor(
                 Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalImage)
             }
 
-
             val y =
                 (config.stepY * i) + config.marginTopTitle - (config.stepY - config.sizeImageLvl) / 2
 
@@ -328,6 +329,29 @@ class TimelineView @JvmOverloads constructor(
 
             Log.d(TAG, "printIcon i: $i; align: $align; x: $x; y: $y")
         }
+    }
+
+    private fun printTitle(
+        pLine: Paint, canvas: Canvas, title: String, i: Int, align: Paint.Align
+    ) {
+        pLine.apply {
+            textSize = config.sizeTitle
+            typeface = Typeface.DEFAULT_BOLD
+            color = config.colorTitle
+        }
+
+        val stepX = (measuredWidth - config.marginHorizontalStroke * 2)
+
+        val x = when (align) {
+            Paint.Align.LEFT -> if (config.startPosition == TimelineConfig.StartPosition.CENTER) startPositionX - config.marginHorizontalText else -startPositionX + stepX
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalText)
+        }
+        val y = (config.stepY * i) + config.marginTopTitle
+
+
+        canvas.drawText(title, x, y, pLine)
+        Log.d(TAG, "printTitle i: $i; align: $align; x: $x; y: $y")
     }
 
     private fun printDescription(
@@ -339,8 +363,10 @@ class TimelineView @JvmOverloads constructor(
             color = config.colorDescription
         }
 
+        val stepX = (measuredWidth - config.marginHorizontalStroke * 2)
+
         val x = when (align) {
-            Paint.Align.LEFT -> startPositionX - config.marginHorizontalText
+            Paint.Align.LEFT -> if (config.startPosition == TimelineConfig.StartPosition.CENTER) startPositionX - config.marginHorizontalText else -startPositionX + stepX
             Paint.Align.CENTER -> startPositionX
             Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalText)
         }
@@ -349,27 +375,6 @@ class TimelineView @JvmOverloads constructor(
 
         canvas.drawText(description, x, y, pLine)
         Log.d(TAG, "printDescription i: $i; align: $align; x: $x; y: $y")
-    }
-
-
-    private fun printTitle(
-        pLine: Paint, canvas: Canvas, title: String, i: Int, align: Paint.Align
-    ) {
-        pLine.apply {
-            textSize = config.sizeTitle
-            typeface = Typeface.DEFAULT_BOLD
-            color = config.colorTitle
-        }
-        val x = when (align) {
-            Paint.Align.LEFT -> startPositionX - config.marginHorizontalText
-            Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalText)
-        }
-        val y = (config.stepY * i) + config.marginTopTitle
-
-
-        canvas.drawText(title, x, y, pLine)
-        Log.d(TAG, "printTitle i: $i; align: $align; x: $x; y: $y")
     }
 
     private fun getBitmap(drawableId: Int): Bitmap? {
@@ -446,12 +451,18 @@ class TimelineView @JvmOverloads constructor(
                         if (i % 2 == 0) -(stepX - startPositionDisableStrokeX) else stepX - startPositionDisableStrokeX,
                         0f
                     )
-                    path.rLineTo(0f, if (i == steps.size - 1) config.stepY / 2 else config.stepY)
+                    path.rLineTo(
+                        0f,
+                        if (i == steps.size - 1) config.stepY / 2 else config.stepY
+                    )
                 }
 
                 else -> {
                     path.rLineTo(horizontalStep, 0f)
-                    path.rLineTo(0f, if (i == steps.size - 1) config.stepY / 2 else config.stepY)
+                    path.rLineTo(
+                        0f,
+                        if (i == steps.size - 1) config.stepY / 2 else config.stepY
+                    )
                 }
             }
         }
