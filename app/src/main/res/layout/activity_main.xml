@@ -21,7 +21,7 @@
         app:timeline_margin_top_title="@dimen/dimen_52dp"
         app:timeline_progress_icon="@drawable/ic_progress_timeline"
         app:timeline_radius_size="@dimen/dimen_48dp"
-        app:timeline_start_position="CENTER"
+        app:timeline_start_position="START"
         app:timeline_step_y_first_size="@dimen/dimen_20dp"
         app:timeline_step_y_size="@dimen/dimen_80dp"
         app:timeline_stroke_size="@dimen/dimen_6dp"
