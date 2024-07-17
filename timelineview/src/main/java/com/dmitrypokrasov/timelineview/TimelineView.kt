@@ -12,6 +12,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import kotlin.math.abs
@@ -19,6 +20,10 @@ import kotlin.math.abs
 class TimelineView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
+
+    companion object {
+        private const val TAG = "TimelineView"
+    }
 
     private val steps: MutableList<TimelineStep> = ArrayList()
     private var config: TimelineConfig
@@ -31,7 +36,7 @@ class TimelineView @JvmOverloads constructor(
     private val pLine = Paint()
     private var pathEffect: CornerPathEffect? = null
 
-    private var startPosition = 0f
+    private var startPositionX = 0f
     private var startPositionDisableStrokeX = 0f
 
     init {
@@ -55,11 +60,13 @@ class TimelineView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        startPosition = when (config.startPosition) {
-            TimelineConfig.StartPosition.START -> 0f
+        startPositionX = when (config.startPosition) {
+            TimelineConfig.StartPosition.START -> 0f + config.marginHorizontalStroke
             TimelineConfig.StartPosition.CENTER -> measuredWidth / 2f
-            TimelineConfig.StartPosition.END -> measuredWidth.toFloat()
+            TimelineConfig.StartPosition.END -> measuredWidth.toFloat() - config.marginHorizontalStroke
         }
+
+//        Log.d(TAG, "onMeasure startPositionX: $startPositionX")
 
         buildPath()
         setMeasuredDimension(
@@ -73,7 +80,7 @@ class TimelineView @JvmOverloads constructor(
         pLine.strokeWidth = config.sizeStroke
         pLine.pathEffect = pathEffect
 
-        canvas.translate(startPosition, 0f)
+        canvas.translate(startPositionX, 0f)
         pLine.color = config.colorProgress
         canvas.drawPath(pathEnable, pLine)
         pLine.color = config.colorStroke
@@ -86,9 +93,9 @@ class TimelineView @JvmOverloads constructor(
 
         steps.forEachIndexed { i, lvl ->
             val horizontalOffset = if (i % 2 == 0) {
-                startPosition - startPositionDisableStrokeX - (config.marginHorizontalStroke + config.marginHorizontalStroke / 2f)
+                startPositionX - startPositionDisableStrokeX - (config.marginHorizontalStroke + config.marginHorizontalStroke / 2f)
             } else {
-                startPositionDisableStrokeX - startPosition + config.marginHorizontalStroke / 2f + config.sizeIconProgress / 2f
+                startPositionDisableStrokeX - startPositionX + config.marginHorizontalStroke / 2f + config.sizeIconProgress / 2f
             }
             val verticalOffset = (config.stepY * i) + config.marginTopProgressIcon
 
@@ -280,6 +287,8 @@ class TimelineView @JvmOverloads constructor(
     }
 
     private fun initTools(timelineConfig: TimelineConfig) {
+        Log.d(TAG, "initTools timelineConfig: $timelineConfig")
+
         pathEffect = CornerPathEffect(timelineConfig.radius)
 
         getBitmap(timelineConfig.iconDisableLvl)?.let { bitmap ->
@@ -302,7 +311,23 @@ class TimelineView @JvmOverloads constructor(
             lvl.count == lvl.maxCount && lvl.icon != 0 -> getBitmap(lvl.icon)
             else -> iconDisableStep
         }
-        bm?.let { printBitmap(pLine, canvas, it, i, align) }
+        bm?.let {
+            val stepX = (measuredWidth - config.marginHorizontalStroke * 2)
+            val x: Float = when (align) {
+                Paint.Align.LEFT -> if (config.startPosition == TimelineConfig.StartPosition.CENTER) startPositionX - config.marginHorizontalImage - config.sizeImageLvl else -startPositionX + stepX + config.marginHorizontalImage
+                Paint.Align.CENTER -> startPositionX
+                Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalImage)
+            }
+
+
+            val y =
+                (config.stepY * i) + config.marginTopTitle - (config.stepY - config.sizeImageLvl) / 2
+
+            pLine.textAlign = align
+            canvas.drawBitmap(it, x, y, pLine)
+
+            Log.d(TAG, "printIcon i: $i; align: $align; x: $x; y: $y")
+        }
     }
 
     private fun printDescription(
@@ -315,14 +340,15 @@ class TimelineView @JvmOverloads constructor(
         }
 
         val x = when (align) {
-            Paint.Align.LEFT -> startPosition - config.marginHorizontalText
-            Paint.Align.CENTER -> startPosition
-            Paint.Align.RIGHT -> -(startPosition - config.marginHorizontalText)
+            Paint.Align.LEFT -> startPositionX - config.marginHorizontalText
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalText)
         }
         val y =
             (config.stepY * i) + config.marginTopTitle + config.sizeTitle + config.marginTopDescription
 
         canvas.drawText(description, x, y, pLine)
+        Log.d(TAG, "printDescription i: $i; align: $align; x: $x; y: $y")
     }
 
 
@@ -335,29 +361,15 @@ class TimelineView @JvmOverloads constructor(
             color = config.colorTitle
         }
         val x = when (align) {
-            Paint.Align.LEFT -> startPosition - config.marginHorizontalText
-            Paint.Align.CENTER -> startPosition
-            Paint.Align.RIGHT -> -(startPosition - config.marginHorizontalText)
+            Paint.Align.LEFT -> startPositionX - config.marginHorizontalText
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalText)
         }
         val y = (config.stepY * i) + config.marginTopTitle
 
 
         canvas.drawText(title, x, y, pLine)
-    }
-
-    private fun printBitmap(
-        pLine: Paint, canvas: Canvas, bitmap: Bitmap, i: Int, align: Paint.Align
-    ) {
-        val x = when (align) {
-            Paint.Align.LEFT -> startPosition - config.marginHorizontalImage - config.sizeImageLvl
-            Paint.Align.CENTER -> startPosition
-            Paint.Align.RIGHT -> -(startPosition - config.marginHorizontalImage)
-        }
-        val y =
-            (config.stepY * i) + config.marginTopTitle - (config.stepY - config.sizeImageLvl) / 2
-
-        pLine.textAlign = align
-        canvas.drawBitmap(bitmap, x, y, pLine)
+        Log.d(TAG, "printTitle i: $i; align: $align; x: $x; y: $y")
     }
 
     private fun getBitmap(drawableId: Int): Bitmap? {
@@ -383,8 +395,8 @@ class TimelineView @JvmOverloads constructor(
         pathDisable.reset()
         pathEnable.reset()
 
-        val stepX = (measuredWidth - config.marginHorizontalStroke * 2).toFloat()
-        val stepXFirst = startPosition - config.marginHorizontalStroke
+        val stepX = (measuredWidth - config.marginHorizontalStroke * 2)
+        val stepXFirst = startPositionX - config.marginHorizontalStroke
         var enable = steps.isNotEmpty() && steps[0].count != 0
         var path: Path = if (enable) pathEnable else pathDisable
 
@@ -426,8 +438,8 @@ class TimelineView @JvmOverloads constructor(
                     path = pathDisable
                     enable = false
                     path.moveTo(
-                        if (i % 2 == 0) startPosition - startPositionDisableStrokeX - config.marginHorizontalStroke
-                        else startPositionDisableStrokeX - startPosition + config.marginHorizontalStroke,
+                        if (i % 2 == 0) startPositionX - startPositionDisableStrokeX - config.marginHorizontalStroke
+                        else startPositionDisableStrokeX - startPositionX + config.marginHorizontalStroke,
                         config.stepYFirst + config.stepY * i
                     )
                     path.rLineTo(

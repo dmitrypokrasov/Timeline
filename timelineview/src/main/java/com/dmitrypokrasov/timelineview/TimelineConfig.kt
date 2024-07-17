@@ -108,28 +108,30 @@ data class TimelineConfig(
         fun setColorTitle(value: Int) = apply { colorTitle = value }
         fun setColorDescription(value: Int) = apply { colorDescription = value }
 
-        fun build() = TimelineConfig(
-            startPosition = startPosition,
-            stepY = stepY,
-            radius = radius,
-            stepYFirst = stepYFirst,
-            marginTopDescription = marginTopDescription,
-            marginTopTitle = marginTopTitle,
-            marginTopProgressIcon = marginTopProgressIcon,
-            marginHorizontalImage = marginHorizontalImage,
-            marginHorizontalText = marginHorizontalText,
-            marginHorizontalStroke = marginHorizontalStroke,
-            iconDisableLvl = iconDisableLvl,
-            iconProgress = iconProgress,
-            sizeDescription = sizeDescription,
-            sizeTitle = sizeTitle,
-            sizeStroke = sizeStroke,
-            sizeImageLvl = sizeImageLvl,
-            sizeIconProgress = sizeIconProgress,
-            colorDescription = colorDescription,
-            colorProgress = colorProgress,
-            colorTitle = colorTitle,
-            colorStroke = colorStroke
-        )
+        fun build(): TimelineConfig {
+            return TimelineConfig(
+                startPosition = startPosition,
+                stepY = stepY,
+                radius = radius,
+                stepYFirst = stepYFirst,
+                marginTopDescription = marginTopDescription,
+                marginTopTitle = marginTopTitle,
+                marginTopProgressIcon = marginTopProgressIcon,
+                marginHorizontalImage = marginHorizontalImage,
+                marginHorizontalText = marginHorizontalText,
+                marginHorizontalStroke = marginHorizontalStroke,
+                iconDisableLvl = iconDisableLvl,
+                iconProgress = iconProgress,
+                sizeDescription = sizeDescription,
+                sizeTitle = sizeTitle,
+                sizeStroke = sizeStroke,
+                sizeImageLvl = sizeImageLvl,
+                sizeIconProgress = sizeIconProgress,
+                colorDescription = colorDescription,
+                colorProgress = colorProgress,
+                colorTitle = colorTitle,
+                colorStroke = colorStroke
+            )
+        }
     }
 }
