@@ -43,8 +43,11 @@ data class TimelineConfig(
     val sizeDescription: Float,
     val sizeTitle: Float,
     val sizeStroke: Float,
-    val sizeImageLvl: Int,
-    val sizeIconProgress: Int
+    val sizeImageLvl: Float,
+    val sizeIconProgress: Float,
+
+    val measuredHeight: Int,
+    val top: Float,
 ) {
     enum class StartPosition {
         START, CENTER, END
@@ -55,16 +58,16 @@ data class TimelineConfig(
 
         private var steps: List<TimelineStep> = listOf()
 
-        private var stepY: Float = DEFAULT_STEP_Y_SIZE.toFloat()
-        private var radius: Float = DEFAULT_RADIUS_SIZE.toFloat()
-        private var stepYFirst: Float = DEFAULT_STEP_Y_FIRST_SIZE.toFloat()
+        private var stepY: Float = DEFAULT_STEP_Y_SIZE
+        private var radius: Float = DEFAULT_RADIUS_SIZE
+        private var stepYFirst: Float = DEFAULT_STEP_Y_FIRST_SIZE
 
-        private var marginTopDescription: Float = DEFAULT_MARGIN_TOP_DESCRIPTION.toFloat()
-        private var marginTopTitle: Float = DEFAULT_MARGIN_TOP_TITLE.toFloat()
-        private var marginTopProgressIcon: Float = DEFAULT_MARGIN_TOP_PROGRESS_ICON.toFloat()
-        private var marginHorizontalImage: Float = DEFAULT_MARGIN_HORIZONTAL_IMAGE.toFloat()
-        private var marginHorizontalText: Float = DEFAULT_MARGIN_HORIZONTAL_TEXT.toFloat()
-        private var marginHorizontalStroke: Float = DEFAULT_MARGIN_HORIZONTAL_STROKE.toFloat()
+        private var marginTopDescription: Float = DEFAULT_MARGIN_TOP_DESCRIPTION
+        private var marginTopTitle: Float = DEFAULT_MARGIN_TOP_TITLE
+        private var marginTopProgressIcon: Float = DEFAULT_MARGIN_TOP_PROGRESS_ICON
+        private var marginHorizontalImage: Float = DEFAULT_MARGIN_HORIZONTAL_IMAGE
+        private var marginHorizontalText: Float = DEFAULT_MARGIN_HORIZONTAL_TEXT
+        private var marginHorizontalStroke: Float = DEFAULT_MARGIN_HORIZONTAL_STROKE
 
         @DrawableRes
         private var iconDisableLvl: Int = 0
@@ -84,11 +87,11 @@ data class TimelineConfig(
         @ColorInt
         private var colorDescription: Int = 0
 
-        private var sizeDescription: Float = DEFAULT_DESCRIPTION_SIZE.toFloat()
-        private var sizeTitle: Float = DEFAULT_TITLE_SIZE.toFloat()
-        private var sizeStroke: Float = DEFAULT_STROKE_SIZE.toFloat()
-        private var sizeImageLvl: Int = DEFAULT_IMAGE_LVL_SIZE
-        private var sizeIconProgress: Int = DEFAULT_ICON_PROGRESS_SIZE
+        private var sizeDescription: Float = DEFAULT_DESCRIPTION_SIZE
+        private var sizeTitle: Float = DEFAULT_TITLE_SIZE
+        private var sizeStroke: Float = DEFAULT_STROKE_SIZE
+        private var sizeImageLvl: Float = DEFAULT_IMAGE_LVL_SIZE
+        private var sizeIconProgress: Float = DEFAULT_ICON_PROGRESS_SIZE
 
         fun setSteps(steps: List<TimelineStep>) = apply { this.steps = steps }
         fun setStartPosition(value: StartPosition) = apply { startPosition = value }
@@ -106,8 +109,8 @@ data class TimelineConfig(
         fun setSizeDescription(value: Float) = apply { sizeDescription = value }
         fun setSizeTitle(value: Float) = apply { sizeTitle = value }
         fun setSizeStroke(value: Float) = apply { sizeStroke = value }
-        fun setSizeImageLvl(value: Int) = apply { sizeImageLvl = value }
-        fun setSizeIconProgress(value: Int) = apply { sizeIconProgress = value }
+        fun setSizeImageLvl(value: Float) = apply { sizeImageLvl = value }
+        fun setSizeIconProgress(value: Float) = apply { sizeIconProgress = value }
         fun setColorProgress(value: Int) = apply { colorProgress = value }
         fun setColorStroke(value: Int) = apply { colorStroke = value }
         fun setColorTitle(value: Int) = apply { colorTitle = value }
@@ -136,7 +139,9 @@ data class TimelineConfig(
                 colorDescription = colorDescription,
                 colorProgress = colorProgress,
                 colorTitle = colorTitle,
-                colorStroke = colorStroke
+                colorStroke = colorStroke,
+                measuredHeight = ((stepY * steps.size) + stepYFirst + 50).toInt(),
+                top = stepYFirst - sizeIconProgress / 2f
             )
         }
     }

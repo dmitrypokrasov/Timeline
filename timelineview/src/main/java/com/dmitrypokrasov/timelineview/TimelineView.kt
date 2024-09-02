@@ -71,9 +71,7 @@ class TimelineView @JvmOverloads constructor(
         Log.d(TAG, "onMeasure startPositionX: $startPositionX")
 
         buildPath()
-        setMeasuredDimension(
-            widthMeasureSpec, ((config.stepY * steps.size) + config.stepYFirst + 50).toInt()
-        )
+        setMeasuredDimension(widthMeasureSpec, config.measuredHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -99,6 +97,7 @@ class TimelineView @JvmOverloads constructor(
             } else {
                 startPositionDisableStrokeX - startPositionX + config.marginHorizontalStroke / 2f + config.sizeIconProgress / 2f
             }
+            //рассчитать
             val verticalOffset = (config.stepY * i) + config.marginTopProgressIcon
 
             if (i == 0) {
@@ -113,7 +112,7 @@ class TimelineView @JvmOverloads constructor(
                         canvas.drawBitmap(
                             it,
                             if (lvl.count == 0) -config.sizeIconProgress / 2f else -startPositionDisableStrokeX - config.sizeIconProgress / 2f,
-                            if (lvl.count == 0) -config.sizeIconProgress / 2f else config.stepYFirst - config.sizeIconProgress / 2f,
+                            if (lvl.count == 0) -config.sizeIconProgress / 2f else config.top,
                             pLine
                         )
                         printProgressIcon = true
@@ -151,22 +150,22 @@ class TimelineView @JvmOverloads constructor(
         )
 
         builder.setStepY(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_step_y_size, TimelineConstants.DEFAULT_STEP_Y_SIZE
-            ).toFloat()
+            )
         )
 
         builder.setRadius(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_radius_size, TimelineConstants.DEFAULT_RADIUS_SIZE
-            ).toFloat()
+            )
         )
 
         builder.setStepYFirst(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_step_y_first_size,
                 TimelineConstants.DEFAULT_STEP_Y_FIRST_SIZE
-            ).toFloat()
+            )
         )
 
         builder.setColorProgress(
@@ -198,75 +197,75 @@ class TimelineView @JvmOverloads constructor(
         )
 
         builder.setMarginTopDescription(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_margin_top_description,
                 TimelineConstants.DEFAULT_MARGIN_TOP_DESCRIPTION
-            ).toFloat()
+            )
         )
 
         builder.setMarginTopTitle(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_margin_top_title,
                 TimelineConstants.DEFAULT_MARGIN_TOP_TITLE
-            ).toFloat()
+            )
         )
 
         builder.setMarginTopProgressIcon(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_margin_top_progress_icon,
                 TimelineConstants.DEFAULT_MARGIN_TOP_PROGRESS_ICON
-            ).toFloat()
+            )
         )
 
         builder.setMarginHorizontalImage(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_margin_horizontal_image,
                 TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_IMAGE
-            ).toFloat()
+            )
         )
 
         builder.setMarginHorizontalText(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_margin_horizontal_text,
                 TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_TEXT
-            ).toFloat()
+            )
         )
 
         builder.setMarginHorizontalStroke(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_margin_horizontal_stroke,
                 TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_STROKE
-            ).toFloat()
+            )
         )
 
         builder.setSizeDescription(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_description_size,
                 TimelineConstants.DEFAULT_DESCRIPTION_SIZE
-            ).toFloat()
+            )
         )
 
         builder.setSizeTitle(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_title_size, TimelineConstants.DEFAULT_TITLE_SIZE
-            ).toFloat()
+            )
         )
 
         builder.setSizeStroke(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_stroke_size, TimelineConstants.DEFAULT_STROKE_SIZE
-            ).toFloat()
+            )
         )
 
         builder.setSizeImageLvl(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_image_lvl_size,
                 TimelineConstants.DEFAULT_IMAGE_LVL_SIZE
             )
         )
 
         builder.setSizeIconProgress(
-            typedArray.getDimensionPixelSize(
+            typedArray.getDimension(
                 R.styleable.TimelineView_timeline_icon_progress_size,
                 TimelineConstants.DEFAULT_ICON_PROGRESS_SIZE
             )
@@ -295,13 +294,19 @@ class TimelineView @JvmOverloads constructor(
 
         getBitmap(timelineConfig.iconDisableLvl)?.let { bitmap ->
             iconDisableStep = Bitmap.createScaledBitmap(
-                bitmap, timelineConfig.sizeImageLvl, timelineConfig.sizeImageLvl, false
+                bitmap,
+                timelineConfig.sizeImageLvl.toInt(),
+                timelineConfig.sizeImageLvl.toInt(),
+                false
             )
         }
 
         getBitmap(timelineConfig.iconProgress)?.let { bitmap ->
             iconProgress = Bitmap.createScaledBitmap(
-                bitmap, timelineConfig.sizeIconProgress, timelineConfig.sizeIconProgress, false
+                bitmap,
+                timelineConfig.sizeIconProgress.toInt(),
+                timelineConfig.sizeIconProgress.toInt(),
+                false
             )
         }
     }
