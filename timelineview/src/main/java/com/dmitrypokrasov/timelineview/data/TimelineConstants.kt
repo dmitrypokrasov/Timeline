@@ -1,4 +1,4 @@
-package com.dmitrypokrasov.timelineview
+package com.dmitrypokrasov.timelineview.data
 
 import com.google.android.material.R.color
 
@@ -19,6 +19,6 @@ internal object TimelineConstants {
     const val DEFAULT_DESCRIPTION_SIZE = 50f
     const val DEFAULT_TITLE_SIZE = 150f
     const val DEFAULT_STROKE_SIZE = 10f
-    const val DEFAULT_IMAGE_LVL_SIZE = 0f
-    const val DEFAULT_ICON_PROGRESS_SIZE = 0f
+    const val DEFAULT_IMAGE_LVL_SIZE = 20f
+    const val DEFAULT_ICON_PROGRESS_SIZE = 20f
 }

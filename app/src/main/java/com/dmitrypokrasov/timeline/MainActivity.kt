@@ -3,9 +3,10 @@ package com.dmitrypokrasov.timeline
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.dmitrypokrasov.timelineview.TimelineConfig
-import com.dmitrypokrasov.timelineview.TimelineStep
-import com.dmitrypokrasov.timelineview.TimelineView
+import com.dmitrypokrasov.timelineview.data.TimelineStep
+import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.ui.TimelineView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +14,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val timeLineView = findViewById<TimelineView>(R.id.timeline)
-        val config = TimelineConfig.Builder()
+
+        val configMath = TimelineMathConfig.Builder()
             .setSteps(
                 ArrayList(
                     listOf(
@@ -21,19 +23,19 @@ class MainActivity : AppCompatActivity() {
                             title = R.string.title_1_lvl,
                             description = R.string.description_1_9_steps,
                             icon = R.drawable.ic_active,
-                            count = 3,
+                            count = 9,
                             maxCount = 9
                         ), TimelineStep(
                             title = R.string.title_2_lvl,
                             description = R.string.description_10_99_steps,
                             icon = R.drawable.ic_active,
-                            count = 0,
+                            count = 99,
                             maxCount = 99
                         ), TimelineStep(
                             title = R.string.title_3_lvl,
                             description = R.string.description_100_999_steps,
                             icon = R.drawable.ic_active,
-                            count = 0,
+                            count = 700,
                             maxCount = 999
                         ), TimelineStep(
                             title = R.string.title_4_lvl,
@@ -56,9 +58,7 @@ class MainActivity : AppCompatActivity() {
             .setSizeTitle(resources.getDimension(R.dimen.dimen_12sp))
             .setSizeDescription(resources.getDimension(R.dimen.dimen_12sp))
             .setSizeStroke(resources.getDimension(R.dimen.dimen_6dp))
-            .setStartPosition(TimelineConfig.StartPosition.CENTER)
-            .setIconProgress(R.drawable.ic_progress_timeline)
-            .setIconDisableLvl(R.drawable.ic_unactive)
+            .setStartPosition(TimelineMathConfig.StartPosition.CENTER)
             .setMarginHorizontalStroke(resources.getDimension(R.dimen.dimen_40dp))
             .setMarginHorizontalText(resources.getDimension(R.dimen.dimen_80dp))
             .setMarginHorizontalImage(resources.getDimension(R.dimen.dimen_16dp))
@@ -68,12 +68,18 @@ class MainActivity : AppCompatActivity() {
             .setStepYFirst(resources.getDimension(R.dimen.dimen_20dp))
             .setSizeImageLvl(resources.getDimension(R.dimen.dimen_48dp))
             .setSizeIconProgress(resources.getDimension(R.dimen.dimen_28dp))
+            .build()
+
+
+        val configUi = TimelineUiConfig.Builder()
+            .setIconProgress(R.drawable.ic_progress_timeline)
+            .setIconDisableLvl(R.drawable.ic_unactive)
             .setColorTitle(ContextCompat.getColor(baseContext, R.color.black))
             .setColorDescription(ContextCompat.getColor(baseContext, R.color.black))
             .setColorStroke(ContextCompat.getColor(baseContext, R.color.teal_700))
             .setColorProgress(ContextCompat.getColor(baseContext, R.color.teal_200))
             .build()
 
-        timeLineView.setConfig(config)
+        timeLineView.setConfig(configMath, configUi)
     }
 }
