@@ -15,75 +15,63 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import kotlin.math.abs
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.scale
 
 class TimelineView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
     companion object {
         private const val TAG = "TimelineView"
     }
 
-    private val steps: MutableList<TimelineStep> = ArrayList()
-    private var config: TimelineConfig
+    private var timelineMath: TimelineMath
 
     private var iconDisableStep: Bitmap? = null
     private var iconProgress: Bitmap? = null
-
     private val pathEnable = Path()
     private val pathDisable = Path()
     private val pLine = Paint()
     private var pathEffect: CornerPathEffect? = null
 
-    private var startPositionX = 0f
-    private var startPositionDisableStrokeX = 0f
-
     init {
-        config = initConfig(attrs)
-        initTools(config)
+        timelineMath = TimelineMath(initConfig(attrs))
+        initTools(timelineMath.config)
     }
 
     fun replaceSteps(steps: List<TimelineStep>) {
-        this.steps.clear()
-        this.steps.addAll(steps)
+        timelineMath.replaceSteps(steps)
         requestLayout()
     }
 
     fun setConfig(timelineConfig: TimelineConfig) {
-        if (this.config == timelineConfig) return
+        if (timelineMath.config == timelineConfig) return
 
-        this.config = timelineConfig
-        this.steps.clear()
-        this.steps.addAll(timelineConfig.steps)
+        timelineMath = TimelineMath(timelineConfig)
 
         initTools(timelineConfig)
         requestLayout()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        startPositionX = when (config.startPosition) {
-            TimelineConfig.StartPosition.START -> 0f + config.marginHorizontalStroke
-            TimelineConfig.StartPosition.CENTER -> measuredWidth / 2f
-            TimelineConfig.StartPosition.END -> measuredWidth.toFloat() - config.marginHorizontalStroke
-        }
-
-        Log.d(TAG, "onMeasure startPositionX: $startPositionX")
-
-        buildPath()
-        setMeasuredDimension(widthMeasureSpec, config.measuredHeight)
+        timelineMath.setMeasuredWidth(measuredWidth)
+        timelineMath.buildPath(pathEnable, pathDisable)
+        setMeasuredDimension(widthMeasureSpec, timelineMath.config.measuredHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
         pLine.reset()
         pLine.style = Paint.Style.STROKE
-        pLine.strokeWidth = config.sizeStroke
+        pLine.strokeWidth = timelineMath.config.sizeStroke
         pLine.pathEffect = pathEffect
 
-        canvas.translate(startPositionX, 0f)
-        pLine.color = config.colorProgress
+        canvas.translate(timelineMath.getStartPositionX(), 0f)
+        pLine.color = timelineMath.config.colorProgress
         canvas.drawPath(pathEnable, pLine)
-        pLine.color = config.colorStroke
+        pLine.color = timelineMath.config.colorStroke
         canvas.drawPath(pathDisable, pLine)
 
         pLine.reset()
@@ -91,14 +79,11 @@ class TimelineView @JvmOverloads constructor(
 
         var printProgressIcon = false
 
-        steps.forEachIndexed { i, lvl ->
-            val horizontalOffset = if (i % 2 == 0) {
-                startPositionX - startPositionDisableStrokeX - (config.marginHorizontalStroke + config.marginHorizontalStroke / 2f)
-            } else {
-                startPositionDisableStrokeX - startPositionX + config.marginHorizontalStroke / 2f + config.sizeIconProgress / 2f
-            }
-            //рассчитать
-            val verticalOffset = (config.stepY * i) + config.marginTopProgressIcon
+        timelineMath.config.steps.forEachIndexed { i, lvl ->
+            val horizontalOffset = timelineMath.getHorizontalIconOffset(i)
+            val verticalOffset = timelineMath.getVerticalOffset(i)
+            val topCoordinates = timelineMath.getTopCoordinates(lvl)
+            val leftCoordinates = timelineMath.getLeftCoordinates(lvl)
 
             if (i == 0) {
                 printTitle(pLine, canvas, resources.getString(lvl.title), i, Paint.Align.RIGHT)
@@ -109,16 +94,12 @@ class TimelineView @JvmOverloads constructor(
 
                 if (lvl.percents != 100) {
                     this@TimelineView.iconProgress?.let {
-                        canvas.drawBitmap(
-                            it,
-                            if (lvl.count == 0) -config.sizeIconProgress / 2f else -startPositionDisableStrokeX - config.sizeIconProgress / 2f,
-                            if (lvl.count == 0) -config.sizeIconProgress / 2f else config.top,
-                            pLine
-                        )
+                        canvas.drawBitmap(it, leftCoordinates, topCoordinates, pLine)
                         printProgressIcon = true
                     }
                 }
             } else {
+
                 if (lvl.percents != 100 && !printProgressIcon) {
                     this@TimelineView.iconProgress?.let {
                         canvas.drawBitmap(it, horizontalOffset, verticalOffset, pLine)
@@ -133,7 +114,6 @@ class TimelineView @JvmOverloads constructor(
                 printIcon(pLine, lvl, canvas, i, align)
             }
         }
-
     }
 
     @SuppressLint("CustomViewStyleable")
@@ -293,8 +273,7 @@ class TimelineView @JvmOverloads constructor(
         pathEffect = CornerPathEffect(timelineConfig.radius)
 
         getBitmap(timelineConfig.iconDisableLvl)?.let { bitmap ->
-            iconDisableStep = Bitmap.createScaledBitmap(
-                bitmap,
+            iconDisableStep = bitmap.scale(
                 timelineConfig.sizeImageLvl.toInt(),
                 timelineConfig.sizeImageLvl.toInt(),
                 false
@@ -302,8 +281,7 @@ class TimelineView @JvmOverloads constructor(
         }
 
         getBitmap(timelineConfig.iconProgress)?.let { bitmap ->
-            iconProgress = Bitmap.createScaledBitmap(
-                bitmap,
+            iconProgress = bitmap.scale(
                 timelineConfig.sizeIconProgress.toInt(),
                 timelineConfig.sizeIconProgress.toInt(),
                 false
@@ -312,22 +290,19 @@ class TimelineView @JvmOverloads constructor(
     }
 
     private fun printIcon(
-        pLine: Paint, lvl: TimelineStep, canvas: Canvas, i: Int, align: Paint.Align
+        pLine: Paint,
+        lvl: TimelineStep,
+        canvas: Canvas,
+        i: Int,
+        align: Paint.Align
     ) {
         val bm: Bitmap? = when {
             lvl.count == lvl.maxCount && lvl.icon != 0 -> getBitmap(lvl.icon)
             else -> iconDisableStep
         }
         bm?.let {
-            val stepX = (measuredWidth - config.marginHorizontalStroke * 2)
-            val x: Float = when (align) {
-                Paint.Align.LEFT -> if (config.startPosition == TimelineConfig.StartPosition.CENTER) startPositionX - config.marginHorizontalImage - config.sizeImageLvl else -startPositionX + stepX + config.marginHorizontalImage
-                Paint.Align.CENTER -> startPositionX
-                Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalImage)
-            }
-
-            val y =
-                (config.stepY * i) + config.marginTopTitle - (config.stepY - config.sizeImageLvl) / 2
+            val x = timelineMath.getIconXCoordinates(align)
+            val y = timelineMath.getIconYCoordinates(i)
 
             pLine.textAlign = align
             canvas.drawBitmap(it, x, y, pLine)
@@ -337,46 +312,40 @@ class TimelineView @JvmOverloads constructor(
     }
 
     private fun printTitle(
-        pLine: Paint, canvas: Canvas, title: String, i: Int, align: Paint.Align
+        pLine: Paint,
+        canvas: Canvas,
+        title: String,
+        i: Int,
+        align: Paint.Align
     ) {
         pLine.apply {
-            textSize = config.sizeTitle
+            textSize = timelineMath.config.sizeTitle
             typeface = Typeface.DEFAULT_BOLD
-            color = config.colorTitle
+            color = timelineMath.config.colorTitle
         }
 
-        val stepX = (measuredWidth - config.marginHorizontalStroke * 2)
-
-        val x = when (align) {
-            Paint.Align.LEFT -> if (config.startPosition == TimelineConfig.StartPosition.CENTER) startPositionX - config.marginHorizontalText else -startPositionX + stepX
-            Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalText)
-        }
-        val y = (config.stepY * i) + config.marginTopTitle
-
+        val x = timelineMath.getTitleXCoordinates(align)
+        val y = timelineMath.getTitleYCoordinates(i)
 
         canvas.drawText(title, x, y, pLine)
         Log.d(TAG, "printTitle i: $i; align: $align; x: $x; y: $y")
     }
 
     private fun printDescription(
-        pLine: Paint, canvas: Canvas, description: String, i: Int, align: Paint.Align
+        pLine: Paint,
+        canvas: Canvas,
+        description: String,
+        i: Int,
+        align: Paint.Align
     ) {
         pLine.apply {
-            textSize = config.sizeDescription
+            textSize = timelineMath.config.sizeDescription
             typeface = Typeface.DEFAULT
-            color = config.colorDescription
+            color = timelineMath.config.colorDescription
         }
 
-        val stepX = (measuredWidth - config.marginHorizontalStroke * 2)
-
-        val x = when (align) {
-            Paint.Align.LEFT -> if (config.startPosition == TimelineConfig.StartPosition.CENTER) startPositionX - config.marginHorizontalText else -startPositionX + stepX
-            Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> -(startPositionX - config.marginHorizontalText)
-        }
-        val y =
-            (config.stepY * i) + config.marginTopTitle + config.sizeTitle + config.marginTopDescription
+        val x = timelineMath.getTitleXCoordinates(align)
+        val y = timelineMath.getDescriptionYCoordinates(i)
 
         canvas.drawText(description, x, y, pLine)
         Log.d(TAG, "printDescription i: $i; align: $align; x: $x; y: $y")
@@ -388,9 +357,7 @@ class TimelineView @JvmOverloads constructor(
         return when (val drawable = ContextCompat.getDrawable(context, drawableId)) {
             is BitmapDrawable -> BitmapFactory.decodeResource(context.resources, drawableId)
             is VectorDrawable -> {
-                val bitmap = Bitmap.createBitmap(
-                    drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
-                )
+                val bitmap = createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight)
                 val canvas = Canvas(bitmap)
                 drawable.setBounds(0, 0, canvas.width, canvas.height)
                 drawable.draw(canvas)
@@ -398,78 +365,6 @@ class TimelineView @JvmOverloads constructor(
             }
 
             else -> throw IllegalArgumentException("Unsupported drawable type")
-        }
-    }
-
-    private fun buildPath() {
-        pathDisable.reset()
-        pathEnable.reset()
-
-        val stepX = (measuredWidth - config.marginHorizontalStroke * 2)
-        val stepXFirst = startPositionX - config.marginHorizontalStroke
-        var enable = steps.isNotEmpty() && steps[0].count != 0
-        var path: Path = if (enable) pathEnable else pathDisable
-
-        steps.forEachIndexed { i, lvl ->
-            val horizontalStep = if (i % 2 == 0) -stepX else stepX
-
-            when {
-                lvl.percents == 100 -> {
-                    if (i == 0) {
-                        path.rLineTo(0f, config.stepYFirst)
-                        path.rLineTo(-stepXFirst, 0f)
-                        path.rLineTo(0f, config.stepY)
-                    } else {
-                        path.rLineTo(horizontalStep, 0f)
-                        path.rLineTo(
-                            0f, if (i == steps.size - 1) config.stepY / 2 else config.stepY
-                        )
-                    }
-                }
-
-                i == 0 -> {
-                    path.rLineTo(0f, config.stepYFirst)
-                    if (enable) {
-                        startPositionDisableStrokeX = stepXFirst / 100 * lvl.percents
-                        path.rLineTo(-startPositionDisableStrokeX, 0f)
-                        path = pathDisable
-                        enable = false
-                        path.moveTo(-startPositionDisableStrokeX, config.stepYFirst)
-                    }
-                    path.rLineTo(-(stepXFirst - startPositionDisableStrokeX), 0f)
-                    path.rLineTo(0f, config.stepY)
-                }
-
-                enable -> {
-                    startPositionDisableStrokeX = stepX / 100 * lvl.percents
-                    path.rLineTo(
-                        horizontalStep / abs(horizontalStep) * startPositionDisableStrokeX, 0f
-                    )
-                    path = pathDisable
-                    enable = false
-                    path.moveTo(
-                        if (i % 2 == 0) startPositionX - startPositionDisableStrokeX - config.marginHorizontalStroke
-                        else startPositionDisableStrokeX - startPositionX + config.marginHorizontalStroke,
-                        config.stepYFirst + config.stepY * i
-                    )
-                    path.rLineTo(
-                        if (i % 2 == 0) -(stepX - startPositionDisableStrokeX) else stepX - startPositionDisableStrokeX,
-                        0f
-                    )
-                    path.rLineTo(
-                        0f,
-                        if (i == steps.size - 1) config.stepY / 2 else config.stepY
-                    )
-                }
-
-                else -> {
-                    path.rLineTo(horizontalStep, 0f)
-                    path.rLineTo(
-                        0f,
-                        if (i == steps.size - 1) config.stepY / 2 else config.stepY
-                    )
-                }
-            }
         }
     }
 }

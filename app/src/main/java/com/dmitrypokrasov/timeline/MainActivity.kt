@@ -13,46 +13,50 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val timeLineView = findViewById<TimelineView>(R.id.timeline)
-        val config = TimelineConfig.Builder().setSteps(
-            ArrayList(
-                listOf(
-                    TimelineStep(
-                        title = R.string.title_1_lvl,
-                        description = R.string.description_1_9_steps,
-                        icon = R.drawable.ic_active,
-                        count = 9,
-                        maxCount = 9
-                    ), TimelineStep(
-                        title = R.string.title_2_lvl,
-                        description = R.string.description_10_99_steps,
-                        icon = R.drawable.ic_active,
-                        count = 50,
-                        maxCount = 99
-                    ), TimelineStep(
-                        title = R.string.title_3_lvl,
-                        description = R.string.description_100_999_steps,
-                        icon = R.drawable.ic_active,
-                        maxCount = 999
-                    ), TimelineStep(
-                        title = R.string.title_4_lvl,
-                        description = R.string.description_1000_9999_steps,
-                        icon = R.drawable.ic_active,
-                        maxCount = 9999
-                    ), TimelineStep(
-                        title = R.string.title_5_lvl,
-                        description = R.string.description_10000_99999_steps,
-                        icon = R.drawable.ic_unactive,
-                        maxCount = 99999
+        val config = TimelineConfig.Builder()
+            .setSteps(
+                ArrayList(
+                    listOf(
+                        TimelineStep(
+                            title = R.string.title_1_lvl,
+                            description = R.string.description_1_9_steps,
+                            icon = R.drawable.ic_active,
+                            count = 3,
+                            maxCount = 9
+                        ), TimelineStep(
+                            title = R.string.title_2_lvl,
+                            description = R.string.description_10_99_steps,
+                            icon = R.drawable.ic_active,
+                            count = 0,
+                            maxCount = 99
+                        ), TimelineStep(
+                            title = R.string.title_3_lvl,
+                            description = R.string.description_100_999_steps,
+                            icon = R.drawable.ic_active,
+                            count = 0,
+                            maxCount = 999
+                        ), TimelineStep(
+                            title = R.string.title_4_lvl,
+                            description = R.string.description_1000_9999_steps,
+                            icon = R.drawable.ic_active,
+                            count = 0,
+                            maxCount = 9999
+                        ), TimelineStep(
+                            title = R.string.title_5_lvl,
+                            description = R.string.description_10000_99999_steps,
+                            icon = R.drawable.ic_unactive,
+                            count = 0,
+                            maxCount = 99999
+                        )
                     )
                 )
             )
-        )
             .setRadius(resources.getDimension(R.dimen.dimen_48dp))
             .setStepY(resources.getDimension(R.dimen.dimen_80dp))
             .setSizeTitle(resources.getDimension(R.dimen.dimen_12sp))
             .setSizeDescription(resources.getDimension(R.dimen.dimen_12sp))
             .setSizeStroke(resources.getDimension(R.dimen.dimen_6dp))
-            .setStartPosition(TimelineConfig.StartPosition.END)
+            .setStartPosition(TimelineConfig.StartPosition.CENTER)
             .setIconProgress(R.drawable.ic_progress_timeline)
             .setIconDisableLvl(R.drawable.ic_unactive)
             .setMarginHorizontalStroke(resources.getDimension(R.dimen.dimen_40dp))
