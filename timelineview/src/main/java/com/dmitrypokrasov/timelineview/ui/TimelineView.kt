@@ -2,25 +2,17 @@ package com.dmitrypokrasov.timelineview.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.CornerPathEffect
 import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.Typeface
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.scale
 import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.data.TimelineConstants
 import com.dmitrypokrasov.timelineview.data.TimelineStep
 import com.dmitrypokrasov.timelineview.domain.TimelineMath
+import com.dmitrypokrasov.timelineview.domain.TimelineUi
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 
@@ -52,30 +44,16 @@ class TimelineView @JvmOverloads constructor(
         private const val TAG = "TimelineView"
     }
 
-    /** Математическая и визуальная конфигурация таймлайна. */
+    /** Математическая конфигурация таймлайна. */
     private var timelineMath: TimelineMath
 
-    /** Битмап неактивного шага. */
-    private var iconDisableStep: Bitmap? = null
-
-    /** Битмап текущей иконки прогресса. */
-    private var iconProgress: Bitmap? = null
-
-    /** Путь для пройденных шагов. */
-    private val pathEnable = Path()
-
-    /** Путь для непройденных шагов. */
-    private val pathDisable = Path()
-
-    /** Основная кисть для рисования линий и текста. */
-    private val pLine = Paint()
-
-    /** Скругление углов линии пути. */
-    private var pathEffect: CornerPathEffect? = null
+    /** Визуальная конфигурация таймлайна. */
+    private var timelineUi: TimelineUi
 
     init {
-        timelineMath = TimelineMath(initMathConfig(attrs), initUiConfig(attrs))
-        initTools(timelineMath.mathConfig, timelineMath.uiConfig)
+        timelineMath = TimelineMath(initMathConfig(attrs))
+        timelineUi = TimelineUi(initUiConfig(attrs))
+        initTools(timelineMath.mathConfig, timelineUi.uiConfig)
     }
 
     /**
@@ -90,9 +68,11 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает новую конфигурацию таймлайна.
      */
     fun setConfig(timelineMathConfig: TimelineMathConfig, timelineUiConfig: TimelineUiConfig) {
-        if (timelineMath.mathConfig == timelineMathConfig && timelineMath.uiConfig == timelineUiConfig) return
+        if (timelineMath.mathConfig == timelineMathConfig && timelineUi.uiConfig == timelineUiConfig) return
 
-        timelineMath = TimelineMath(timelineMathConfig, timelineUiConfig)
+        timelineMath = TimelineMath(timelineMathConfig)
+        timelineUi = TimelineUi(timelineUiConfig)
+
         initTools(timelineMathConfig, timelineUiConfig)
 
         requestLayout()
@@ -100,63 +80,103 @@ class TimelineView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         timelineMath.setMeasuredWidth(measuredWidth)
-        timelineMath.buildPath(pathEnable, pathDisable)
-        setMeasuredDimension(widthMeasureSpec, timelineMath.mathConfig.measuredHeight)
+        timelineMath.buildPath(timelineUi.pathEnable, timelineUi.pathDisable)
+        setMeasuredDimension(widthMeasureSpec, timelineMath.getMeasuredHeight())
     }
 
     override fun onDraw(canvas: Canvas) {
-        pLine.reset()
-        pLine.style = Paint.Style.STROKE
-        pLine.strokeWidth = timelineMath.mathConfig.sizeStroke
-        pLine.pathEffect = pathEffect
+        timelineUi.resetFromPaintTools()
 
-        canvas.translate(timelineMath.getStartPositionX(), 0f)
-        pLine.color = timelineMath.uiConfig.colorProgress
-        canvas.drawPath(pathEnable, pLine)
-        pLine.color = timelineMath.uiConfig.colorStroke
-        canvas.drawPath(pathDisable, pLine)
+        canvas.translate(timelineMath.getStartPosition(), 0f)
+        timelineUi.drawProgressPath(canvas)
+        timelineUi.drawDisablePath(canvas)
 
         // Отрисовка шагов: иконки, заголовки, описания
-        pLine.reset()
-        pLine.isAntiAlias = true
+        timelineUi.resetFromTextTools()
 
         var printProgressIcon = false
 
         timelineMath.mathConfig.steps.forEachIndexed { i, lvl ->
-            val horizontalOffset = timelineMath.getHorizontalIconOffset(i)
-            val verticalOffset = timelineMath.getVerticalOffset(i)
-            val topCoordinates = timelineMath.getTopCoordinates(lvl)
-            val leftCoordinates = timelineMath.getLeftCoordinates(lvl)
-
             if (i == 0) {
-                printTitle(pLine, canvas, resources.getString(lvl.title), i, Paint.Align.RIGHT)
-                printDescription(
-                    pLine, canvas, resources.getString(lvl.description), i, Paint.Align.RIGHT
+                timelineUi.printTitle(
+                    canvas,
+                    resources.getString(lvl.title),
+                    timelineMath.getTitleXCoordinates(Paint.Align.RIGHT),
+                    timelineMath.getTitleYCoordinates(i)
                 )
-                printIcon(pLine, lvl, canvas, i, Paint.Align.RIGHT)
+                timelineUi.printDescription(
+                    canvas,
+                    resources.getString(lvl.description),
+                    timelineMath.getTitleXCoordinates(Paint.Align.RIGHT),
+                    timelineMath.getDescriptionYCoordinates(i)
+                )
+                timelineUi.printIcon(
+                    lvl,
+                    canvas,
+                    Paint.Align.RIGHT,
+                    context,
+                    timelineMath.getIconXCoordinates(Paint.Align.RIGHT),
+                    timelineMath.getIconYCoordinates(i)
+                )
 
                 if (lvl.percents != 100) {
-                    this@TimelineView.iconProgress?.let {
-                        canvas.drawBitmap(it, leftCoordinates, topCoordinates, pLine)
-                        printProgressIcon = true
-                    }
+                    timelineUi.drawProgressBitmap(
+                        canvas,
+                        timelineMath.getLeftCoordinates(lvl),
+                        timelineMath.getTopCoordinates(lvl)
+                    )
+                    printProgressIcon = true
                 }
             } else {
 
                 if (lvl.percents != 100 && !printProgressIcon) {
-                    this@TimelineView.iconProgress?.let {
-                        canvas.drawBitmap(it, horizontalOffset, verticalOffset, pLine)
-                        printProgressIcon = true
-                    }
+                    timelineUi.drawProgressBitmap(
+                        canvas,
+                        timelineMath.getHorizontalIconOffset(i),
+                        timelineMath.getVerticalOffset(i)
+                    )
+                    printProgressIcon = true
                 }
 
                 val align =
-                    if (pLine.textAlign == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
-                printTitle(pLine, canvas, resources.getString(lvl.title), i, align)
-                printDescription(pLine, canvas, resources.getString(lvl.description), i, align)
-                printIcon(pLine, lvl, canvas, i, align)
+                    if (timelineUi.getTextAlign() == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
+                timelineUi.printTitle(
+                    canvas,
+                    resources.getString(lvl.title),
+                    timelineMath.getTitleXCoordinates(align),
+                    timelineMath.getTitleYCoordinates(i)
+                )
+                timelineUi.printDescription(
+                    canvas,
+                    resources.getString(lvl.description),
+                    timelineMath.getTitleXCoordinates(align),
+                    timelineMath.getDescriptionYCoordinates(i)
+                )
+                timelineUi.printIcon(
+                    lvl,
+                    canvas,
+                    align,
+                    context,
+                    timelineMath.getIconXCoordinates(align),
+                    timelineMath.getIconYCoordinates(i)
+                )
             }
         }
+    }
+
+    /**
+     * Инициализирует визуальные элементы (битмапы, pathEffect).
+     */
+    private fun initTools(
+        timelineMathConfig: TimelineMathConfig,
+        timelineUiConfig: TimelineUiConfig
+    ) {
+        Log.d(
+            TAG,
+            "initTools timelineMathConfig: $timelineMathConfig, timelineUiConfig: $timelineUiConfig"
+        )
+
+        timelineUi.initTools(timelineMathConfig, context)
     }
 
     /**
@@ -179,12 +199,6 @@ class TimelineView @JvmOverloads constructor(
         builderMathConfig.setStepY(
             typedArray.getDimension(
                 R.styleable.TimelineView_timeline_step_y_size, TimelineConstants.DEFAULT_STEP_Y_SIZE
-            )
-        )
-
-        builderMathConfig.setRadius(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_radius_size, TimelineConstants.DEFAULT_RADIUS_SIZE
             )
         )
 
@@ -234,25 +248,6 @@ class TimelineView @JvmOverloads constructor(
             typedArray.getDimension(
                 R.styleable.TimelineView_timeline_margin_horizontal_stroke,
                 TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_STROKE
-            )
-        )
-
-        builderMathConfig.setSizeDescription(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_description_size,
-                TimelineConstants.DEFAULT_DESCRIPTION_SIZE
-            )
-        )
-
-        builderMathConfig.setSizeTitle(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_title_size, TimelineConstants.DEFAULT_TITLE_SIZE
-            )
-        )
-
-        builderMathConfig.setSizeStroke(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_stroke_size, TimelineConstants.DEFAULT_STROKE_SIZE
             )
         )
 
@@ -330,6 +325,31 @@ class TimelineView @JvmOverloads constructor(
             )
         )
 
+        builderUiConfig.setRadius(
+            typedArray.getDimension(
+                R.styleable.TimelineView_timeline_radius_size, TimelineConstants.DEFAULT_RADIUS_SIZE
+            )
+        )
+
+        builderUiConfig.setSizeDescription(
+            typedArray.getDimension(
+                R.styleable.TimelineView_timeline_description_size,
+                TimelineConstants.DEFAULT_DESCRIPTION_SIZE
+            )
+        )
+
+        builderUiConfig.setSizeTitle(
+            typedArray.getDimension(
+                R.styleable.TimelineView_timeline_title_size, TimelineConstants.DEFAULT_TITLE_SIZE
+            )
+        )
+
+        builderUiConfig.setSizeStroke(
+            typedArray.getDimension(
+                R.styleable.TimelineView_timeline_stroke_size, TimelineConstants.DEFAULT_STROKE_SIZE
+            )
+        )
+
         builderUiConfig.setColorStroke(
             typedArray.getColor(
                 R.styleable.TimelineView_timeline_stroke_color,
@@ -365,128 +385,5 @@ class TimelineView @JvmOverloads constructor(
         typedArray.recycle()
 
         return builderUiConfig.build()
-    }
-
-
-    /**
-     * Инициализирует визуальные элементы (битмапы, pathEffect).
-     */
-    private fun initTools(
-        timelineMathConfig: TimelineMathConfig,
-        timelineUiConfig: TimelineUiConfig
-    ) {
-        Log.d(
-            TAG,
-            "initTools timelineMathConfig: $timelineMathConfig, timelineUiConfig: $timelineUiConfig"
-        )
-
-        pathEffect = CornerPathEffect(timelineMathConfig.radius)
-
-        getBitmap(timelineUiConfig.iconDisableLvl)?.let { bitmap ->
-            iconDisableStep = bitmap.scale(
-                timelineMathConfig.sizeImageLvl.toInt(),
-                timelineMathConfig.sizeImageLvl.toInt(),
-                false
-            )
-        }
-
-        getBitmap(timelineUiConfig.iconProgress)?.let { bitmap ->
-            iconProgress = bitmap.scale(
-                timelineMathConfig.sizeIconProgress.toInt(),
-                timelineMathConfig.sizeIconProgress.toInt(),
-                false
-            )
-        }
-    }
-
-    /**
-     * Отрисовка иконки шага.
-     */
-    private fun printIcon(
-        pLine: Paint,
-        lvl: TimelineStep,
-        canvas: Canvas,
-        i: Int,
-        align: Paint.Align
-    ) {
-        val bm: Bitmap? = when {
-            lvl.count == lvl.maxCount && lvl.icon != 0 -> getBitmap(lvl.icon)
-            else -> iconDisableStep
-        }
-        bm?.let {
-            val x = timelineMath.getIconXCoordinates(align)
-            val y = timelineMath.getIconYCoordinates(i)
-
-            pLine.textAlign = align
-            canvas.drawBitmap(it, x, y, pLine)
-
-            Log.d(TAG, "printIcon i: $i; align: $align; x: $x; y: $y")
-        }
-    }
-
-    /**
-     * Отрисовка заголовка шага.
-     */
-    private fun printTitle(
-        pLine: Paint,
-        canvas: Canvas,
-        title: String,
-        i: Int,
-        align: Paint.Align
-    ) {
-        pLine.apply {
-            textSize = timelineMath.mathConfig.sizeTitle
-            typeface = Typeface.DEFAULT_BOLD
-            color = timelineMath.uiConfig.colorTitle
-        }
-
-        val x = timelineMath.getTitleXCoordinates(align)
-        val y = timelineMath.getTitleYCoordinates(i)
-
-        canvas.drawText(title, x, y, pLine)
-        Log.d(TAG, "printTitle i: $i; align: $align; x: $x; y: $y")
-    }
-
-    /**
-     * Отрисовка описания шага.
-     */
-    private fun printDescription(
-        pLine: Paint,
-        canvas: Canvas,
-        description: String,
-        i: Int,
-        align: Paint.Align
-    ) {
-        pLine.apply {
-            textSize = timelineMath.mathConfig.sizeDescription
-            typeface = Typeface.DEFAULT
-            color = timelineMath.uiConfig.colorDescription
-        }
-
-        val x = timelineMath.getTitleXCoordinates(align)
-        val y = timelineMath.getDescriptionYCoordinates(i)
-
-        canvas.drawText(description, x, y, pLine)
-        Log.d(TAG, "printDescription i: $i; align: $align; x: $x; y: $y")
-    }
-
-    /**
-     * Получение Bitmap из ресурса, включая поддержку VectorDrawable.
-     */
-    private fun getBitmap(drawableId: Int): Bitmap? {
-        if (drawableId == 0) return null
-
-        return when (val drawable = ContextCompat.getDrawable(context, drawableId)) {
-            is BitmapDrawable -> BitmapFactory.decodeResource(context.resources, drawableId)
-            is VectorDrawable -> {
-                val bitmap = createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight)
-                val canvas = Canvas(bitmap)
-                drawable.setBounds(0, 0, canvas.width, canvas.height)
-                drawable.draw(canvas)
-                bitmap
-            }
-
-            else -> throw IllegalArgumentException("Unsupported drawable type")
-        }
     }
 }

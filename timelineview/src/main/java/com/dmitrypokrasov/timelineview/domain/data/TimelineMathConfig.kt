@@ -1,5 +1,7 @@
 package com.dmitrypokrasov.timelineview.domain.data
 
+import android.graphics.Paint
+import android.util.Log
 import com.dmitrypokrasov.timelineview.data.TimelineConstants
 import com.dmitrypokrasov.timelineview.data.TimelineStep
 
@@ -19,14 +21,8 @@ import com.dmitrypokrasov.timelineview.data.TimelineStep
  * @property marginHorizontalImage Горизонтальный отступ для изображения уровня.
  * @property marginHorizontalText Горизонтальный отступ для текста.
  * @property marginHorizontalStroke Горизонтальный отступ для вертикальной линии.
- * @property top Смещение всего контента относительно начала вьюшки (на основе первого шага).
  * @property sizeIconProgress Размер иконки прогресса.
- * @property measuredHeight Полная высота компонента, рассчитанная на основе количества шагов и отступов.
- * @property sizeDescription Размер текста описания.
- * @property sizeTitle Размер текста заголовка.
  * @property sizeImageLvl Размер изображения уровня.
- * @property sizeStroke Толщина вертикальной линии.
- * @property radius Радиус точки/индикатора для каждого шага.
  */
 data class TimelineMathConfig(
     val startPosition: StartPosition,
@@ -39,15 +35,146 @@ data class TimelineMathConfig(
     val marginHorizontalImage: Float,
     val marginHorizontalText: Float,
     val marginHorizontalStroke: Float,
-    val top: Float,
     val sizeIconProgress: Float,
-    val measuredHeight: Int,
-    val sizeDescription: Float,
-    val sizeTitle: Float,
-    val sizeImageLvl: Float,
-    val sizeStroke: Float,
-    val radius: Float
+    val sizeImageLvl: Float
 ) {
+
+    companion object {
+        private const val TAG = "TimelineMathConfig"
+    }
+
+    private var startPositionX = 0f
+    private var startPositionDisableStrokeX = 0f
+    private var measuredWidth = 0
+
+    fun setMeasuredWidth(measuredWidth: Int) {
+        this.measuredWidth = measuredWidth
+
+        startPositionX = when (startPosition) {
+            StartPosition.START -> marginHorizontalStroke
+            StartPosition.CENTER -> measuredWidth / 2f
+            StartPosition.END -> measuredWidth.toFloat() - marginHorizontalStroke
+        }
+
+        Log.d(TAG, "setMeasuredWidth startPositionX: $startPositionX")
+    }
+
+    fun getStartPosition(): Float {
+        return startPositionX
+    }
+
+    /** Возвращает стандартное вертикальное смещение между шагами. Если последний шаг то высота шага делится на 2 */
+    fun getStandartDYMove(i: Int): Float {
+        return if (i == steps.size - 1) stepY / 2 else stepY
+    }
+
+    /** Возвращает Y-координату для иконки уровня. */
+    fun getIconYCoordinates(i: Int): Float {
+        return getTitleYCoordinates(i) - (stepY - sizeImageLvl) / 2
+    }
+
+    /** Возвращает Y-координату заголовка уровня. */
+    fun getTitleYCoordinates(i: Int): Float {
+        return (stepY * i) + marginTopTitle
+    }
+
+    /** Возвращает Y-координату описания уровня. */
+    fun getDescriptionYCoordinates(i: Int): Float {
+        return getTitleYCoordinates(i) + marginTopDescription
+    }
+
+    /** Возвращает X-координату левой границы иконки прогресса. */
+    fun getLeftCoordinates(lvl: TimelineStep): Float {
+        return if (lvl.count == 0) -sizeIconProgress / 2f else -startPositionDisableStrokeX - sizeIconProgress / 2f
+    }
+
+    /** Возвращает Y-координату верхней границы иконки прогресса. */
+    fun getTopCoordinates(lvl: TimelineStep): Float {
+        return if (lvl.count == 0) -sizeIconProgress / 2f else stepYFirst - sizeIconProgress / 2f
+    }
+
+    /** Инициализирует значение [startPositionDisableStrokeX] на основе прогресса шага. */
+    fun getStartPositionDisableStrokeX(lvl: TimelineStep, i: Int): Float {
+        val startPosition =
+            if (i == 0) getStepXFirst() / 100 * lvl.percents else getStepX() / 100 * lvl.percents
+
+        startPositionDisableStrokeX = startPosition
+
+        Log.d(
+            TAG,
+            "initStartPositionDisableStrokeX i: $i, startPositionDisableStrokeX: $startPosition"
+        )
+
+        return startPosition
+    }
+
+    /** Возвращает X-координату заголовка уровня. */
+    fun getTitleXCoordinates(align: Paint.Align): Float {
+        val stepX = getStepX()
+        return when (align) {
+            Paint.Align.LEFT -> if (startPosition == StartPosition.CENTER) startPositionX - marginHorizontalText else -startPositionX + stepX
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> -(startPositionX - marginHorizontalText)
+        }
+    }
+
+    /** Возвращает X-координату для иконки уровня. */
+    fun getIconXCoordinates(align: Paint.Align): Float {
+        val stepX = getStepX()
+        return when (align) {
+            Paint.Align.LEFT -> if (startPosition == StartPosition.CENTER) startPositionX - marginHorizontalImage - sizeImageLvl else -startPositionX + stepX + marginHorizontalImage
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> -(startPositionX - marginHorizontalImage)
+        }
+    }
+
+    /** Возвращает ширину горизонтального шага между элементами (без учёта отступов). */
+    fun getStepX(): Float {
+        return (measuredWidth - marginHorizontalStroke * 2)
+    }
+
+    /** Возвращает ширину первого шага (для расчёта первой линии). */
+    fun getStepXFirst(): Float {
+        return startPositionX - marginHorizontalStroke
+    }
+
+    /** Возвращает вертикальное смещение на шаге [i]. */
+    fun getVerticalOffset(i: Int): Float {
+        return (stepY * i) + marginTopProgressIcon
+    }
+
+    /** Вспомогательная функция для расчёта смещения X-координаты для текущего шага. */
+    fun getHorizontalOffset(i: Int): Float {
+        val offset = if (i % 2 == 0)
+            when (startPosition) {
+                StartPosition.START -> -startPositionDisableStrokeX + getStepX()
+                StartPosition.CENTER -> -startPositionDisableStrokeX + startPositionX - marginHorizontalStroke
+                StartPosition.END -> -startPositionDisableStrokeX
+            }
+        else startPositionDisableStrokeX - startPositionX + marginHorizontalStroke
+
+        Log.d(
+            TAG,
+            "getHorizontalOffset i: $i, offset: $offset, startPositionDisableStrokeX: $startPositionDisableStrokeX, startPositionX: $startPositionX, marginHorizontalStroke: $marginHorizontalStroke"
+        )
+
+        return offset
+    }
+
+    fun getHorizontalIconOffset(i: Int): Float {
+        val offset = getHorizontalOffset(i) - sizeIconProgress / 2f
+
+        Log.d(
+            TAG,
+            "getHorizontalOffset i: $i, offset: $offset, startPositionDisableStrokeX: $startPositionDisableStrokeX, startPositionX: $startPositionX, marginHorizontalStroke: $marginHorizontalStroke"
+        )
+
+        return offset
+    }
+
+    fun getMeasuredHeight(): Int {
+        return ((stepY * steps.size) + stepYFirst + 50).toInt()
+    }
 
     /**
      * Положение первого шага таймлайна относительно контейнера.
@@ -78,11 +205,7 @@ data class TimelineMathConfig(
             TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_STROKE
 
         private var sizeIconProgress: Float = TimelineConstants.DEFAULT_ICON_PROGRESS_SIZE
-        private var sizeDescription: Float = TimelineConstants.DEFAULT_DESCRIPTION_SIZE
-        private var sizeTitle: Float = TimelineConstants.DEFAULT_TITLE_SIZE
-        private var sizeStroke: Float = TimelineConstants.DEFAULT_STROKE_SIZE
         private var sizeImageLvl: Float = TimelineConstants.DEFAULT_IMAGE_LVL_SIZE
-        private var radius: Float = TimelineConstants.DEFAULT_RADIUS_SIZE
 
         /** Устанавливает список шагов таймлайна. */
         fun setSteps(steps: List<TimelineStep>) = apply { this.steps = steps }
@@ -117,20 +240,8 @@ data class TimelineMathConfig(
         /** Устанавливает размер иконки прогресса. */
         fun setSizeIconProgress(value: Float) = apply { sizeIconProgress = value }
 
-        /** Устанавливает размер текста описания. */
-        fun setSizeDescription(value: Float) = apply { sizeDescription = value }
-
-        /** Устанавливает размер текста заголовка. */
-        fun setSizeTitle(value: Float) = apply { sizeTitle = value }
-
-        /** Устанавливает толщину вертикальной линии. */
-        fun setSizeStroke(value: Float) = apply { sizeStroke = value }
-
         /** Устанавливает размер изображения уровня. */
         fun setSizeImageLvl(value: Float) = apply { sizeImageLvl = value }
-
-        /** Устанавливает радиус индикатора. */
-        fun setRadius(value: Float) = apply { radius = value }
 
         /**
          * Создаёт экземпляр [TimelineMathConfig] с рассчитанной высотой и смещением.
@@ -148,13 +259,7 @@ data class TimelineMathConfig(
                 marginHorizontalText = marginHorizontalText,
                 marginHorizontalStroke = marginHorizontalStroke,
                 sizeIconProgress = sizeIconProgress,
-                top = stepYFirst - sizeIconProgress / 2f,
-                measuredHeight = ((stepY * steps.size) + stepYFirst + 50).toInt(),
-                sizeDescription = sizeDescription,
-                sizeTitle = sizeTitle,
-                sizeStroke = sizeStroke,
-                sizeImageLvl = sizeImageLvl,
-                radius = radius
+                sizeImageLvl = sizeImageLvl
             )
         }
     }

@@ -2,6 +2,7 @@ package com.dmitrypokrasov.timelineview.domain.data
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import com.dmitrypokrasov.timelineview.data.TimelineConstants
 
 /**
  * Конфигурация визуального оформления элементов таймлайна.
@@ -14,6 +15,11 @@ import androidx.annotation.DrawableRes
  * @property colorStroke Цвет обводки шагов/иконок.
  * @property colorTitle Цвет заголовка шага.
  * @property colorDescription Цвет описания шага.
+ * @property radius Радиус точки/индикатора для каждого шага.
+ * @property sizeDescription Размер текста описания.
+ * @property sizeTitle Размер текста заголовка.
+ * @property sizeStroke Толщина вертикальной линии.
+ *
  */
 data class TimelineUiConfig(
     @DrawableRes val iconDisableLvl: Int,
@@ -21,7 +27,11 @@ data class TimelineUiConfig(
     @ColorInt var colorProgress: Int,
     @ColorInt var colorStroke: Int,
     @ColorInt var colorTitle: Int,
-    @ColorInt var colorDescription: Int
+    @ColorInt var colorDescription: Int,
+    val sizeDescription: Float,
+    val sizeTitle: Float,
+    val radius: Float,
+    val sizeStroke: Float
 ) {
 
     /**
@@ -46,6 +56,11 @@ data class TimelineUiConfig(
 
         @ColorInt
         private var colorDescription: Int = 0
+
+        private var radius: Float = TimelineConstants.DEFAULT_RADIUS_SIZE
+        private var sizeDescription: Float = TimelineConstants.DEFAULT_DESCRIPTION_SIZE
+        private var sizeTitle: Float = TimelineConstants.DEFAULT_TITLE_SIZE
+        private var sizeStroke: Float = TimelineConstants.DEFAULT_STROKE_SIZE
 
         /**
          * Устанавливает иконку для неактивных уровней.
@@ -77,6 +92,18 @@ data class TimelineUiConfig(
          */
         fun setColorDescription(value: Int) = apply { colorDescription = value }
 
+        /** Устанавливает радиус индикатора. */
+        fun setRadius(value: Float) = apply { radius = value }
+
+        /** Устанавливает размер текста описания. */
+        fun setSizeDescription(value: Float) = apply { sizeDescription = value }
+
+        /** Устанавливает размер текста заголовка. */
+        fun setSizeTitle(value: Float) = apply { sizeTitle = value }
+
+        /** Устанавливает толщину вертикальной линии. */
+        fun setSizeStroke(value: Float) = apply { sizeStroke = value }
+
         /**
          * Создаёт экземпляр [TimelineUiConfig] на основе установленных параметров.
          */
@@ -87,7 +114,11 @@ data class TimelineUiConfig(
                 colorDescription = colorDescription,
                 colorProgress = colorProgress,
                 colorTitle = colorTitle,
-                colorStroke = colorStroke
+                colorStroke = colorStroke,
+                radius = radius,
+                sizeDescription = sizeDescription,
+                sizeTitle = sizeTitle,
+                sizeStroke = sizeStroke
             )
         }
     }
