@@ -50,6 +50,9 @@ class TimelineView @JvmOverloads constructor(
     /** Визуальная конфигурация таймлайна. */
     private var timelineUi: TimelineUi
 
+    /** Текущая сторона отрисовки (LEFT/RIGHT). */
+    private var currentSide: Paint.Align = Paint.Align.RIGHT
+
     init {
         timelineMath = TimelineMath(initMathConfig(attrs))
         timelineUi = TimelineUi(initUiConfig(attrs))
@@ -94,28 +97,32 @@ class TimelineView @JvmOverloads constructor(
         // Отрисовка шагов: иконки, заголовки, описания
         timelineUi.resetFromTextTools()
 
+        currentSide = Paint.Align.RIGHT
         var printProgressIcon = false
 
         timelineMath.mathConfig.steps.forEachIndexed { i, lvl ->
+            val align = currentSide
             if (i == 0) {
                 timelineUi.printTitle(
                     canvas,
                     resources.getString(lvl.title),
-                    timelineMath.getTitleXCoordinates(Paint.Align.RIGHT),
-                    timelineMath.getTitleYCoordinates(i)
+                    timelineMath.getTitleXCoordinates(align),
+                    timelineMath.getTitleYCoordinates(i),
+                    align
                 )
                 timelineUi.printDescription(
                     canvas,
                     resources.getString(lvl.description),
-                    timelineMath.getTitleXCoordinates(Paint.Align.RIGHT),
-                    timelineMath.getDescriptionYCoordinates(i)
+                    timelineMath.getTitleXCoordinates(align),
+                    timelineMath.getDescriptionYCoordinates(i),
+                    align
                 )
                 timelineUi.printIcon(
                     lvl,
                     canvas,
-                    Paint.Align.RIGHT,
+                    align,
                     context,
-                    timelineMath.getIconXCoordinates(Paint.Align.RIGHT),
+                    timelineMath.getIconXCoordinates(align),
                     timelineMath.getIconYCoordinates(i)
                 )
 
@@ -128,7 +135,6 @@ class TimelineView @JvmOverloads constructor(
                     printProgressIcon = true
                 }
             } else {
-
                 if (lvl.percents != 100 && !printProgressIcon) {
                     timelineUi.drawProgressBitmap(
                         canvas,
@@ -138,19 +144,19 @@ class TimelineView @JvmOverloads constructor(
                     printProgressIcon = true
                 }
 
-                val align =
-                    if (timelineUi.getTextAlign() == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
                 timelineUi.printTitle(
                     canvas,
                     resources.getString(lvl.title),
                     timelineMath.getTitleXCoordinates(align),
-                    timelineMath.getTitleYCoordinates(i)
+                    timelineMath.getTitleYCoordinates(i),
+                    align
                 )
                 timelineUi.printDescription(
                     canvas,
                     resources.getString(lvl.description),
                     timelineMath.getTitleXCoordinates(align),
-                    timelineMath.getDescriptionYCoordinates(i)
+                    timelineMath.getDescriptionYCoordinates(i),
+                    align
                 )
                 timelineUi.printIcon(
                     lvl,
@@ -161,6 +167,9 @@ class TimelineView @JvmOverloads constructor(
                     timelineMath.getIconYCoordinates(i)
                 )
             }
+
+            currentSide =
+                if (currentSide == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
         }
     }
 
