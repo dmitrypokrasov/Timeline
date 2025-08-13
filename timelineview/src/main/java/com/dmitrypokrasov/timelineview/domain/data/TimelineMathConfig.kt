@@ -63,8 +63,11 @@ data class TimelineMathConfig(
         return startPositionX
     }
 
-    /** Возвращает стандартное вертикальное смещение между шагами. Если последний шаг то высота шага делится на 2 */
-    fun getStandartDYMove(i: Int): Float {
+    /**
+     * Возвращает стандартное вертикальное смещение между шагами.
+     * Если последний шаг, то высота шага делится на 2.
+     */
+    fun getStandardDyMove(i: Int): Float {
         return if (i == steps.size - 1) stepY / 2 else stepY
     }
 
@@ -172,8 +175,12 @@ data class TimelineMathConfig(
         return offset
     }
 
+    /**
+     * Возвращает рассчитанную высоту таймлайна.
+     * Учитывает количество шагов, начальный отступ и половину размера иконки прогресса.
+     */
     fun getMeasuredHeight(): Int {
-        return ((stepY * steps.size) + stepYFirst + 50).toInt()
+        return ((stepY * steps.size) + stepYFirst + sizeIconProgress / 2f).toInt()
     }
 
     /**

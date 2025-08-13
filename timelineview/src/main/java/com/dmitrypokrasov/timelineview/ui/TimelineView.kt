@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.view.View.MeasureSpec
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.data.TimelineConstants
@@ -50,6 +51,9 @@ class TimelineView @JvmOverloads constructor(
     /** Визуальная конфигурация таймлайна. */
     private var timelineUi: TimelineUi
 
+    /** Текущая сторона отрисовки (LEFT/RIGHT). */
+    private var currentSide: Paint.Align = Paint.Align.RIGHT
+
     init {
         timelineMath = TimelineMath(initMathConfig(attrs))
         timelineUi = TimelineUi(initUiConfig(attrs))
@@ -79,9 +83,10 @@ class TimelineView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         timelineMath.setMeasuredWidth(measuredWidth)
         timelineMath.buildPath(timelineUi.pathEnable, timelineUi.pathDisable)
-        setMeasuredDimension(widthMeasureSpec, timelineMath.getMeasuredHeight())
+        setMeasuredDimension(measuredWidth, timelineMath.getMeasuredHeight())
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -94,28 +99,32 @@ class TimelineView @JvmOverloads constructor(
         // Отрисовка шагов: иконки, заголовки, описания
         timelineUi.resetFromTextTools()
 
+        currentSide = Paint.Align.RIGHT
         var printProgressIcon = false
 
         timelineMath.mathConfig.steps.forEachIndexed { i, lvl ->
+            val align = currentSide
             if (i == 0) {
                 timelineUi.printTitle(
                     canvas,
                     resources.getString(lvl.title),
-                    timelineMath.getTitleXCoordinates(Paint.Align.RIGHT),
-                    timelineMath.getTitleYCoordinates(i)
+                    timelineMath.getTitleXCoordinates(align),
+                    timelineMath.getTitleYCoordinates(i),
+                    align
                 )
                 timelineUi.printDescription(
                     canvas,
                     resources.getString(lvl.description),
-                    timelineMath.getTitleXCoordinates(Paint.Align.RIGHT),
-                    timelineMath.getDescriptionYCoordinates(i)
+                    timelineMath.getTitleXCoordinates(align),
+                    timelineMath.getDescriptionYCoordinates(i),
+                    align
                 )
                 timelineUi.printIcon(
                     lvl,
                     canvas,
-                    Paint.Align.RIGHT,
+                    align,
                     context,
-                    timelineMath.getIconXCoordinates(Paint.Align.RIGHT),
+                    timelineMath.getIconXCoordinates(align),
                     timelineMath.getIconYCoordinates(i)
                 )
 
@@ -128,7 +137,6 @@ class TimelineView @JvmOverloads constructor(
                     printProgressIcon = true
                 }
             } else {
-
                 if (lvl.percents != 100 && !printProgressIcon) {
                     timelineUi.drawProgressBitmap(
                         canvas,
@@ -138,19 +146,19 @@ class TimelineView @JvmOverloads constructor(
                     printProgressIcon = true
                 }
 
-                val align =
-                    if (timelineUi.getTextAlign() == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
                 timelineUi.printTitle(
                     canvas,
                     resources.getString(lvl.title),
                     timelineMath.getTitleXCoordinates(align),
-                    timelineMath.getTitleYCoordinates(i)
+                    timelineMath.getTitleYCoordinates(i),
+                    align
                 )
                 timelineUi.printDescription(
                     canvas,
                     resources.getString(lvl.description),
                     timelineMath.getTitleXCoordinates(align),
-                    timelineMath.getDescriptionYCoordinates(i)
+                    timelineMath.getDescriptionYCoordinates(i),
+                    align
                 )
                 timelineUi.printIcon(
                     lvl,
@@ -161,6 +169,9 @@ class TimelineView @JvmOverloads constructor(
                     timelineMath.getIconYCoordinates(i)
                 )
             }
+
+            currentSide =
+                if (currentSide == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
         }
     }
 
@@ -179,14 +190,16 @@ class TimelineView @JvmOverloads constructor(
         timelineUi.initTools(timelineMathConfig, context)
     }
 
+    @SuppressLint("CustomViewStyleable")
+    private fun obtainAttributes(attrs: AttributeSet?) =
+        context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
+
     /**
      * Инициализация математической конфигурации из XML-атрибутов.
      */
-    @SuppressLint("CustomViewStyleable")
     private fun initMathConfig(attrs: AttributeSet?): TimelineMathConfig {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
+        val typedArray = obtainAttributes(attrs)
 
-        val builderUiConfig = TimelineUiConfig.Builder()
         val builderMathConfig = TimelineMathConfig.Builder()
 
         builderMathConfig.setStartPosition(
@@ -265,45 +278,6 @@ class TimelineView @JvmOverloads constructor(
             )
         )
 
-        builderUiConfig.setColorProgress(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_progress_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_PROGRESS_COLOR)
-            )
-        )
-
-        builderUiConfig.setColorStroke(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_stroke_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_STROKE_COLOR)
-            )
-        )
-
-        builderUiConfig.setColorTitle(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_title_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_TITLE_COLOR)
-            )
-        )
-
-        builderUiConfig.setColorDescription(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_description_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_DESCRIPTION_COLOR)
-            )
-        )
-
-        builderUiConfig.setIconDisableLvl(
-            typedArray.getResourceId(
-                R.styleable.TimelineView_timeline_disable_icon, 0
-            )
-        )
-        builderUiConfig.setIconProgress(
-            typedArray.getResourceId(
-                R.styleable.TimelineView_timeline_progress_icon, 0
-            )
-        )
-
         typedArray.recycle()
 
         return builderMathConfig.build()
@@ -312,9 +286,8 @@ class TimelineView @JvmOverloads constructor(
     /**
      * Инициализация UI-конфигурации из XML-атрибутов.
      */
-    @SuppressLint("CustomViewStyleable")
     private fun initUiConfig(attrs: AttributeSet?): TimelineUiConfig {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
+        val typedArray = obtainAttributes(attrs)
 
         val builderUiConfig = TimelineUiConfig.Builder()
 
