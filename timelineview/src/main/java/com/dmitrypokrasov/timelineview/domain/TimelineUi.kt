@@ -71,6 +71,10 @@ internal class TimelineUi(
         }
     }
 
+    fun getTextAlign(): Paint.Align {
+        return textPaint.textAlign
+    }
+
     fun resetFromPaintTools() {
         linePaint.reset()
         linePaint.style = Paint.Style.STROKE
