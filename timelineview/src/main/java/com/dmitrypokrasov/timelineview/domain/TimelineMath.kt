@@ -52,7 +52,7 @@ internal class TimelineMath(var mathConfig: TimelineMathConfig) {
                         path.rLineTo(0f, mathConfig.stepY)
                     } else {
                         path.rLineTo(horizontalStep, 0f)
-                        path.rLineTo(0f, mathConfig.getStandartDYMove(i))
+                        path.rLineTo(0f, mathConfig.getStandardDyMove(i))
                     }
                 }
 
@@ -89,7 +89,7 @@ internal class TimelineMath(var mathConfig: TimelineMathConfig) {
 
                     path.moveTo(startPositionLineXDisable, startPositionLineYDisable)
 
-                    val finishPositionLineYDisable = mathConfig.getStandartDYMove(i)
+                    val finishPositionLineYDisable = mathConfig.getStandardDyMove(i)
                     val finishPositionLineXDisable =
                         if (i % 2 == 0) -(mathConfig.getStepX() - startPositionDisableStrokeX)
                         else mathConfig.getStepX() - startPositionDisableStrokeX
@@ -100,7 +100,7 @@ internal class TimelineMath(var mathConfig: TimelineMathConfig) {
 
                 else -> {
                     path.rLineTo(horizontalStep, 0f)
-                    path.rLineTo(0f, mathConfig.getStandartDYMove(i))
+                    path.rLineTo(0f, mathConfig.getStandardDyMove(i))
                 }
             }
         }
