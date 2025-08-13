@@ -68,7 +68,7 @@ internal class TimelineUi(
         }
     }
 
-    fun getTextAlign(): Paint.Align? {
+    fun getTextAlign(): Paint.Align {
         return pLine.textAlign
     }
 
