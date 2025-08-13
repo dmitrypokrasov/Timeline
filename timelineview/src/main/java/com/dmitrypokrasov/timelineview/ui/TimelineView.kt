@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.view.View.MeasureSpec
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.data.TimelineConstants
@@ -79,9 +80,10 @@ class TimelineView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         timelineMath.setMeasuredWidth(measuredWidth)
         timelineMath.buildPath(timelineUi.pathEnable, timelineUi.pathDisable)
-        setMeasuredDimension(widthMeasureSpec, timelineMath.getMeasuredHeight())
+        setMeasuredDimension(measuredWidth, timelineMath.getMeasuredHeight())
     }
 
     override fun onDraw(canvas: Canvas) {
