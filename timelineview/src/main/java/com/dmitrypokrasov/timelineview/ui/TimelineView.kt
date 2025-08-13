@@ -181,14 +181,16 @@ class TimelineView @JvmOverloads constructor(
         timelineUi.initTools(timelineMathConfig, context)
     }
 
+    @SuppressLint("CustomViewStyleable")
+    private fun obtainAttributes(attrs: AttributeSet?) =
+        context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
+
     /**
      * Инициализация математической конфигурации из XML-атрибутов.
      */
-    @SuppressLint("CustomViewStyleable")
     private fun initMathConfig(attrs: AttributeSet?): TimelineMathConfig {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
+        val typedArray = obtainAttributes(attrs)
 
-        val builderUiConfig = TimelineUiConfig.Builder()
         val builderMathConfig = TimelineMathConfig.Builder()
 
         builderMathConfig.setStartPosition(
@@ -267,45 +269,6 @@ class TimelineView @JvmOverloads constructor(
             )
         )
 
-        builderUiConfig.setColorProgress(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_progress_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_PROGRESS_COLOR)
-            )
-        )
-
-        builderUiConfig.setColorStroke(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_stroke_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_STROKE_COLOR)
-            )
-        )
-
-        builderUiConfig.setColorTitle(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_title_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_TITLE_COLOR)
-            )
-        )
-
-        builderUiConfig.setColorDescription(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_description_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_DESCRIPTION_COLOR)
-            )
-        )
-
-        builderUiConfig.setIconDisableLvl(
-            typedArray.getResourceId(
-                R.styleable.TimelineView_timeline_disable_icon, 0
-            )
-        )
-        builderUiConfig.setIconProgress(
-            typedArray.getResourceId(
-                R.styleable.TimelineView_timeline_progress_icon, 0
-            )
-        )
-
         typedArray.recycle()
 
         return builderMathConfig.build()
@@ -314,9 +277,8 @@ class TimelineView @JvmOverloads constructor(
     /**
      * Инициализация UI-конфигурации из XML-атрибутов.
      */
-    @SuppressLint("CustomViewStyleable")
     private fun initUiConfig(attrs: AttributeSet?): TimelineUiConfig {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
+        val typedArray = obtainAttributes(attrs)
 
         val builderUiConfig = TimelineUiConfig.Builder()
 
