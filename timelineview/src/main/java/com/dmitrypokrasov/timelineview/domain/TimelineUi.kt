@@ -40,8 +40,11 @@ internal class TimelineUi(
     /** Битмап текущей иконки прогресса. */
     private var iconProgressBitmap: Bitmap? = null
 
-    /** Основная кисть для рисования линий и текста. */
-    private val pLine = Paint()
+    /** Кисть для рисования линий. */
+    private val linePaint = Paint()
+
+    /** Кисть для рисования текста и иконок. */
+    private val textPaint = Paint()
 
     /**
      * Инициализирует визуальные элементы (битмапы, pathEffect).
@@ -68,20 +71,16 @@ internal class TimelineUi(
         }
     }
 
-    fun getTextAlign(): Paint.Align? {
-        return pLine.textAlign
-    }
-
     fun resetFromPaintTools() {
-        pLine.reset()
-        pLine.style = Paint.Style.STROKE
-        pLine.strokeWidth = uiConfig.sizeStroke
-        pLine.pathEffect = pathEffect
+        linePaint.reset()
+        linePaint.style = Paint.Style.STROKE
+        linePaint.strokeWidth = uiConfig.sizeStroke
+        linePaint.pathEffect = pathEffect
     }
 
     fun resetFromTextTools() {
-        pLine.reset()
-        pLine.isAntiAlias = true
+        textPaint.reset()
+        textPaint.isAntiAlias = true
     }
 
     fun drawProgressBitmap(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) {
@@ -90,19 +89,19 @@ internal class TimelineUi(
                 it,
                 leftCoordinates,
                 topCoordinates,
-                pLine
+                textPaint
             )
         }
     }
 
     fun drawProgressPath(canvas: Canvas) {
-        pLine.color = uiConfig.colorProgress
-        canvas.drawPath(pathEnable, pLine)
+        linePaint.color = uiConfig.colorProgress
+        canvas.drawPath(pathEnable, linePaint)
     }
 
     fun drawDisablePath(canvas: Canvas) {
-        pLine.color = uiConfig.colorStroke
-        canvas.drawPath(pathDisable, pLine)
+        linePaint.color = uiConfig.colorStroke
+        canvas.drawPath(pathDisable, linePaint)
     }
 
     /**
@@ -112,15 +111,17 @@ internal class TimelineUi(
         canvas: Canvas,
         title: String,
         x: Float,
-        y: Float
+        y: Float,
+        align: Paint.Align
     ) {
-        pLine.apply {
-            this.textSize = uiConfig.sizeTitle
+        textPaint.apply {
+            textAlign = align
+            textSize = uiConfig.sizeTitle
             typeface = Typeface.DEFAULT_BOLD
             color = uiConfig.colorTitle
         }
 
-        canvas.drawText(title, x, y, pLine)
+        canvas.drawText(title, x, y, textPaint)
     }
 
     /**
@@ -130,15 +131,17 @@ internal class TimelineUi(
         canvas: Canvas,
         description: String,
         x: Float,
-        y: Float
+        y: Float,
+        align: Paint.Align
     ) {
-        pLine.apply {
-            this.textSize = uiConfig.sizeDescription
+        textPaint.apply {
+            textAlign = align
+            textSize = uiConfig.sizeDescription
             typeface = Typeface.DEFAULT
             color = uiConfig.colorDescription
         }
 
-        canvas.drawText(description, x, y, pLine)
+        canvas.drawText(description, x, y, textPaint)
     }
 
     /**
@@ -157,8 +160,8 @@ internal class TimelineUi(
             else -> iconDisableStep
         }
         bm?.let {
-            pLine.textAlign = align
-            canvas.drawBitmap(it, x, y, pLine)
+            textPaint.textAlign = align
+            canvas.drawBitmap(it, x, y, textPaint)
         }
     }
 
