@@ -7,34 +7,19 @@ import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import kotlin.math.abs
 
 /**
- * Класс, отвечающий за расчёт координат, размеров и построение путей для отрисовки таймлайна.
- *
- * Используется при отрисовке на `Canvas` или в кастомном `View`, чтобы:
- * - построить линии прогресса (`Path`)
- * - рассчитать позиции иконок, заголовков и описаний
- * - адаптировать расположение под ширину вьюшки
- *
- * @property mathConfig Конфигурация математических параметров таймлайна.
+ * Публичная реализация [TimelineMathEngine], основанная на "змейке".
+ * Содержит всю вычислительную логику, ранее находившуюся в `TimelineMath`.
  */
-internal class TimelineMath(var mathConfig: TimelineMathConfig) {
+class SnakeTimelineMath(var mathConfig: TimelineMathConfig) : TimelineMathEngine {
 
     companion object {
-        private const val TAG = "TimelineMath"
+        private const val TAG = "SnakeTimelineMath"
     }
 
-    /**
-     * Заменяет список шагов в текущей математической конфигурации.
-     */
-    fun replaceSteps(steps: List<TimelineStep>) {
+    override fun replaceSteps(steps: List<TimelineStep>) {
         mathConfig = mathConfig.copy(steps = steps)
     }
-
-    /**
-     * Строит два пути:
-     * - [pathEnable] — линия пройденных шагов.
-     * - [pathDisable] — линия ещё не завершённых шагов.
-     */
-    fun buildPath(pathEnable: Path, pathDisable: Path) {
+    override fun buildPath(pathEnable: Path, pathDisable: Path) {
         pathDisable.reset()
         pathEnable.reset()
 
@@ -106,48 +91,34 @@ internal class TimelineMath(var mathConfig: TimelineMathConfig) {
         }
     }
 
-    fun getStartPosition(): Float {
+    override fun getStartPosition(): Float {
         return mathConfig.getStartPosition()
     }
 
-    /**
-     * Устанавливает ширину View и рассчитывает X-координату начала рисования.
-     */
-    fun setMeasuredWidth(measuredWidth: Int) {
+    override fun setMeasuredWidth(measuredWidth: Int) {
         mathConfig.setMeasuredWidth(measuredWidth)
     }
-
-    /** Возвращает горизонтальное смещение иконки прогресса на шаге [i]. */
-    fun getHorizontalIconOffset(i: Int): Float {
+    override fun getHorizontalIconOffset(i: Int): Float {
         return mathConfig.getHorizontalIconOffset(i)
     }
-
-    /** Возвращает вертикальное смещение на шаге [i]. */
-    fun getVerticalOffset(i: Int): Float {
+    override fun getVerticalOffset(i: Int): Float {
         return mathConfig.getVerticalOffset(i)
     }
 
-    fun getMeasuredHeight(): Int {
+    override fun getMeasuredHeight(): Int {
         return mathConfig.getMeasuredHeight()
     }
 
-    /** Возвращает X-координату левой границы иконки прогресса. */
-    fun getLeftCoordinates(lvl: TimelineStep): Float {
+    override fun getLeftCoordinates(lvl: TimelineStep): Float {
         return mathConfig.getLeftCoordinates(lvl)
     }
-
-    /** Возвращает Y-координату верхней границы иконки прогресса. */
-    fun getTopCoordinates(lvl: TimelineStep): Float {
+    override fun getTopCoordinates(lvl: TimelineStep): Float {
         return mathConfig.getTopCoordinates(lvl)
     }
-
-    /** Возвращает X-координату для иконки уровня. */
-    fun getIconXCoordinates(align: Paint.Align): Float {
+    override fun getIconXCoordinates(align: Paint.Align): Float {
         return mathConfig.getIconXCoordinates(align)
     }
-
-    /** Возвращает X-координату заголовка уровня. */
-    fun getTitleXCoordinates(align: Paint.Align): Float {
+    override fun getTitleXCoordinates(align: Paint.Align): Float {
         return mathConfig.getTitleXCoordinates(align)
     }
 
@@ -156,13 +127,10 @@ internal class TimelineMath(var mathConfig: TimelineMathConfig) {
         return mathConfig.getIconYCoordinates(i)
     }
 
-    /** Возвращает Y-координату заголовка уровня. */
-    fun getTitleYCoordinates(i: Int): Float {
+    override fun getTitleYCoordinates(i: Int): Float {
         return mathConfig.getTitleYCoordinates(i)
     }
-
-    /** Возвращает Y-координату описания уровня. */
-    fun getDescriptionYCoordinates(i: Int): Float {
+    override fun getDescriptionYCoordinates(i: Int): Float {
         return mathConfig.getDescriptionYCoordinates(i)
     }
 }
