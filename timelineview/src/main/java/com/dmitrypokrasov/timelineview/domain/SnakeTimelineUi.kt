@@ -18,11 +18,15 @@ import com.dmitrypokrasov.timelineview.data.TimelineStep
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 
-internal class TimelineUi(
-    var uiConfig: TimelineUiConfig
-) {
+/**
+ * Публичная реализация [TimelineUiRenderer], использующая алгоритм "змейки",
+ * ранее находившийся в `TimelineUi`.
+ */
+class SnakeTimelineUi(
+    var uiConfig: TimelineUiConfig,
+) : TimelineUiRenderer {
     companion object {
-        private const val TAG = "TimelineUi"
+        private const val TAG = "SnakeTimelineUi"
     }
 
     /** Путь для пройденных шагов. */
@@ -49,10 +53,7 @@ internal class TimelineUi(
     /** Кисть для рисования иконок. */
     private val iconPaint = Paint()
 
-    /**
-     * Инициализирует визуальные элементы (битмапы, pathEffect).
-     */
-    fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) {
+    override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) {
         Log.d(TAG, "initTools timelineUiConfig: $timelineMathConfig")
 
         pathEffect = CornerPathEffect(uiConfig.radius)
@@ -74,14 +75,14 @@ internal class TimelineUi(
         }
     }
 
-    fun resetFromPaintTools() {
+    override fun resetFromPaintTools() {
         linePaint.reset()
         linePaint.style = Paint.Style.STROKE
         linePaint.strokeWidth = uiConfig.sizeStroke
         linePaint.pathEffect = pathEffect
     }
 
-    fun resetFromTextTools() {
+    override fun resetFromTextTools() {
         textPaint.reset()
         textPaint.isAntiAlias = true
     }
@@ -91,7 +92,7 @@ internal class TimelineUi(
         iconPaint.isAntiAlias = true
     }
 
-    fun drawProgressBitmap(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) {
+    override fun drawProgressBitmap(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) {
         iconProgressBitmap?.let {
             canvas.drawBitmap(
                 it,
@@ -102,20 +103,17 @@ internal class TimelineUi(
         }
     }
 
-    fun drawProgressPath(canvas: Canvas) {
+    override fun drawProgressPath(canvas: Canvas) {
         linePaint.color = uiConfig.colorProgress
         canvas.drawPath(pathEnable, linePaint)
     }
 
-    fun drawDisablePath(canvas: Canvas) {
+    override fun drawDisablePath(canvas: Canvas) {
         linePaint.color = uiConfig.colorStroke
         canvas.drawPath(pathDisable, linePaint)
     }
 
-    /**
-     * Отрисовка заголовка шага.
-     */
-    fun printTitle(
+    override fun printTitle(
         canvas: Canvas,
         title: String,
         x: Float,
@@ -132,10 +130,7 @@ internal class TimelineUi(
         canvas.drawText(title, x, y, textPaint)
     }
 
-    /**
-     * Отрисовка описания шага.
-     */
-    fun printDescription(
+    override fun printDescription(
         canvas: Canvas,
         description: String,
         x: Float,
@@ -152,10 +147,7 @@ internal class TimelineUi(
         canvas.drawText(description, x, y, textPaint)
     }
 
-    /**
-     * Отрисовка иконки шага.
-     */
-    fun printIcon(
+    override fun printIcon(
         lvl: TimelineStep,
         canvas: Canvas,
         align: Paint.Align,
@@ -192,4 +184,6 @@ internal class TimelineUi(
             else -> throw IllegalArgumentException("Unsupported drawable type")
         }
     }
+
+    override fun getTextAlign(): Paint.Align = textPaint.textAlign
 }

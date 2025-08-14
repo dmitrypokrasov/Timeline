@@ -7,8 +7,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.TimelineMath
-import com.dmitrypokrasov.timelineview.domain.TimelineUi
+import com.dmitrypokrasov.timelineview.domain.SnakeTimelineMath
+import com.dmitrypokrasov.timelineview.domain.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 
@@ -26,7 +26,7 @@ import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
  * - иконку текущего шага (progress icon)
  * - заголовки и описания
  *
- * Использует [TimelineMath] как движок для всех вычислений и генерации координат.
+ * Использует [SnakeTimelineMath] как движок для всех вычислений и генерации координат.
  *
  * @constructor Создаёт [TimelineView], читая параметры из XML или по умолчанию.
  */
@@ -41,18 +41,18 @@ class TimelineView @JvmOverloads constructor(
     }
 
     /** Математическая конфигурация таймлайна. */
-    private var timelineMath: TimelineMath
+    private var timelineMath: SnakeTimelineMath
 
     /** Визуальная конфигурация таймлайна. */
-    private var timelineUi: TimelineUi
+    private var timelineUi: SnakeTimelineUi
 
     /** Текущая сторона отрисовки (LEFT/RIGHT). */
     private var currentSide: Paint.Align = Paint.Align.RIGHT
 
     init {
         val (mathConfig, uiConfig) = ConfigParser(context).parse(attrs)
-        timelineMath = TimelineMath(mathConfig)
-        timelineUi = TimelineUi(uiConfig)
+        timelineMath = SnakeTimelineMath(mathConfig)
+        timelineUi = SnakeTimelineUi(uiConfig)
         initTools(mathConfig, uiConfig)
     }
 
@@ -70,8 +70,8 @@ class TimelineView @JvmOverloads constructor(
     fun setConfig(timelineMathConfig: TimelineMathConfig, timelineUiConfig: TimelineUiConfig) {
         if (timelineMath.mathConfig == timelineMathConfig && timelineUi.uiConfig == timelineUiConfig) return
 
-        timelineMath = TimelineMath(timelineMathConfig)
-        timelineUi = TimelineUi(timelineUiConfig)
+        timelineMath = SnakeTimelineMath(timelineMathConfig)
+        timelineUi = SnakeTimelineUi(timelineUiConfig)
 
         initTools(timelineMathConfig, timelineUiConfig)
 
