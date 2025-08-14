@@ -3,7 +3,6 @@ package com.dmitrypokrasov.timelineview.domain.data
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import com.dmitrypokrasov.timelineview.data.TimelineConstants
-import com.dmitrypokrasov.timelineview.domain.TimelineUiRenderer
 
 /**
  * Конфигурация визуального оформления элементов таймлайна.
@@ -35,11 +34,6 @@ data class TimelineUiConfig(
     val sizeStroke: Float
 ) {
 
-    /**
-     * Реализация [TimelineUiRenderer], использующаяся для отрисовки.
-     * Может быть переопределена через билдер.
-     */
-    var uiRenderer: TimelineUiRenderer? = null
 
     /**
      * Билдер для создания экземпляра [TimelineUiConfig] с пошаговой настройкой параметров.
@@ -68,7 +62,6 @@ data class TimelineUiConfig(
         private var sizeDescription: Float = TimelineConstants.DEFAULT_DESCRIPTION_SIZE
         private var sizeTitle: Float = TimelineConstants.DEFAULT_TITLE_SIZE
         private var sizeStroke: Float = TimelineConstants.DEFAULT_STROKE_SIZE
-        private var uiRenderer: TimelineUiRenderer? = null
 
         /**
          * Устанавливает иконку для неактивных уровней.
@@ -112,10 +105,6 @@ data class TimelineUiConfig(
         /** Устанавливает толщину вертикальной линии. */
         fun setSizeStroke(value: Float) = apply { sizeStroke = value }
 
-        /**
-         * Устанавливает пользовательский рендерер интерфейса.
-         */
-        fun setUiRenderer(renderer: TimelineUiRenderer) = apply { uiRenderer = renderer }
 
         /**
          * Создаёт экземпляр [TimelineUiConfig] на основе установленных параметров.
@@ -133,9 +122,6 @@ data class TimelineUiConfig(
                 sizeTitle = sizeTitle,
                 sizeStroke = sizeStroke
             )
-
-            uiRenderer?.let { config.uiRenderer = it }
-
             return config
         }
     }

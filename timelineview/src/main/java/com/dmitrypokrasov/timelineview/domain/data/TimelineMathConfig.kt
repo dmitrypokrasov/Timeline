@@ -4,7 +4,6 @@ import android.graphics.Paint
 import android.util.Log
 import com.dmitrypokrasov.timelineview.data.TimelineConstants
 import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.TimelineMathEngine
 
 /**
  * Конфигурация для расчёта позиционирования и геометрии элементов таймлайна.
@@ -48,11 +47,6 @@ data class TimelineMathConfig(
     private var startPositionDisableStrokeX = 0f
     private var measuredWidth = 0
 
-    /**
-     * Реализация [TimelineMathEngine], которая будет использоваться при расчётах.
-     * По умолчанию не задана и может быть переопределена через билдер.
-     */
-    var mathEngine: TimelineMathEngine? = null
 
     fun setMeasuredWidth(measuredWidth: Int) {
         this.measuredWidth = measuredWidth
@@ -220,7 +214,6 @@ data class TimelineMathConfig(
 
         private var sizeIconProgress: Float = TimelineConstants.DEFAULT_ICON_PROGRESS_SIZE
         private var sizeImageLvl: Float = TimelineConstants.DEFAULT_IMAGE_LVL_SIZE
-        private var mathEngine: TimelineMathEngine? = null
 
         /** Устанавливает список шагов таймлайна. */
         fun setSteps(steps: List<TimelineStep>) = apply { this.steps = steps }
@@ -258,10 +251,6 @@ data class TimelineMathConfig(
         /** Устанавливает размер изображения уровня. */
         fun setSizeImageLvl(value: Float) = apply { sizeImageLvl = value }
 
-        /**
-         * Устанавливает пользовательский математический движок.
-         */
-        fun setMathEngine(engine: TimelineMathEngine) = apply { mathEngine = engine }
 
         /**
          * Создаёт экземпляр [TimelineMathConfig] с рассчитанной высотой и смещением.
@@ -281,9 +270,6 @@ data class TimelineMathConfig(
                 sizeIconProgress = sizeIconProgress,
                 sizeImageLvl = sizeImageLvl
             )
-
-            mathEngine?.let { config.mathEngine = it }
-
             return config
         }
     }

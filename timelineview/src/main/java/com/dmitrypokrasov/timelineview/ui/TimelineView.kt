@@ -10,6 +10,7 @@ import com.dmitrypokrasov.timelineview.data.TimelineStep
 import com.dmitrypokrasov.timelineview.domain.SnakeTimelineMath
 import com.dmitrypokrasov.timelineview.domain.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.domain.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.domain.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 
@@ -61,12 +62,8 @@ class TimelineView @JvmOverloads constructor(
         mathConfig = parsedMathConfig
         uiConfig = parsedUiConfig
 
-        timelineMath = (parsedMathConfig.mathEngine ?: SnakeTimelineMath(parsedMathConfig)).also {
-            parsedMathConfig.mathEngine = it
-        }
-        timelineUi = (parsedUiConfig.uiRenderer as? SnakeTimelineUi ?: SnakeTimelineUi(parsedUiConfig)).also {
-            parsedUiConfig.uiRenderer = it
-        }
+        timelineMath = SnakeTimelineMath(parsedMathConfig)
+        timelineUi = SnakeTimelineUi(parsedUiConfig)
 
         initTools(parsedMathConfig, parsedUiConfig)
     }
@@ -76,7 +73,32 @@ class TimelineView @JvmOverloads constructor(
      */
     fun replaceSteps(steps: List<TimelineStep>) {
         timelineMath.replaceSteps(steps)
-        mathConfig = mathConfig.copy(steps = steps).also { it.mathEngine = timelineMath }
+        mathConfig = mathConfig.copy(steps = steps)
+        requestLayout()
+    }
+
+    /**
+     * Устанавливает пользовательский математический движок.
+     */
+    fun setMathEngine(engine: TimelineMathEngine) {
+        timelineMath = engine
+        if (engine is SnakeTimelineMath) {
+            engine.mathConfig = mathConfig
+        } else {
+            engine.replaceSteps(mathConfig.steps)
+        }
+        requestLayout()
+    }
+
+    /**
+     * Устанавливает пользовательский рендерер интерфейса.
+     */
+    fun setUiRenderer(renderer: TimelineUiRenderer) {
+        timelineUi = (renderer as? SnakeTimelineUi) ?: SnakeTimelineUi(uiConfig)
+        if (renderer is SnakeTimelineUi) {
+            renderer.uiConfig = uiConfig
+        }
+        initTools(mathConfig, uiConfig)
         requestLayout()
     }
 
@@ -89,11 +111,13 @@ class TimelineView @JvmOverloads constructor(
         mathConfig = newMathConfig
         uiConfig = newUiConfig
 
-        timelineMath = (newMathConfig.mathEngine ?: SnakeTimelineMath(newMathConfig)).also {
-            newMathConfig.mathEngine = it
+        timelineMath.replaceSteps(newMathConfig.steps)
+        if (timelineMath is SnakeTimelineMath) {
+            (timelineMath as SnakeTimelineMath).mathConfig = newMathConfig
         }
-        timelineUi = (newUiConfig.uiRenderer as? SnakeTimelineUi ?: SnakeTimelineUi(newUiConfig)).also {
-            newUiConfig.uiRenderer = it
+
+        if (timelineUi is SnakeTimelineUi) {
+            timelineUi.uiConfig = newUiConfig
         }
 
         initTools(newMathConfig, newUiConfig)
