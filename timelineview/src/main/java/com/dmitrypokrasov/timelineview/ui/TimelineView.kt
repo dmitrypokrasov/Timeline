@@ -104,8 +104,7 @@ class TimelineView @JvmOverloads constructor(
         var align = Paint.Align.LEFT
 
         timelineMath.mathConfig.steps.forEachIndexed { i, lvl ->
-
-        if (i == 0) {
+            if (i == 0) {
                 timelineUi.printTitle(
                     canvas,
                     resources.getString(lvl.title),
