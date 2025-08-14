@@ -1,15 +1,11 @@
 package com.dmitrypokrasov.timelineview.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat
-import com.dmitrypokrasov.timelineview.R
-import com.dmitrypokrasov.timelineview.data.TimelineConstants
 import com.dmitrypokrasov.timelineview.data.TimelineStep
 import com.dmitrypokrasov.timelineview.domain.TimelineMath
 import com.dmitrypokrasov.timelineview.domain.TimelineUi
@@ -54,9 +50,10 @@ class TimelineView @JvmOverloads constructor(
     private var currentSide: Paint.Align = Paint.Align.RIGHT
 
     init {
-        timelineMath = TimelineMath(initMathConfig(attrs))
-        timelineUi = TimelineUi(initUiConfig(attrs))
-        initTools(timelineMath.mathConfig, timelineUi.uiConfig)
+        val (mathConfig, uiConfig) = ConfigParser(context).parse(attrs)
+        timelineMath = TimelineMath(mathConfig)
+        timelineUi = TimelineUi(uiConfig)
+        initTools(mathConfig, uiConfig)
     }
 
     /**
@@ -192,173 +189,4 @@ class TimelineView @JvmOverloads constructor(
         timelineUi.initTools(timelineMathConfig, context)
     }
 
-    @SuppressLint("CustomViewStyleable")
-    private fun obtainAttributes(attrs: AttributeSet?) =
-        context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
-
-    /**
-     * Инициализация математической конфигурации из XML-атрибутов.
-     */
-    private fun initMathConfig(attrs: AttributeSet?): TimelineMathConfig {
-        val typedArray = obtainAttributes(attrs)
-
-        val builderMathConfig = TimelineMathConfig.Builder()
-
-        builderMathConfig.setStartPosition(
-            TimelineMathConfig.StartPosition.entries[typedArray.getInt(
-                R.styleable.TimelineView_timeline_start_position,
-                TimelineMathConfig.StartPosition.CENTER.ordinal
-            )]
-        )
-
-        builderMathConfig.setStepY(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_step_y_size, TimelineConstants.DEFAULT_STEP_Y_SIZE
-            )
-        )
-
-        builderMathConfig.setStepYFirst(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_step_y_first_size,
-                TimelineConstants.DEFAULT_STEP_Y_FIRST_SIZE
-            )
-        )
-
-        builderMathConfig.setMarginTopDescription(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_margin_top_description,
-                TimelineConstants.DEFAULT_MARGIN_TOP_DESCRIPTION
-            )
-        )
-
-        builderMathConfig.setMarginTopTitle(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_margin_top_title,
-                TimelineConstants.DEFAULT_MARGIN_TOP_TITLE
-            )
-        )
-
-        builderMathConfig.setMarginTopProgressIcon(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_margin_top_progress_icon,
-                TimelineConstants.DEFAULT_MARGIN_TOP_PROGRESS_ICON
-            )
-        )
-
-        builderMathConfig.setMarginHorizontalImage(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_margin_horizontal_image,
-                TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_IMAGE
-            )
-        )
-
-        builderMathConfig.setMarginHorizontalText(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_margin_horizontal_text,
-                TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_TEXT
-            )
-        )
-
-        builderMathConfig.setMarginHorizontalStroke(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_margin_horizontal_stroke,
-                TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_STROKE
-            )
-        )
-
-        builderMathConfig.setSizeImageLvl(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_image_lvl_size,
-                TimelineConstants.DEFAULT_IMAGE_LVL_SIZE
-            )
-        )
-
-        builderMathConfig.setSizeIconProgress(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_icon_progress_size,
-                TimelineConstants.DEFAULT_ICON_PROGRESS_SIZE
-            )
-        )
-
-        typedArray.recycle()
-
-        return builderMathConfig.build()
-    }
-
-    /**
-     * Инициализация UI-конфигурации из XML-атрибутов.
-     */
-    private fun initUiConfig(attrs: AttributeSet?): TimelineUiConfig {
-        val typedArray = obtainAttributes(attrs)
-
-        val builderUiConfig = TimelineUiConfig.Builder()
-
-        builderUiConfig.setColorProgress(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_progress_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_PROGRESS_COLOR)
-            )
-        )
-
-        builderUiConfig.setRadius(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_radius_size, TimelineConstants.DEFAULT_RADIUS_SIZE
-            )
-        )
-
-        builderUiConfig.setSizeDescription(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_description_size,
-                TimelineConstants.DEFAULT_DESCRIPTION_SIZE
-            )
-        )
-
-        builderUiConfig.setSizeTitle(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_title_size, TimelineConstants.DEFAULT_TITLE_SIZE
-            )
-        )
-
-        builderUiConfig.setSizeStroke(
-            typedArray.getDimension(
-                R.styleable.TimelineView_timeline_stroke_size, TimelineConstants.DEFAULT_STROKE_SIZE
-            )
-        )
-
-        builderUiConfig.setColorStroke(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_stroke_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_STROKE_COLOR)
-            )
-        )
-
-        builderUiConfig.setColorTitle(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_title_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_TITLE_COLOR)
-            )
-        )
-
-        builderUiConfig.setColorDescription(
-            typedArray.getColor(
-                R.styleable.TimelineView_timeline_description_color,
-                ContextCompat.getColor(context, TimelineConstants.DEFAULT_DESCRIPTION_COLOR)
-            )
-        )
-
-        builderUiConfig.setIconDisableLvl(
-            typedArray.getResourceId(
-                R.styleable.TimelineView_timeline_disable_icon, 0
-            )
-        )
-        builderUiConfig.setIconProgress(
-            typedArray.getResourceId(
-                R.styleable.TimelineView_timeline_progress_icon, 0
-            )
-        )
-
-        typedArray.recycle()
-
-        return builderUiConfig.build()
-    }
 }
