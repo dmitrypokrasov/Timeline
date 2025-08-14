@@ -7,10 +7,15 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.dmitrypokrasov.timelineview.data.TimelineStep
+import com.dmitrypokrasov.timelineview.domain.LinearTimelineMath
+import com.dmitrypokrasov.timelineview.domain.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.domain.SnakeTimelineMath
 import com.dmitrypokrasov.timelineview.domain.SnakeTimelineUi
+import com.dmitrypokrasov.timelineview.domain.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.domain.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.ui.TimelineOrientation
 
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
@@ -26,7 +31,8 @@ import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
  * - иконку текущего шага (progress icon)
  * - заголовки и описания
  *
- * Использует [SnakeTimelineMath] как движок для всех вычислений и генерации координат.
+ * Использует реализации [TimelineMathEngine] и [TimelineUiRenderer], выбираемые
+ * в зависимости от [TimelineOrientation].
  *
  * @constructor Создаёт [TimelineView], читая параметры из XML или по умолчанию.
  */
@@ -40,19 +46,40 @@ class TimelineView @JvmOverloads constructor(
         private const val TAG = "TimelineView"
     }
 
-    /** Математическая конфигурация таймлайна. */
-    private var timelineMath: SnakeTimelineMath
+    /** Математический движок таймлайна. */
+    private var timelineMath: TimelineMathEngine
 
-    /** Визуальная конфигурация таймлайна. */
-    private var timelineUi: SnakeTimelineUi
+    /** Рендерер таймлайна. */
+    private var timelineUi: TimelineUiRenderer
+
+    /** Текущая ориентация таймлайна. */
+    private var orientation: TimelineOrientation
+
+    /** Список шагов для отрисовки. */
+    private var steps: List<TimelineStep> = emptyList()
 
     /** Текущая сторона отрисовки (LEFT/RIGHT). */
     private var currentSide: Paint.Align = Paint.Align.RIGHT
 
     init {
-        val (mathConfig, uiConfig) = ConfigParser(context).parse(attrs)
-        timelineMath = SnakeTimelineMath(mathConfig)
-        timelineUi = SnakeTimelineUi(uiConfig)
+        val (mathConfig, uiConfig, parsedOrientation) = ConfigParser(context).parse(attrs)
+        orientation = parsedOrientation
+
+        timelineMath = when (orientation) {
+            TimelineOrientation.SNAKE_VERTICAL -> SnakeTimelineMath(mathConfig)
+            TimelineOrientation.LINEAR_VERTICAL ->
+                LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL)
+            TimelineOrientation.LINEAR_HORIZONTAL ->
+                LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.HORIZONTAL)
+        }
+
+        timelineUi = when (orientation) {
+            TimelineOrientation.SNAKE_VERTICAL -> SnakeTimelineUi(uiConfig)
+            TimelineOrientation.LINEAR_VERTICAL,
+            TimelineOrientation.LINEAR_HORIZONTAL -> LinearTimelineUi(uiConfig)
+        }
+
+        steps = mathConfig.steps
         initTools(mathConfig, uiConfig)
     }
 
@@ -60,18 +87,39 @@ class TimelineView @JvmOverloads constructor(
      * Обновляет список шагов и перерисовывает таймлайн.
      */
     fun replaceSteps(steps: List<TimelineStep>) {
+        this.steps = steps
         timelineMath.replaceSteps(steps)
         requestLayout()
     }
 
     /**
      * Устанавливает новую конфигурацию таймлайна.
+     *
+     * Позволяет передать собственные реализации движка математики и рендерера UI.
+     * Если они не указаны, будут использованы стандартные реализации в зависимости
+     * от [orientation].
      */
-    fun setConfig(timelineMathConfig: TimelineMathConfig, timelineUiConfig: TimelineUiConfig) {
-        if (timelineMath.mathConfig == timelineMathConfig && timelineUi.uiConfig == timelineUiConfig) return
+    fun setConfig(
+        timelineMathConfig: TimelineMathConfig,
+        timelineUiConfig: TimelineUiConfig,
+        mathEngine: TimelineMathEngine? = null,
+        uiRenderer: TimelineUiRenderer? = null
+    ) {
+        timelineMath = mathEngine ?: when (orientation) {
+            TimelineOrientation.SNAKE_VERTICAL -> SnakeTimelineMath(timelineMathConfig)
+            TimelineOrientation.LINEAR_VERTICAL ->
+                LinearTimelineMath(timelineMathConfig, LinearTimelineMath.Orientation.VERTICAL)
+            TimelineOrientation.LINEAR_HORIZONTAL ->
+                LinearTimelineMath(timelineMathConfig, LinearTimelineMath.Orientation.HORIZONTAL)
+        }
 
-        timelineMath = SnakeTimelineMath(timelineMathConfig)
-        timelineUi = SnakeTimelineUi(timelineUiConfig)
+        timelineUi = uiRenderer ?: when (orientation) {
+            TimelineOrientation.SNAKE_VERTICAL -> SnakeTimelineUi(timelineUiConfig)
+            TimelineOrientation.LINEAR_VERTICAL,
+            TimelineOrientation.LINEAR_HORIZONTAL -> LinearTimelineUi(timelineUiConfig)
+        }
+
+        steps = timelineMathConfig.steps
 
         initTools(timelineMathConfig, timelineUiConfig)
 
@@ -100,7 +148,7 @@ class TimelineView @JvmOverloads constructor(
         var printProgressIcon = false
         var align = Paint.Align.LEFT
 
-        timelineMath.mathConfig.steps.forEachIndexed { i, lvl ->
+        steps.forEachIndexed { i, lvl ->
             if (i == 0) {
                 timelineUi.printTitle(
                     canvas,

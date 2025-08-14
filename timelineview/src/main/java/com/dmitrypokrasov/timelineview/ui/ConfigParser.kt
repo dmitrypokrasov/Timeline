@@ -8,6 +8,7 @@ import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.data.TimelineConstants
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.ui.TimelineOrientation
 
 /**
  * Utility class for parsing view attributes into math and UI configurations.
@@ -15,7 +16,7 @@ import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 class ConfigParser(private val context: Context) {
 
     @SuppressLint("CustomViewStyleable")
-    fun parse(attrs: AttributeSet?): Pair<TimelineMathConfig, TimelineUiConfig> {
+    fun parse(attrs: AttributeSet?): Triple<TimelineMathConfig, TimelineUiConfig, TimelineOrientation> {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
 
         val mathBuilder = TimelineMathConfig.Builder()
@@ -142,9 +143,14 @@ class ConfigParser(private val context: Context) {
                 typedArray.getResourceId(R.styleable.TimelineView_timeline_progress_icon, 0)
             )
 
+        val orientation = TimelineOrientation.entries[typedArray.getInt(
+            R.styleable.TimelineView_timeline_orientation,
+            TimelineOrientation.SNAKE_VERTICAL.ordinal
+        )]
+
         typedArray.recycle()
 
-        return mathBuilder.build() to uiBuilder.build()
+        return Triple(mathBuilder.build(), uiBuilder.build(), orientation)
     }
 }
 

@@ -112,5 +112,10 @@ class LinearTimelineMath(
     override fun getDescriptionYCoordinates(i: Int): Float {
         return mathConfig.getDescriptionYCoordinates(i)
     }
+
+    override fun getIconYCoordinates(i: Int): Float {
+        return if (orientation == Orientation.VERTICAL) mathConfig.getIconYCoordinates(i)
+        else -mathConfig.sizeImageLvl / 2f
+    }
 }
 
