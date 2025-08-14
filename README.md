@@ -53,10 +53,13 @@ dependencies {
 | `app:timeline_icon_progress_size` | Size of the progress icon. |
 
 #### In code
+You can also provide custom math and UI engines. The example below shows a linear timeline in vertical orientation.
 
 ```kotlin
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.data.TimelineStep
+import com.dmitrypokrasov.timelineview.domain.LinearTimelineMath
+import com.dmitrypokrasov.timelineview.domain.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.ui.TimelineView
@@ -82,10 +85,18 @@ val steps = listOf(
 
 timelineView.replaceSteps(steps)
 
+// configure custom linear engines in vertical orientation
+val mathEngine = LinearTimelineMath(
+    TimelineMathConfig.Builder().build(),
+    LinearTimelineMath.Orientation.VERTICAL
+)
+val uiRenderer = LinearTimelineUi(TimelineUiConfig.Builder().build())
+
 val mathConfig = TimelineMathConfig.Builder()
     .setSteps(steps)
     .setStartPosition(TimelineMathConfig.StartPosition.CENTER)
     .setStepY(80f)
+    .setMathEngine(mathEngine)
     .build()
 
 val uiConfig = TimelineUiConfig.Builder()
@@ -93,6 +104,7 @@ val uiConfig = TimelineUiConfig.Builder()
     .setIconDisableLvl(R.drawable.ic_tobacco_unactive)
     .setColorProgress(ContextCompat.getColor(this, R.color.purple_700))
     .setColorStroke(ContextCompat.getColor(this, R.color.purple_200))
+    .setUiRenderer(uiRenderer)
     .build()
 
 timelineView.setConfig(mathConfig, uiConfig)

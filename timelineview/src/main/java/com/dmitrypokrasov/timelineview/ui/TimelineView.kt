@@ -53,8 +53,8 @@ class TimelineView @JvmOverloads constructor(
 
     init {
         val (parsedMathConfig, parsedUiConfig) = ConfigParser(context).parse(attrs)
-        timelineMath = SnakeTimelineMath(parsedMathConfig)
-        timelineUi = SnakeTimelineUi(parsedUiConfig)
+        timelineMath = parsedMathConfig.mathEngine ?: SnakeTimelineMath(parsedMathConfig)
+        timelineUi = parsedUiConfig.uiRenderer ?: SnakeTimelineUi(parsedUiConfig)
 
         initTools()
     }
@@ -93,8 +93,12 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает новую конфигурацию таймлайна.
      */
     fun setConfig(newMathConfig: TimelineMathConfig, newUiConfig: TimelineUiConfig) {
+        timelineMath = newMathConfig.mathEngine ?: timelineMath
         timelineMath.setConfig(newMathConfig)
+
+        timelineUi = newUiConfig.uiRenderer ?: timelineUi
         timelineUi.setConfig(newUiConfig)
+
         initTools()
         requestLayout()
     }

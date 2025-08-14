@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.data.TimelineStep
+import com.dmitrypokrasov.timelineview.domain.LinearTimelineMath
+import com.dmitrypokrasov.timelineview.domain.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.ui.TimelineView
@@ -14,6 +16,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val timeLineView = findViewById<TimelineView>(R.id.timeline)
+
+        val mathEngine = LinearTimelineMath(
+            TimelineMathConfig.Builder().build(),
+            LinearTimelineMath.Orientation.VERTICAL
+        )
 
         val configMath = TimelineMathConfig.Builder()
             .setSteps(
@@ -64,8 +71,11 @@ class MainActivity : AppCompatActivity() {
             .setStepYFirst(resources.getDimension(R.dimen.dimen_20dp))
             .setSizeImageLvl(resources.getDimension(R.dimen.dimen_48dp))
             .setSizeIconProgress(resources.getDimension(R.dimen.dimen_28dp))
+            .setMathEngine(mathEngine)
             .build()
 
+
+        val uiRenderer = LinearTimelineUi(TimelineUiConfig.Builder().build())
 
         val configUi = TimelineUiConfig.Builder()
             .setIconProgress(R.drawable.ic_progress_timeline)
@@ -78,6 +88,7 @@ class MainActivity : AppCompatActivity() {
             .setRadius(resources.getDimension(R.dimen.dimen_48dp))
             .setColorStroke(ContextCompat.getColor(baseContext, R.color.teal_700))
             .setColorProgress(ContextCompat.getColor(baseContext, R.color.teal_200))
+            .setUiRenderer(uiRenderer)
             .build()
 
         timeLineView.setConfig(configMath, configUi)
