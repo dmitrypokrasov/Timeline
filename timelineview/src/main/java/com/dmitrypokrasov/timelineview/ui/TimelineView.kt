@@ -9,6 +9,7 @@ import android.view.View
 import com.dmitrypokrasov.timelineview.data.TimelineStep
 import com.dmitrypokrasov.timelineview.domain.SnakeTimelineMath
 import com.dmitrypokrasov.timelineview.domain.SnakeTimelineUi
+import com.dmitrypokrasov.timelineview.domain.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 
@@ -40,20 +41,34 @@ class TimelineView @JvmOverloads constructor(
         private const val TAG = "TimelineView"
     }
 
-    /** Математическая конфигурация таймлайна. */
-    private var timelineMath: SnakeTimelineMath
+    /** Математический движок таймлайна. */
+    private var timelineMath: TimelineMathEngine
 
-    /** Визуальная конфигурация таймлайна. */
+    /** Рендерер визуальной части таймлайна. */
     private var timelineUi: SnakeTimelineUi
+
+    /** Текущая математическая конфигурация. */
+    private var mathConfig: TimelineMathConfig
+
+    /** Текущая визуальная конфигурация. */
+    private var uiConfig: TimelineUiConfig
 
     /** Текущая сторона отрисовки (LEFT/RIGHT). */
     private var currentSide: Paint.Align = Paint.Align.RIGHT
 
     init {
-        val (mathConfig, uiConfig) = ConfigParser(context).parse(attrs)
-        timelineMath = SnakeTimelineMath(mathConfig)
-        timelineUi = SnakeTimelineUi(uiConfig)
-        initTools(mathConfig, uiConfig)
+        val (parsedMathConfig, parsedUiConfig) = ConfigParser(context).parse(attrs)
+        mathConfig = parsedMathConfig
+        uiConfig = parsedUiConfig
+
+        timelineMath = (parsedMathConfig.mathEngine ?: SnakeTimelineMath(parsedMathConfig)).also {
+            parsedMathConfig.mathEngine = it
+        }
+        timelineUi = (parsedUiConfig.uiRenderer as? SnakeTimelineUi ?: SnakeTimelineUi(parsedUiConfig)).also {
+            parsedUiConfig.uiRenderer = it
+        }
+
+        initTools(parsedMathConfig, parsedUiConfig)
     }
 
     /**
@@ -61,19 +76,27 @@ class TimelineView @JvmOverloads constructor(
      */
     fun replaceSteps(steps: List<TimelineStep>) {
         timelineMath.replaceSteps(steps)
+        mathConfig = mathConfig.copy(steps = steps).also { it.mathEngine = timelineMath }
         requestLayout()
     }
 
     /**
      * Устанавливает новую конфигурацию таймлайна.
      */
-    fun setConfig(timelineMathConfig: TimelineMathConfig, timelineUiConfig: TimelineUiConfig) {
-        if (timelineMath.mathConfig == timelineMathConfig && timelineUi.uiConfig == timelineUiConfig) return
+    fun setConfig(newMathConfig: TimelineMathConfig, newUiConfig: TimelineUiConfig) {
+        if (mathConfig == newMathConfig && uiConfig == newUiConfig) return
 
-        timelineMath = SnakeTimelineMath(timelineMathConfig)
-        timelineUi = SnakeTimelineUi(timelineUiConfig)
+        mathConfig = newMathConfig
+        uiConfig = newUiConfig
 
-        initTools(timelineMathConfig, timelineUiConfig)
+        timelineMath = (newMathConfig.mathEngine ?: SnakeTimelineMath(newMathConfig)).also {
+            newMathConfig.mathEngine = it
+        }
+        timelineUi = (newUiConfig.uiRenderer as? SnakeTimelineUi ?: SnakeTimelineUi(newUiConfig)).also {
+            newUiConfig.uiRenderer = it
+        }
+
+        initTools(newMathConfig, newUiConfig)
 
         requestLayout()
     }
@@ -100,7 +123,7 @@ class TimelineView @JvmOverloads constructor(
         var printProgressIcon = false
         var align = Paint.Align.LEFT
 
-        timelineMath.mathConfig.steps.forEachIndexed { i, lvl ->
+        mathConfig.steps.forEachIndexed { i, lvl ->
             if (i == 0) {
                 timelineUi.printTitle(
                     canvas,
@@ -122,7 +145,7 @@ class TimelineView @JvmOverloads constructor(
                     align,
                     context,
                     timelineMath.getIconXCoordinates(align),
-                    timelineMath.getIconYCoordinates(i)
+                    mathConfig.getIconYCoordinates(i)
                 )
 
                 if (lvl.percents != 100) {
@@ -165,7 +188,7 @@ class TimelineView @JvmOverloads constructor(
                     align,
                     context,
                     timelineMath.getIconXCoordinates(align),
-                    timelineMath.getIconYCoordinates(i)
+                    mathConfig.getIconYCoordinates(i)
                 )
             }
 
