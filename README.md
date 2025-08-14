@@ -85,18 +85,11 @@ val steps = listOf(
 
 timelineView.replaceSteps(steps)
 
-// configure custom linear engines in vertical orientation
-val mathEngine = LinearTimelineMath(
-    TimelineMathConfig.Builder().build(),
-    LinearTimelineMath.Orientation.VERTICAL
-)
-val uiRenderer = LinearTimelineUi(TimelineUiConfig.Builder().build())
-
+// build configs first
 val mathConfig = TimelineMathConfig.Builder()
     .setSteps(steps)
     .setStartPosition(TimelineMathConfig.StartPosition.CENTER)
     .setStepY(80f)
-    .setMathEngine(mathEngine)
     .build()
 
 val uiConfig = TimelineUiConfig.Builder()
@@ -104,8 +97,13 @@ val uiConfig = TimelineUiConfig.Builder()
     .setIconDisableLvl(R.drawable.ic_tobacco_unactive)
     .setColorProgress(ContextCompat.getColor(this, R.color.purple_700))
     .setColorStroke(ContextCompat.getColor(this, R.color.purple_200))
-    .setUiRenderer(uiRenderer)
     .build()
 
+// configure custom linear engines in vertical orientation
+val mathEngine = LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL)
+val uiRenderer = LinearTimelineUi(uiConfig)
+
+timelineView.setMathEngine(mathEngine)
+timelineView.setUiRenderer(uiRenderer)
 timelineView.setConfig(mathConfig, uiConfig)
 ```

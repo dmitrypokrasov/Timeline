@@ -17,11 +17,6 @@ class MainActivity : AppCompatActivity() {
 
         val timeLineView = findViewById<TimelineView>(R.id.timeline)
 
-        val mathEngine = LinearTimelineMath(
-            TimelineMathConfig.Builder().build(),
-            LinearTimelineMath.Orientation.VERTICAL
-        )
-
         val configMath = TimelineMathConfig.Builder()
             .setSteps(
                 ArrayList(
@@ -71,11 +66,8 @@ class MainActivity : AppCompatActivity() {
             .setStepYFirst(resources.getDimension(R.dimen.dimen_20dp))
             .setSizeImageLvl(resources.getDimension(R.dimen.dimen_48dp))
             .setSizeIconProgress(resources.getDimension(R.dimen.dimen_28dp))
-            .setMathEngine(mathEngine)
             .build()
 
-
-        val uiRenderer = LinearTimelineUi(TimelineUiConfig.Builder().build())
 
         val configUi = TimelineUiConfig.Builder()
             .setIconProgress(R.drawable.ic_progress_timeline)
@@ -88,9 +80,13 @@ class MainActivity : AppCompatActivity() {
             .setRadius(resources.getDimension(R.dimen.dimen_48dp))
             .setColorStroke(ContextCompat.getColor(baseContext, R.color.teal_700))
             .setColorProgress(ContextCompat.getColor(baseContext, R.color.teal_200))
-            .setUiRenderer(uiRenderer)
             .build()
 
+        val mathEngine = LinearTimelineMath(configMath, LinearTimelineMath.Orientation.VERTICAL)
+        val uiRenderer = LinearTimelineUi(configUi)
+
+        timeLineView.setMathEngine(mathEngine)
+        timeLineView.setUiRenderer(uiRenderer)
         timeLineView.setConfig(configMath, configUi)
     }
 }
