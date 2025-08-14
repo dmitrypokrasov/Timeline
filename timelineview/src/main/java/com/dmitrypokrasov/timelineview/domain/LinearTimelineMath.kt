@@ -11,12 +11,18 @@ import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
  * горизонтально в зависимости от [orientation].
  */
 class LinearTimelineMath(
-    var mathConfig: TimelineMathConfig,
+    private var mathConfig: TimelineMathConfig,
     val orientation: Orientation = Orientation.VERTICAL,
 ) : TimelineMathEngine {
 
     /** Возможные направления построения линии. */
     enum class Orientation { VERTICAL, HORIZONTAL }
+
+    override fun setConfig(config: TimelineMathConfig) {
+        mathConfig = config
+    }
+
+    override fun getConfig(): TimelineMathConfig = mathConfig
 
     override fun replaceSteps(steps: List<TimelineStep>) {
         mathConfig = mathConfig.copy(steps = steps)
@@ -87,6 +93,8 @@ class LinearTimelineMath(
         else -mathConfig.sizeIconProgress / 2f
     }
 
+    override fun getSteps(): List<TimelineStep> = mathConfig.steps
+
     override fun getMeasuredHeight(): Int = mathConfig.getMeasuredHeight()
 
     override fun getLeftCoordinates(lvl: TimelineStep): Float {
@@ -103,6 +111,11 @@ class LinearTimelineMath(
 
     override fun getIconXCoordinates(align: Paint.Align): Float {
         return mathConfig.getIconXCoordinates(align)
+    }
+
+    override fun getIconYCoordinates(i: Int): Float {
+        return if (orientation == Orientation.VERTICAL) mathConfig.getIconYCoordinates(i)
+        else -mathConfig.sizeIconProgress / 2f
     }
 
     override fun getTitleYCoordinates(i: Int): Float {

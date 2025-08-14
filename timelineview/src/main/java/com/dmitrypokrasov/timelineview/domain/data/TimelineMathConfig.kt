@@ -47,7 +47,6 @@ data class TimelineMathConfig(
     private var startPositionDisableStrokeX = 0f
     private var measuredWidth = 0
 
-
     fun setMeasuredWidth(measuredWidth: Int) {
         this.measuredWidth = measuredWidth
 

@@ -10,11 +10,17 @@ import kotlin.math.abs
  * Публичная реализация [TimelineMathEngine], основанная на "змейке".
  * Содержит всю вычислительную логику, ранее находившуюся в `TimelineMath`.
  */
-class SnakeTimelineMath(var mathConfig: TimelineMathConfig) : TimelineMathEngine {
+class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMathEngine {
 
     companion object {
         private const val TAG = "SnakeTimelineMath"
     }
+
+    override fun setConfig(config: TimelineMathConfig) {
+        mathConfig = config
+    }
+
+    override fun getConfig(): TimelineMathConfig = mathConfig
 
     override fun replaceSteps(steps: List<TimelineStep>) {
         mathConfig = mathConfig.copy(steps = steps)
@@ -105,6 +111,8 @@ class SnakeTimelineMath(var mathConfig: TimelineMathConfig) : TimelineMathEngine
         return mathConfig.getVerticalOffset(i)
     }
 
+    override fun getSteps(): List<TimelineStep> = mathConfig.steps
+
     override fun getMeasuredHeight(): Int {
         return mathConfig.getMeasuredHeight()
     }
@@ -122,10 +130,7 @@ class SnakeTimelineMath(var mathConfig: TimelineMathConfig) : TimelineMathEngine
         return mathConfig.getTitleXCoordinates(align)
     }
 
-    /** Возвращает Y-координату для иконки уровня. */
-    fun getIconYCoordinates(i: Int): Float {
-        return mathConfig.getIconYCoordinates(i)
-    }
+    override fun getIconYCoordinates(i: Int): Float = mathConfig.getIconYCoordinates(i)
 
     override fun getTitleYCoordinates(i: Int): Float {
         return mathConfig.getTitleYCoordinates(i)

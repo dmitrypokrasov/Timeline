@@ -46,26 +46,17 @@ class TimelineView @JvmOverloads constructor(
     private var timelineMath: TimelineMathEngine
 
     /** Рендерер визуальной части таймлайна. */
-    private var timelineUi: SnakeTimelineUi
-
-    /** Текущая математическая конфигурация. */
-    private var mathConfig: TimelineMathConfig
-
-    /** Текущая визуальная конфигурация. */
-    private var uiConfig: TimelineUiConfig
+    private var timelineUi: TimelineUiRenderer
 
     /** Текущая сторона отрисовки (LEFT/RIGHT). */
     private var currentSide: Paint.Align = Paint.Align.RIGHT
 
     init {
         val (parsedMathConfig, parsedUiConfig) = ConfigParser(context).parse(attrs)
-        mathConfig = parsedMathConfig
-        uiConfig = parsedUiConfig
-
         timelineMath = SnakeTimelineMath(parsedMathConfig)
         timelineUi = SnakeTimelineUi(parsedUiConfig)
 
-        initTools(parsedMathConfig, parsedUiConfig)
+        initTools()
     }
 
     /**
@@ -73,7 +64,6 @@ class TimelineView @JvmOverloads constructor(
      */
     fun replaceSteps(steps: List<TimelineStep>) {
         timelineMath.replaceSteps(steps)
-        mathConfig = mathConfig.copy(steps = steps)
         requestLayout()
     }
 
@@ -81,12 +71,10 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает пользовательский математический движок.
      */
     fun setMathEngine(engine: TimelineMathEngine) {
+        val currentConfig = timelineMath.getConfig()
         timelineMath = engine
-        if (engine is SnakeTimelineMath) {
-            engine.mathConfig = mathConfig
-        } else {
-            engine.replaceSteps(mathConfig.steps)
-        }
+        timelineMath.setConfig(currentConfig)
+        initTools()
         requestLayout()
     }
 
@@ -94,11 +82,10 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает пользовательский рендерер интерфейса.
      */
     fun setUiRenderer(renderer: TimelineUiRenderer) {
-        timelineUi = (renderer as? SnakeTimelineUi) ?: SnakeTimelineUi(uiConfig)
-        if (renderer is SnakeTimelineUi) {
-            renderer.uiConfig = uiConfig
-        }
-        initTools(mathConfig, uiConfig)
+        val currentConfig = timelineUi.getConfig()
+        timelineUi = renderer
+        timelineUi.setConfig(currentConfig)
+        initTools()
         requestLayout()
     }
 
@@ -106,29 +93,16 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает новую конфигурацию таймлайна.
      */
     fun setConfig(newMathConfig: TimelineMathConfig, newUiConfig: TimelineUiConfig) {
-        if (mathConfig == newMathConfig && uiConfig == newUiConfig) return
-
-        mathConfig = newMathConfig
-        uiConfig = newUiConfig
-
-        timelineMath.replaceSteps(newMathConfig.steps)
-        if (timelineMath is SnakeTimelineMath) {
-            (timelineMath as SnakeTimelineMath).mathConfig = newMathConfig
-        }
-
-        if (timelineUi is SnakeTimelineUi) {
-            timelineUi.uiConfig = newUiConfig
-        }
-
-        initTools(newMathConfig, newUiConfig)
-
+        timelineMath.setConfig(newMathConfig)
+        timelineUi.setConfig(newUiConfig)
+        initTools()
         requestLayout()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         timelineMath.setMeasuredWidth(measuredWidth)
-        timelineMath.buildPath(timelineUi.pathEnable, timelineUi.pathDisable)
+        timelineMath.buildPath(timelineUi.getPathEnable(), timelineUi.getPathDisable())
         setMeasuredDimension(measuredWidth, timelineMath.getMeasuredHeight())
     }
 
@@ -147,7 +121,7 @@ class TimelineView @JvmOverloads constructor(
         var printProgressIcon = false
         var align = Paint.Align.LEFT
 
-        mathConfig.steps.forEachIndexed { i, lvl ->
+        timelineMath.getSteps().forEachIndexed { i, lvl ->
             if (i == 0) {
                 timelineUi.printTitle(
                     canvas,
@@ -169,7 +143,7 @@ class TimelineView @JvmOverloads constructor(
                     align,
                     context,
                     timelineMath.getIconXCoordinates(align),
-                    mathConfig.getIconYCoordinates(i)
+                    timelineMath.getIconYCoordinates(i)
                 )
 
                 if (lvl.percents != 100) {
@@ -212,7 +186,7 @@ class TimelineView @JvmOverloads constructor(
                     align,
                     context,
                     timelineMath.getIconXCoordinates(align),
-                    mathConfig.getIconYCoordinates(i)
+                    timelineMath.getIconYCoordinates(i)
                 )
             }
 
@@ -224,16 +198,13 @@ class TimelineView @JvmOverloads constructor(
     /**
      * Инициализирует визуальные элементы (битмапы, pathEffect).
      */
-    private fun initTools(
-        timelineMathConfig: TimelineMathConfig,
-        timelineUiConfig: TimelineUiConfig
-    ) {
+    private fun initTools() {
         Log.d(
             TAG,
-            "initTools timelineMathConfig: $timelineMathConfig, timelineUiConfig: $timelineUiConfig"
+            "initTools timelineMathConfig: ${timelineMath.getConfig()}, timelineUiConfig: ${timelineUi.getConfig()}"
         )
 
-        timelineUi.initTools(timelineMathConfig, context)
+        timelineUi.initTools(timelineMath.getConfig(), context)
     }
 
 }
