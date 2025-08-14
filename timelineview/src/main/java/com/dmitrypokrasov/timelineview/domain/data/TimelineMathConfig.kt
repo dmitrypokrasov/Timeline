@@ -115,9 +115,9 @@ data class TimelineMathConfig(
     fun getTitleXCoordinates(align: Paint.Align): Float {
         val stepX = getStepX()
         return when (align) {
-            Paint.Align.LEFT -> if (startPosition == StartPosition.CENTER) startPositionX - marginHorizontalText else -startPositionX + stepX
+            Paint.Align.LEFT -> -(startPositionX - marginHorizontalText)
             Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> -(startPositionX - marginHorizontalText)
+            Paint.Align.RIGHT -> if (startPosition == StartPosition.CENTER) startPositionX - marginHorizontalText else -startPositionX + stepX
         }
     }
 
@@ -125,9 +125,9 @@ data class TimelineMathConfig(
     fun getIconXCoordinates(align: Paint.Align): Float {
         val stepX = getStepX()
         return when (align) {
-            Paint.Align.LEFT -> if (startPosition == StartPosition.CENTER) startPositionX - marginHorizontalImage - sizeImageLvl else -startPositionX + stepX + marginHorizontalImage
+            Paint.Align.LEFT -> -(startPositionX - marginHorizontalImage)
             Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> -(startPositionX - marginHorizontalImage)
+            Paint.Align.RIGHT -> if (startPosition == StartPosition.CENTER) startPositionX - marginHorizontalImage - sizeImageLvl else -startPositionX + stepX + marginHorizontalImage
         }
     }
 

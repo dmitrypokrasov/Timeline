@@ -43,8 +43,11 @@ internal class TimelineUi(
     /** Кисть для рисования линий. */
     private val linePaint = Paint()
 
-    /** Кисть для рисования текста и иконок. */
+    /** Кисть для рисования текста. */
     private val textPaint = Paint()
+
+    /** Кисть для рисования иконок. */
+    private val iconPaint = Paint()
 
     /**
      * Инициализирует визуальные элементы (битмапы, pathEffect).
@@ -71,10 +74,6 @@ internal class TimelineUi(
         }
     }
 
-    fun getTextAlign(): Paint.Align {
-        return textPaint.textAlign
-    }
-
     fun resetFromPaintTools() {
         linePaint.reset()
         linePaint.style = Paint.Style.STROKE
@@ -87,13 +86,18 @@ internal class TimelineUi(
         textPaint.isAntiAlias = true
     }
 
+    fun resetFromIconTools() {
+        iconPaint.reset()
+        iconPaint.isAntiAlias = true
+    }
+
     fun drawProgressBitmap(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) {
         iconProgressBitmap?.let {
             canvas.drawBitmap(
                 it,
                 leftCoordinates,
                 topCoordinates,
-                textPaint
+                iconPaint
             )
         }
     }
@@ -164,8 +168,8 @@ internal class TimelineUi(
             else -> iconDisableStep
         }
         bm?.let {
-            textPaint.textAlign = align
-            canvas.drawBitmap(it, x, y, textPaint)
+            iconPaint.textAlign = align
+            canvas.drawBitmap(it, x, y, iconPaint)
         }
     }
 

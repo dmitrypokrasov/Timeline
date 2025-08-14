@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.view.View.MeasureSpec
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.data.TimelineConstants
@@ -98,12 +97,13 @@ class TimelineView @JvmOverloads constructor(
 
         // Отрисовка шагов: иконки, заголовки, описания
         timelineUi.resetFromTextTools()
+        timelineUi.resetFromIconTools()
 
         currentSide = Paint.Align.RIGHT
         var printProgressIcon = false
+        var align = Paint.Align.LEFT
 
         timelineMath.mathConfig.steps.forEachIndexed { i, lvl ->
-            val align = currentSide
             if (i == 0) {
                 timelineUi.printTitle(
                     canvas,
@@ -145,6 +145,8 @@ class TimelineView @JvmOverloads constructor(
                     )
                     printProgressIcon = true
                 }
+
+                align = if (align == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
 
                 timelineUi.printTitle(
                     canvas,
