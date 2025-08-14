@@ -3,6 +3,7 @@ package com.dmitrypokrasov.timelineview.domain
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import com.dmitrypokrasov.timelineview.data.TimelineStep
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 
@@ -12,6 +13,11 @@ import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
  * Отвечает за подготовку инструментов рисования и вывод элементов на [Canvas].
  */
 interface TimelineUiRenderer {
+    /** Путь для пройденных шагов. */
+    val pathEnable: Path
+
+    /** Путь для непройденных шагов. */
+    val pathDisable: Path
     /**
      * Инициализирует визуальные инструменты.
      *
@@ -32,6 +38,11 @@ interface TimelineUiRenderer {
      * Сбрасывает и настраивает кисть для рисования текста.
      */
     fun resetFromTextTools()
+
+    /**
+      * Сбрасывает и настраивает кисть для рисования иконок.
+      */
+    fun resetFromIconTools()
 
     /**
      * Рисует bitmap текущего прогресса.

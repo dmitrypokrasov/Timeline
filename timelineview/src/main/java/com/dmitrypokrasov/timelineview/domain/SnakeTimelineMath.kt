@@ -123,7 +123,7 @@ class SnakeTimelineMath(var mathConfig: TimelineMathConfig) : TimelineMathEngine
     }
 
     /** Возвращает Y-координату для иконки уровня. */
-    fun getIconYCoordinates(i: Int): Float {
+    override fun getIconYCoordinates(i: Int): Float {
         return mathConfig.getIconYCoordinates(i)
     }
 

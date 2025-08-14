@@ -89,6 +89,11 @@ interface TimelineMathEngine {
     fun getDescriptionYCoordinates(i: Int): Float
 
     /**
+     * Возвращает Y-координату иконки шага [i].
+     */
+    fun getIconYCoordinates(i: Int): Float
+
+    /**
      * Возвращает рассчитанную высоту View после всех вычислений.
      */
     fun getMeasuredHeight(): Int

@@ -97,3 +97,17 @@ val uiConfig = TimelineUiConfig.Builder()
 
 timelineView.setConfig(mathConfig, uiConfig)
 ```
+
+### Custom engines
+
+If default linear or snake behaviours do not cover your case, provide your own
+implementations of `TimelineMathEngine` and `TimelineUiRenderer`:
+
+```kotlin
+timelineView.setConfig(
+    mathConfig,
+    uiConfig,
+    mathEngine = MyMathEngine(mathConfig),
+    uiRenderer = MyUiRenderer(uiConfig)
+)
+```

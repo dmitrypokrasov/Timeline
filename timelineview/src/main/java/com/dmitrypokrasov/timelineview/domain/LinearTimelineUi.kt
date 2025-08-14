@@ -26,10 +26,10 @@ class LinearTimelineUi(
 ) : TimelineUiRenderer {
 
     /** Путь для пройденных шагов. */
-    val pathEnable = Path()
+    override val pathEnable = Path()
 
     /** Путь для непройденных шагов. */
-    val pathDisable = Path()
+    override val pathDisable = Path()
 
     /** Битмап неактивного шага. */
     private var iconDisableStep: Bitmap? = null
@@ -81,7 +81,7 @@ class LinearTimelineUi(
         textPaint.isAntiAlias = true
     }
 
-    fun resetFromIconTools() {
+    override fun resetFromIconTools() {
         iconPaint.reset()
         iconPaint.isAntiAlias = true
     }

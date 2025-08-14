@@ -6,6 +6,11 @@
             <enum name="CENTER" value="1" />
             <enum name="END" value="2" />
         </attr>
+        <attr name="timeline_orientation" format="enum">
+            <enum name="SNAKE_VERTICAL" value="0" />
+            <enum name="LINEAR_VERTICAL" value="1" />
+            <enum name="LINEAR_HORIZONTAL" value="2" />
+        </attr>
         <attr name="timeline_progress_color" format="color" />
         <attr name="timeline_stroke_color" format="color" />
         <attr name="timeline_title_color" format="color" />
