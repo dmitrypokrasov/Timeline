@@ -3,8 +3,10 @@ package com.dmitrypokrasov.timelineview.domain
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import com.dmitrypokrasov.timelineview.data.TimelineStep
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 
 /**
  * Интерфейс рендерера временной шкалы.
@@ -12,6 +14,12 @@ import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
  * Отвечает за подготовку инструментов рисования и вывод элементов на [Canvas].
  */
 interface TimelineUiRenderer {
+    /** Устанавливает новую конфигурацию визуального оформления. */
+    fun setConfig(config: TimelineUiConfig)
+
+    /** Возвращает текущую конфигурацию визуального оформления. */
+    fun getConfig(): TimelineUiConfig
+
     /**
      * Инициализирует визуальные инструменты.
      *
@@ -33,6 +41,9 @@ interface TimelineUiRenderer {
      */
     fun resetFromTextTools()
 
+    /** Сбрасывает и настраивает кисть для рисования иконок. */
+    fun resetFromIconTools()
+
     /**
      * Рисует bitmap текущего прогресса.
      *
@@ -51,6 +62,12 @@ interface TimelineUiRenderer {
      * Рисует путь непройденных шагов.
      */
     fun drawDisablePath(canvas: Canvas)
+
+    /** Возвращает путь пройденных шагов. */
+    fun getPathEnable(): Path
+
+    /** Возвращает путь непройденных шагов. */
+    fun getPathDisable(): Path
 
     /**
      * Печатает заголовок шага.

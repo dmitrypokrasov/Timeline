@@ -3,6 +3,7 @@ package com.dmitrypokrasov.timelineview.domain
 import android.graphics.Paint
 import android.graphics.Path
 import com.dmitrypokrasov.timelineview.data.TimelineStep
+import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 
 /**
  * Математический движок временной шкалы.
@@ -11,6 +12,12 @@ import com.dmitrypokrasov.timelineview.data.TimelineStep
  * элементов интерфейса.
  */
 interface TimelineMathEngine {
+    /** Устанавливает новую конфигурацию математики. */
+    fun setConfig(config: TimelineMathConfig)
+
+    /** Возвращает текущую конфигурацию математики. */
+    fun getConfig(): TimelineMathConfig
+
     /**
      * Заменяет текущий список шагов временной шкалы.
      *
@@ -50,6 +57,9 @@ interface TimelineMathEngine {
      */
     fun getVerticalOffset(i: Int): Float
 
+    /** Возвращает список шагов таймлайна. */
+    fun getSteps(): List<TimelineStep>
+
     /**
      * Вычисляет левую координату иконки для указанного шага.
      *
@@ -63,6 +73,9 @@ interface TimelineMathEngine {
      * @param lvl шаг временной шкалы
      */
     fun getTopCoordinates(lvl: TimelineStep): Float
+
+    /** Возвращает Y-координату иконки шага [i]. */
+    fun getIconYCoordinates(i: Int): Float
 
     /**
      * Возвращает X-координату заголовка уровня в зависимости от выравнивания.

@@ -9,6 +9,8 @@ import android.view.View
 import com.dmitrypokrasov.timelineview.data.TimelineStep
 import com.dmitrypokrasov.timelineview.domain.SnakeTimelineMath
 import com.dmitrypokrasov.timelineview.domain.SnakeTimelineUi
+import com.dmitrypokrasov.timelineview.domain.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.domain.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 
@@ -40,20 +42,21 @@ class TimelineView @JvmOverloads constructor(
         private const val TAG = "TimelineView"
     }
 
-    /** Математическая конфигурация таймлайна. */
-    private var timelineMath: SnakeTimelineMath
+    /** Математический движок таймлайна. */
+    private var timelineMath: TimelineMathEngine
 
-    /** Визуальная конфигурация таймлайна. */
-    private var timelineUi: SnakeTimelineUi
+    /** Рендерер визуальной части таймлайна. */
+    private var timelineUi: TimelineUiRenderer
 
     /** Текущая сторона отрисовки (LEFT/RIGHT). */
     private var currentSide: Paint.Align = Paint.Align.RIGHT
 
     init {
-        val (mathConfig, uiConfig) = ConfigParser(context).parse(attrs)
-        timelineMath = SnakeTimelineMath(mathConfig)
-        timelineUi = SnakeTimelineUi(uiConfig)
-        initTools(mathConfig, uiConfig)
+        val (parsedMathConfig, parsedUiConfig) = ConfigParser(context).parse(attrs)
+        timelineMath = SnakeTimelineMath(parsedMathConfig)
+        timelineUi = SnakeTimelineUi(parsedUiConfig)
+
+        initTools()
     }
 
     /**
@@ -65,23 +68,27 @@ class TimelineView @JvmOverloads constructor(
     }
 
     /**
-     * Устанавливает новую конфигурацию таймлайна.
+     * Устанавливает пользовательский математический движок.
      */
-    fun setConfig(timelineMathConfig: TimelineMathConfig, timelineUiConfig: TimelineUiConfig) {
-        if (timelineMath.mathConfig == timelineMathConfig && timelineUi.uiConfig == timelineUiConfig) return
+    fun setMathEngine(engine: TimelineMathEngine) {
+        timelineMath = engine
+        initTools()
+        requestLayout()
+    }
 
-        timelineMath = SnakeTimelineMath(timelineMathConfig)
-        timelineUi = SnakeTimelineUi(timelineUiConfig)
-
-        initTools(timelineMathConfig, timelineUiConfig)
-
+    /**
+     * Устанавливает пользовательский рендерер интерфейса.
+     */
+    fun setUiRenderer(renderer: TimelineUiRenderer) {
+        timelineUi = renderer
+        initTools()
         requestLayout()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         timelineMath.setMeasuredWidth(measuredWidth)
-        timelineMath.buildPath(timelineUi.pathEnable, timelineUi.pathDisable)
+        timelineMath.buildPath(timelineUi.getPathEnable(), timelineUi.getPathDisable())
         setMeasuredDimension(measuredWidth, timelineMath.getMeasuredHeight())
     }
 
@@ -100,7 +107,7 @@ class TimelineView @JvmOverloads constructor(
         var printProgressIcon = false
         var align = Paint.Align.LEFT
 
-        timelineMath.mathConfig.steps.forEachIndexed { i, lvl ->
+        timelineMath.getSteps().forEachIndexed { i, lvl ->
             if (i == 0) {
                 timelineUi.printTitle(
                     canvas,
@@ -177,16 +184,13 @@ class TimelineView @JvmOverloads constructor(
     /**
      * Инициализирует визуальные элементы (битмапы, pathEffect).
      */
-    private fun initTools(
-        timelineMathConfig: TimelineMathConfig,
-        timelineUiConfig: TimelineUiConfig
-    ) {
+    private fun initTools() {
         Log.d(
             TAG,
-            "initTools timelineMathConfig: $timelineMathConfig, timelineUiConfig: $timelineUiConfig"
+            "initTools timelineMathConfig: ${timelineMath.getConfig()}, timelineUiConfig: ${timelineUi.getConfig()}"
         )
 
-        timelineUi.initTools(timelineMathConfig, context)
+        timelineUi.initTools(timelineMath.getConfig(), context)
     }
 
 }

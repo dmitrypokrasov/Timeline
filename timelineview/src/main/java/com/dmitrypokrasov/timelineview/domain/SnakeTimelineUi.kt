@@ -23,17 +23,17 @@ import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
  * ранее находившийся в `TimelineUi`.
  */
 class SnakeTimelineUi(
-    var uiConfig: TimelineUiConfig,
+    private var uiConfig: TimelineUiConfig,
 ) : TimelineUiRenderer {
     companion object {
         private const val TAG = "SnakeTimelineUi"
     }
 
     /** Путь для пройденных шагов. */
-    val pathEnable = Path()
+    private val pathEnable = Path()
 
     /** Путь для непройденных шагов. */
-    val pathDisable = Path()
+    private val pathDisable = Path()
 
     /** Битмап неактивного шага. */
     private var iconDisableStep: Bitmap? = null
@@ -87,7 +87,13 @@ class SnakeTimelineUi(
         textPaint.isAntiAlias = true
     }
 
-    fun resetFromIconTools() {
+    override fun setConfig(config: TimelineUiConfig) {
+        uiConfig = config
+    }
+
+    override fun getConfig(): TimelineUiConfig = uiConfig
+
+    override fun resetFromIconTools() {
         iconPaint.reset()
         iconPaint.isAntiAlias = true
     }
@@ -112,6 +118,10 @@ class SnakeTimelineUi(
         linePaint.color = uiConfig.colorStroke
         canvas.drawPath(pathDisable, linePaint)
     }
+
+    override fun getPathEnable(): Path = pathEnable
+
+    override fun getPathDisable(): Path = pathDisable
 
     override fun printTitle(
         canvas: Canvas,
