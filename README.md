@@ -83,8 +83,6 @@ val steps = listOf(
     )
 )
 
-timelineView.replaceSteps(steps)
-
 // build configs first
 val mathConfig = TimelineMathConfig(
     steps = steps,
@@ -105,5 +103,4 @@ val uiRenderer = LinearTimelineUi(uiConfig)
 
 timelineView.setMathEngine(mathEngine)
 timelineView.setUiRenderer(uiRenderer)
-timelineView.setConfig(mathConfig, uiConfig)
 ```

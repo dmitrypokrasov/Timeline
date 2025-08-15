@@ -84,6 +84,5 @@ class MainActivity : AppCompatActivity() {
 
         timeLineView.setMathEngine(mathEngine)
         timeLineView.setUiRenderer(uiRenderer)
-        timeLineView.setConfig(configMath, configUi)
     }
 }

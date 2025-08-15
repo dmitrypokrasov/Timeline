@@ -106,7 +106,8 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         }
     }
 
-    override fun getHorizontalIconOffset(i: Int): Float = calculateHorizontalIconOffset(i)
+    override fun getHorizontalIconOffset(i: Int): Float =
+        calculateHorizontalOffset(i) - mathConfig.sizeIconProgress / 2f
 
     override fun getVerticalOffset(i: Int): Float =
         (mathConfig.stepY * i) + mathConfig.marginTopProgressIcon
@@ -125,11 +126,27 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         if (lvl.count == 0) -mathConfig.sizeIconProgress / 2f
         else mathConfig.stepYFirst - mathConfig.sizeIconProgress / 2f
 
-    override fun getIconXCoordinates(align: Paint.Align): Float =
-        calculateIconXCoordinates(align)
+    override fun getIconXCoordinates(align: Paint.Align): Float {
+        val stepX = getStepX()
+        return when (align) {
+            Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalImage)
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
+                startPositionX - mathConfig.marginHorizontalImage - mathConfig.sizeImageLvl
+            else -startPositionX + stepX + mathConfig.marginHorizontalImage
+        }
+    }
 
-    override fun getTitleXCoordinates(align: Paint.Align): Float =
-        calculateTitleXCoordinates(align)
+    override fun getTitleXCoordinates(align: Paint.Align): Float {
+        val stepX = getStepX()
+        return when (align) {
+            Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalText)
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
+                startPositionX - mathConfig.marginHorizontalText
+            else -startPositionX + stepX
+        }
+    }
 
     override fun getIconYCoordinates(i: Int): Float =
         calculateTitleYCoordinates(i) - (mathConfig.stepY - mathConfig.sizeImageLvl) / 2
@@ -167,31 +184,5 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
                 TimelineMathConfig.StartPosition.END -> -startPositionDisableStrokeX
             }
         else startPositionDisableStrokeX - startPositionX + mathConfig.marginHorizontalStroke
-    }
-
-    private fun calculateHorizontalIconOffset(i: Int): Float {
-        return calculateHorizontalOffset(i) - mathConfig.sizeIconProgress / 2f
-    }
-
-    private fun calculateIconXCoordinates(align: Paint.Align): Float {
-        val stepX = getStepX()
-        return when (align) {
-            Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalImage)
-            Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
-                startPositionX - mathConfig.marginHorizontalImage - mathConfig.sizeImageLvl
-            else -startPositionX + stepX + mathConfig.marginHorizontalImage
-        }
-    }
-
-    private fun calculateTitleXCoordinates(align: Paint.Align): Float {
-        val stepX = getStepX()
-        return when (align) {
-            Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalText)
-            Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
-                startPositionX - mathConfig.marginHorizontalText
-            else -startPositionX + stepX
-        }
     }
 }

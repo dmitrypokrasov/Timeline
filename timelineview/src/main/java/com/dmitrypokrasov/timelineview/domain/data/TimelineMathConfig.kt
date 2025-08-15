@@ -6,6 +6,19 @@ import com.dmitrypokrasov.timelineview.data.TimelineStep
 /**
  * Конфигурация параметров позиционирования и размеров таймлайна.
  *
+ * @property startPosition начальная позиция таймлайна (слева, по центру или справа)
+ * @property steps список шагов, образующих таймлайн
+ * @property stepY расстояние по вертикали между шагами
+ * @property stepYFirst отступ от начала компонента до первого шага
+ * @property marginTopDescription отступ сверху для описания шага
+ * @property marginTopTitle отступ сверху для заголовка шага
+ * @property marginTopProgressIcon отступ сверху для иконки прогресса
+ * @property marginHorizontalImage горизонтальный отступ для изображений шагов
+ * @property marginHorizontalText горизонтальный отступ для текстовых блоков
+ * @property marginHorizontalStroke горизонтальный отступ для вертикальной линии
+ * @property sizeIconProgress размер иконки текущего прогресса
+ * @property sizeImageLvl размер иконок шагов
+ *
  * Хранит только данные без дополнительных вычислений. Вся логика расчётов
  * вынесена в реализации [com.dmitrypokrasov.timelineview.domain.TimelineMathEngine].
  */

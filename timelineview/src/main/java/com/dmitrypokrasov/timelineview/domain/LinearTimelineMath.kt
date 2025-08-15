@@ -44,9 +44,11 @@ class LinearTimelineMath(
 
         mathConfig.steps.forEachIndexed { index, step ->
             val segment = if (orientation == Orientation.VERTICAL) {
-                if (index == 0) mathConfig.stepYFirst else getStandardDyMove(index)
+                if (index == 0) mathConfig.stepYFirst
+                else if (index == mathConfig.steps.size - 1) mathConfig.stepY / 2
+                else mathConfig.stepY
             } else {
-                if (index == 0) getStepXFirst() else getStepX()
+                if (index == 0) startPositionX - mathConfig.marginHorizontalStroke else getStepX()
             }
 
             if (drawEnable) {
@@ -111,42 +113,7 @@ class LinearTimelineMath(
 
     override fun getTopCoordinates(lvl: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
 
-    override fun getTitleXCoordinates(align: Paint.Align): Float =
-        calculateTitleXCoordinates(align)
-
-    override fun getIconXCoordinates(align: Paint.Align): Float =
-        calculateIconXCoordinates(align)
-
-    override fun getIconYCoordinates(i: Int): Float {
-        return if (orientation == Orientation.VERTICAL) calculateIconYCoordinates(i)
-        else -mathConfig.sizeIconProgress / 2f
-    }
-
-    override fun getTitleYCoordinates(i: Int): Float = calculateTitleYCoordinates(i)
-
-    override fun getDescriptionYCoordinates(i: Int): Float =
-        calculateTitleYCoordinates(i) + mathConfig.marginTopDescription
-
-    // --- Private helpers ---
-
-    private fun getStandardDyMove(i: Int): Float =
-        if (i == mathConfig.steps.size - 1) mathConfig.stepY / 2 else mathConfig.stepY
-
-    private fun getStepX(): Float =
-        (measuredWidth - mathConfig.marginHorizontalStroke * 2)
-
-    private fun getStepXFirst(): Float = startPositionX - mathConfig.marginHorizontalStroke
-
-    private fun calculateVerticalOffset(i: Int): Float =
-        (mathConfig.stepY * i) + mathConfig.marginTopProgressIcon
-
-    private fun calculateTitleYCoordinates(i: Int): Float =
-        (mathConfig.stepY * i) + mathConfig.marginTopTitle
-
-    private fun calculateIconYCoordinates(i: Int): Float =
-        calculateTitleYCoordinates(i) - (mathConfig.stepY - mathConfig.sizeImageLvl) / 2
-
-    private fun calculateTitleXCoordinates(align: Paint.Align): Float {
+    override fun getTitleXCoordinates(align: Paint.Align): Float {
         val stepX = getStepX()
         return when (align) {
             Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalText)
@@ -157,7 +124,7 @@ class LinearTimelineMath(
         }
     }
 
-    private fun calculateIconXCoordinates(align: Paint.Align): Float {
+    override fun getIconXCoordinates(align: Paint.Align): Float {
         val stepX = getStepX()
         return when (align) {
             Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalImage)
@@ -167,4 +134,26 @@ class LinearTimelineMath(
             else -startPositionX + stepX + mathConfig.marginHorizontalImage
         }
     }
+
+    override fun getIconYCoordinates(i: Int): Float {
+        return if (orientation == Orientation.VERTICAL)
+            calculateTitleYCoordinates(i) - (mathConfig.stepY - mathConfig.sizeImageLvl) / 2
+        else -mathConfig.sizeIconProgress / 2f
+    }
+
+    override fun getTitleYCoordinates(i: Int): Float = calculateTitleYCoordinates(i)
+
+    override fun getDescriptionYCoordinates(i: Int): Float =
+        calculateTitleYCoordinates(i) + mathConfig.marginTopDescription
+
+    // --- Private helpers ---
+
+    private fun getStepX(): Float =
+        (measuredWidth - mathConfig.marginHorizontalStroke * 2)
+
+    private fun calculateVerticalOffset(i: Int): Float =
+        (mathConfig.stepY * i) + mathConfig.marginTopProgressIcon
+
+    private fun calculateTitleYCoordinates(i: Int): Float =
+        (mathConfig.stepY * i) + mathConfig.marginTopTitle
 }

@@ -71,9 +71,7 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает пользовательский математический движок.
      */
     fun setMathEngine(engine: TimelineMathEngine) {
-        val currentConfig = timelineMath.getConfig()
         timelineMath = engine
-        timelineMath.setConfig(currentConfig)
         initTools()
         requestLayout()
     }
@@ -82,21 +80,7 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает пользовательский рендерер интерфейса.
      */
     fun setUiRenderer(renderer: TimelineUiRenderer) {
-        val currentConfig = timelineUi.getConfig()
         timelineUi = renderer
-        timelineUi.setConfig(currentConfig)
-        initTools()
-        requestLayout()
-    }
-
-    /**
-     * Устанавливает новую конфигурацию таймлайна.
-     */
-    fun setConfig(newMathConfig: TimelineMathConfig, newUiConfig: TimelineUiConfig) {
-        timelineMath.setConfig(newMathConfig)
-
-        timelineUi.setConfig(newUiConfig)
-
         initTools()
         requestLayout()
     }

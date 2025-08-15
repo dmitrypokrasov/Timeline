@@ -7,6 +7,17 @@ import com.dmitrypokrasov.timelineview.data.TimelineConstants
 /**
  * Конфигурация визуального оформления элементов таймлайна.
  *
+ * @property iconDisableLvl иконка для заблокированных шагов
+ * @property iconProgress иконка текущего прогресса
+ * @property colorProgress цвет пройденной части линии
+ * @property colorStroke цвет оставшейся части линии
+ * @property colorTitle цвет заголовков шагов
+ * @property colorDescription цвет описаний шагов
+ * @property sizeDescription размер текста описания
+ * @property sizeTitle размер текста заголовка
+ * @property radius радиус скругления линии
+ * @property sizeStroke толщина линии
+ *
  * Содержит только значения, используемые рендерерами. Вся логика подготовки
  * вынесена в реализации [com.dmitrypokrasov.timelineview.domain.TimelineUiRenderer].
  */
