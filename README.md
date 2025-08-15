@@ -86,18 +86,18 @@ val steps = listOf(
 timelineView.replaceSteps(steps)
 
 // build configs first
-val mathConfig = TimelineMathConfig.Builder()
-    .setSteps(steps)
-    .setStartPosition(TimelineMathConfig.StartPosition.CENTER)
-    .setStepY(80f)
-    .build()
+val mathConfig = TimelineMathConfig(
+    steps = steps,
+    startPosition = TimelineMathConfig.StartPosition.CENTER,
+    stepY = 80f,
+)
 
-val uiConfig = TimelineUiConfig.Builder()
-    .setIconProgress(R.drawable.ic_progress_time_line)
-    .setIconDisableLvl(R.drawable.ic_tobacco_unactive)
-    .setColorProgress(ContextCompat.getColor(this, R.color.purple_700))
-    .setColorStroke(ContextCompat.getColor(this, R.color.purple_200))
-    .build()
+val uiConfig = TimelineUiConfig(
+    iconProgress = R.drawable.ic_progress_time_line,
+    iconDisableLvl = R.drawable.ic_tobacco_unactive,
+    colorProgress = ContextCompat.getColor(this, R.color.purple_700),
+    colorStroke = ContextCompat.getColor(this, R.color.purple_200),
+)
 
 // configure custom linear engines in vertical orientation
 val mathEngine = LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL)

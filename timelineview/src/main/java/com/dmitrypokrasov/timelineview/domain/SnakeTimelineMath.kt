@@ -8,13 +8,13 @@ import kotlin.math.abs
 
 /**
  * Публичная реализация [TimelineMathEngine], основанная на "змейке".
- * Содержит всю вычислительную логику, ранее находившуюся в `TimelineMath`.
+ * Вся вычислительная логика перемещена сюда из конфигурации.
  */
 class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMathEngine {
 
-    companion object {
-        private const val TAG = "SnakeTimelineMath"
-    }
+    private var startPositionX = 0f
+    private var startPositionDisableStrokeX = 0f
+    private var measuredWidth = 0
 
     override fun setConfig(config: TimelineMathConfig) {
         mathConfig = config
@@ -25,6 +25,7 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
     override fun replaceSteps(steps: List<TimelineStep>) {
         mathConfig = mathConfig.copy(steps = steps)
     }
+
     override fun buildPath(pathEnable: Path, pathDisable: Path) {
         pathDisable.reset()
         pathEnable.reset()
@@ -33,57 +34,54 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         var path: Path = if (enable) pathEnable else pathDisable
 
         mathConfig.steps.forEachIndexed { i, lvl ->
-            var horizontalStep = if (i % 2 == 0) -mathConfig.getStepX() else mathConfig.getStepX()
+            var horizontalStep = if (i % 2 == 0) -getStepX() else getStepX()
 
             when {
                 lvl.percents == 100 -> {
                     if (i == 0) {
                         path.rLineTo(0f, mathConfig.stepYFirst)
-                        path.rLineTo(-mathConfig.getStepXFirst(), 0f)
+                        path.rLineTo(-getStepXFirst(), 0f)
                         path.rLineTo(0f, mathConfig.stepY)
                     } else {
                         path.rLineTo(horizontalStep, 0f)
-                        path.rLineTo(0f, mathConfig.getStandardDyMove(i))
+                        path.rLineTo(0f, getStandardDyMove(i))
                     }
                 }
 
                 i == 0 -> {
                     path.rLineTo(0f, mathConfig.stepYFirst)
-                    val startPositionDisableStrokeX =
-                        mathConfig.getStartPositionDisableStrokeX(lvl, i)
+                    val startPosDisable = calculateStartPositionDisableStrokeX(lvl, i)
 
                     if (enable) {
-                        path.rLineTo(-startPositionDisableStrokeX, 0f)
+                        path.rLineTo(-startPosDisable, 0f)
                         path = pathDisable
                         enable = false
-                        path.moveTo(-startPositionDisableStrokeX, mathConfig.stepYFirst)
+                        path.moveTo(-startPosDisable, mathConfig.stepYFirst)
                     }
-                    path.rLineTo(-(mathConfig.getStepXFirst() - startPositionDisableStrokeX), 0f)
+                    path.rLineTo(-(getStepXFirst() - startPosDisable), 0f)
                     path.rLineTo(0f, mathConfig.stepY)
                 }
 
                 enable -> {
-                    val startPositionDisableStrokeX =
-                        mathConfig.getStartPositionDisableStrokeX(lvl, i)
+                    val startPosDisable = calculateStartPositionDisableStrokeX(lvl, i)
 
-                    horizontalStep =
-                        if (i % 2 == 0) -mathConfig.getStepX() else mathConfig.getStepX()
+                    horizontalStep = if (i % 2 == 0) -getStepX() else getStepX()
                     val finishPositionLineXEnable =
-                        horizontalStep / abs(horizontalStep) * startPositionDisableStrokeX
+                        horizontalStep / abs(horizontalStep) * startPosDisable
 
                     path.rLineTo(finishPositionLineXEnable, 0f)
                     path = pathDisable
                     enable = false
 
                     val startPositionLineYDisable = mathConfig.stepYFirst + mathConfig.stepY * i
-                    val startPositionLineXDisable = mathConfig.getHorizontalOffset(i)
+                    val startPositionLineXDisable = calculateHorizontalOffset(i)
 
                     path.moveTo(startPositionLineXDisable, startPositionLineYDisable)
 
-                    val finishPositionLineYDisable = mathConfig.getStandardDyMove(i)
+                    val finishPositionLineYDisable = getStandardDyMove(i)
                     val finishPositionLineXDisable =
-                        if (i % 2 == 0) -(mathConfig.getStepX() - startPositionDisableStrokeX)
-                        else mathConfig.getStepX() - startPositionDisableStrokeX
+                        if (i % 2 == 0) -(getStepX() - startPosDisable)
+                        else getStepX() - startPosDisable
 
                     path.rLineTo(finishPositionLineXDisable, 0f)
                     path.rLineTo(0f, finishPositionLineYDisable)
@@ -91,51 +89,109 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
 
                 else -> {
                     path.rLineTo(horizontalStep, 0f)
-                    path.rLineTo(0f, mathConfig.getStandardDyMove(i))
+                    path.rLineTo(0f, getStandardDyMove(i))
                 }
             }
         }
     }
 
-    override fun getStartPosition(): Float {
-        return mathConfig.getStartPosition()
-    }
+    override fun getStartPosition(): Float = startPositionX
 
     override fun setMeasuredWidth(measuredWidth: Int) {
-        mathConfig.setMeasuredWidth(measuredWidth)
+        this.measuredWidth = measuredWidth
+        startPositionX = when (mathConfig.startPosition) {
+            TimelineMathConfig.StartPosition.START -> mathConfig.marginHorizontalStroke
+            TimelineMathConfig.StartPosition.CENTER -> measuredWidth / 2f
+            TimelineMathConfig.StartPosition.END -> measuredWidth.toFloat() - mathConfig.marginHorizontalStroke
+        }
     }
-    override fun getHorizontalIconOffset(i: Int): Float {
-        return mathConfig.getHorizontalIconOffset(i)
-    }
-    override fun getVerticalOffset(i: Int): Float {
-        return mathConfig.getVerticalOffset(i)
-    }
+
+    override fun getHorizontalIconOffset(i: Int): Float = calculateHorizontalIconOffset(i)
+
+    override fun getVerticalOffset(i: Int): Float =
+        (mathConfig.stepY * i) + mathConfig.marginTopProgressIcon
 
     override fun getSteps(): List<TimelineStep> = mathConfig.steps
 
-    override fun getMeasuredHeight(): Int {
-        return mathConfig.getMeasuredHeight()
+    override fun getMeasuredHeight(): Int =
+        ((mathConfig.stepY * mathConfig.steps.size) +
+            mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
+
+    override fun getLeftCoordinates(lvl: TimelineStep): Float =
+        if (lvl.count == 0) -mathConfig.sizeIconProgress / 2f
+        else -startPositionDisableStrokeX - mathConfig.sizeIconProgress / 2f
+
+    override fun getTopCoordinates(lvl: TimelineStep): Float =
+        if (lvl.count == 0) -mathConfig.sizeIconProgress / 2f
+        else mathConfig.stepYFirst - mathConfig.sizeIconProgress / 2f
+
+    override fun getIconXCoordinates(align: Paint.Align): Float =
+        calculateIconXCoordinates(align)
+
+    override fun getTitleXCoordinates(align: Paint.Align): Float =
+        calculateTitleXCoordinates(align)
+
+    override fun getIconYCoordinates(i: Int): Float =
+        calculateTitleYCoordinates(i) - (mathConfig.stepY - mathConfig.sizeImageLvl) / 2
+
+    override fun getTitleYCoordinates(i: Int): Float = calculateTitleYCoordinates(i)
+
+    override fun getDescriptionYCoordinates(i: Int): Float =
+        calculateTitleYCoordinates(i) + mathConfig.marginTopDescription
+
+    // --- Private helpers ---
+
+    private fun getStandardDyMove(i: Int): Float =
+        if (i == mathConfig.steps.size - 1) mathConfig.stepY / 2 else mathConfig.stepY
+
+    private fun calculateTitleYCoordinates(i: Int): Float =
+        (mathConfig.stepY * i) + mathConfig.marginTopTitle
+
+    private fun calculateStartPositionDisableStrokeX(lvl: TimelineStep, i: Int): Float {
+        val startPosition =
+            if (i == 0) getStepXFirst() / 100 * lvl.percents else getStepX() / 100 * lvl.percents
+        startPositionDisableStrokeX = startPosition
+        return startPosition
     }
 
-    override fun getLeftCoordinates(lvl: TimelineStep): Float {
-        return mathConfig.getLeftCoordinates(lvl)
-    }
-    override fun getTopCoordinates(lvl: TimelineStep): Float {
-        return mathConfig.getTopCoordinates(lvl)
-    }
-    override fun getIconXCoordinates(align: Paint.Align): Float {
-        return mathConfig.getIconXCoordinates(align)
-    }
-    override fun getTitleXCoordinates(align: Paint.Align): Float {
-        return mathConfig.getTitleXCoordinates(align)
+    private fun getStepX(): Float =
+        (measuredWidth - mathConfig.marginHorizontalStroke * 2)
+
+    private fun getStepXFirst(): Float = startPositionX - mathConfig.marginHorizontalStroke
+
+    private fun calculateHorizontalOffset(i: Int): Float {
+        return if (i % 2 == 0)
+            when (mathConfig.startPosition) {
+                TimelineMathConfig.StartPosition.START -> -startPositionDisableStrokeX + getStepX()
+                TimelineMathConfig.StartPosition.CENTER -> -startPositionDisableStrokeX + startPositionX - mathConfig.marginHorizontalStroke
+                TimelineMathConfig.StartPosition.END -> -startPositionDisableStrokeX
+            }
+        else startPositionDisableStrokeX - startPositionX + mathConfig.marginHorizontalStroke
     }
 
-    override fun getIconYCoordinates(i: Int): Float = mathConfig.getIconYCoordinates(i)
-
-    override fun getTitleYCoordinates(i: Int): Float {
-        return mathConfig.getTitleYCoordinates(i)
+    private fun calculateHorizontalIconOffset(i: Int): Float {
+        return calculateHorizontalOffset(i) - mathConfig.sizeIconProgress / 2f
     }
-    override fun getDescriptionYCoordinates(i: Int): Float {
-        return mathConfig.getDescriptionYCoordinates(i)
+
+    private fun calculateIconXCoordinates(align: Paint.Align): Float {
+        val stepX = getStepX()
+        return when (align) {
+            Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalImage)
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
+                startPositionX - mathConfig.marginHorizontalImage - mathConfig.sizeImageLvl
+            else -startPositionX + stepX + mathConfig.marginHorizontalImage
+        }
+    }
+
+    private fun calculateTitleXCoordinates(align: Paint.Align): Float {
+        val stepX = getStepX()
+        return when (align) {
+            Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalText)
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
+                startPositionX - mathConfig.marginHorizontalText
+            else -startPositionX + stepX
+        }
     }
 }
