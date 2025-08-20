@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.LinearTimelineMath
-import com.dmitrypokrasov.timelineview.domain.LinearTimelineUi
+import com.dmitrypokrasov.timelineview.domain.SnakeTimelineMath
+import com.dmitrypokrasov.timelineview.domain.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.ui.TimelineView
@@ -79,8 +79,8 @@ class MainActivity : AppCompatActivity() {
             colorProgress = ContextCompat.getColor(baseContext, R.color.teal_200),
         )
 
-        val mathEngine = LinearTimelineMath(configMath, LinearTimelineMath.Orientation.VERTICAL)
-        val uiRenderer = LinearTimelineUi(configUi)
+        val mathEngine = SnakeTimelineMath(configMath)
+        val uiRenderer = SnakeTimelineUi(configUi)
 
         timeLineView.setMathEngine(mathEngine)
         timeLineView.setUiRenderer(uiRenderer)
