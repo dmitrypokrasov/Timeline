@@ -6,17 +6,26 @@ import com.dmitrypokrasov.timelineview.data.TimelineStep
 import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
 
 /**
- * Простая реализация [TimelineMathEngine], строящая путь без
- * чередования сторон. Линия может располагаться вертикально или
- * горизонтально в зависимости от [orientation].
+ * Простая реализация [TimelineMathEngine], строящая путь без чередования сторон.
+ * Линия может располагаться вертикально или горизонтально в зависимости от
+ * [orientation]. Все расчёты перенесены из конфигурации в этот класс.
  */
 class LinearTimelineMath(
-    var mathConfig: TimelineMathConfig,
+    private var mathConfig: TimelineMathConfig,
     val orientation: Orientation = Orientation.VERTICAL,
 ) : TimelineMathEngine {
 
     /** Возможные направления построения линии. */
     enum class Orientation { VERTICAL, HORIZONTAL }
+
+    private var startPositionX = 0f
+    private var measuredWidth = 0
+
+    override fun setConfig(config: TimelineMathConfig) {
+        mathConfig = config
+    }
+
+    override fun getConfig(): TimelineMathConfig = mathConfig
 
     override fun replaceSteps(steps: List<TimelineStep>) {
         mathConfig = mathConfig.copy(steps = steps)
@@ -35,9 +44,11 @@ class LinearTimelineMath(
 
         mathConfig.steps.forEachIndexed { index, step ->
             val segment = if (orientation == Orientation.VERTICAL) {
-                if (index == 0) mathConfig.stepYFirst else mathConfig.getStandardDyMove(index)
+                if (index == 0) mathConfig.stepYFirst
+                else if (index == mathConfig.steps.size - 1) mathConfig.stepY / 2
+                else mathConfig.stepY
             } else {
-                if (index == 0) mathConfig.getStepXFirst() else mathConfig.getStepX()
+                if (index == 0) startPositionX - mathConfig.marginHorizontalStroke else getStepX()
             }
 
             if (drawEnable) {
@@ -71,46 +82,78 @@ class LinearTimelineMath(
         }
     }
 
-    override fun getStartPosition(): Float = mathConfig.getStartPosition()
+    override fun getStartPosition(): Float = startPositionX
 
     override fun setMeasuredWidth(measuredWidth: Int) {
-        mathConfig.setMeasuredWidth(measuredWidth)
+        this.measuredWidth = measuredWidth
+        startPositionX = when (mathConfig.startPosition) {
+            TimelineMathConfig.StartPosition.START -> mathConfig.marginHorizontalStroke
+            TimelineMathConfig.StartPosition.CENTER -> measuredWidth / 2f
+            TimelineMathConfig.StartPosition.END -> measuredWidth.toFloat() - mathConfig.marginHorizontalStroke
+        }
     }
 
     override fun getHorizontalIconOffset(i: Int): Float {
         return if (orientation == Orientation.VERTICAL) -mathConfig.sizeIconProgress / 2f
-        else mathConfig.getVerticalOffset(i)
+        else calculateVerticalOffset(i)
     }
 
     override fun getVerticalOffset(i: Int): Float {
-        return if (orientation == Orientation.VERTICAL) mathConfig.getVerticalOffset(i)
+        return if (orientation == Orientation.VERTICAL) calculateVerticalOffset(i)
         else -mathConfig.sizeIconProgress / 2f
     }
 
-    override fun getMeasuredHeight(): Int = mathConfig.getMeasuredHeight()
+    override fun getSteps(): List<TimelineStep> = mathConfig.steps
 
-    override fun getLeftCoordinates(lvl: TimelineStep): Float {
-        return -mathConfig.sizeIconProgress / 2f
-    }
+    override fun getMeasuredHeight(): Int =
+        ((mathConfig.stepY * mathConfig.steps.size) +
+            mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
 
-    override fun getTopCoordinates(lvl: TimelineStep): Float {
-        return -mathConfig.sizeIconProgress / 2f
-    }
+    override fun getLeftCoordinates(lvl: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
+
+    override fun getTopCoordinates(lvl: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
 
     override fun getTitleXCoordinates(align: Paint.Align): Float {
-        return mathConfig.getTitleXCoordinates(align)
+        val stepX = getStepX()
+        return when (align) {
+            Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalText)
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
+                startPositionX - mathConfig.marginHorizontalText
+            else -startPositionX + stepX
+        }
     }
 
     override fun getIconXCoordinates(align: Paint.Align): Float {
-        return mathConfig.getIconXCoordinates(align)
+        val stepX = getStepX()
+        return when (align) {
+            Paint.Align.LEFT -> -(startPositionX - mathConfig.marginHorizontalImage)
+            Paint.Align.CENTER -> startPositionX
+            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
+                startPositionX - mathConfig.marginHorizontalImage - mathConfig.sizeImageLvl
+            else -startPositionX + stepX + mathConfig.marginHorizontalImage
+        }
     }
 
-    override fun getTitleYCoordinates(i: Int): Float {
-        return mathConfig.getTitleYCoordinates(i)
+    override fun getIconYCoordinates(i: Int): Float {
+        return if (orientation == Orientation.VERTICAL)
+            calculateTitleYCoordinates(i) - (mathConfig.stepY - mathConfig.sizeImageLvl) / 2
+        else -mathConfig.sizeIconProgress / 2f
     }
 
-    override fun getDescriptionYCoordinates(i: Int): Float {
-        return mathConfig.getDescriptionYCoordinates(i)
-    }
+    override fun getTitleYCoordinates(i: Int): Float = calculateTitleYCoordinates(i)
+
+    override fun getDescriptionYCoordinates(i: Int): Float =
+        calculateTitleYCoordinates(i) + mathConfig.marginTopDescription
+
+    // --- Private helpers ---
+
+    private fun getStepX(): Float =
+        (measuredWidth - mathConfig.marginHorizontalStroke * 2)
+
+    private fun calculateVerticalOffset(i: Int): Float =
+        (mathConfig.stepY * i) + mathConfig.marginTopProgressIcon
+
+    private fun calculateTitleYCoordinates(i: Int): Float =
+        (mathConfig.stepY * i) + mathConfig.marginTopTitle
 }
-
