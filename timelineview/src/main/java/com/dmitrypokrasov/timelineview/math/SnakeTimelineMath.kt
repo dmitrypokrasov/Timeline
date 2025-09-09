@@ -1,9 +1,9 @@
-package com.dmitrypokrasov.timelineview.domain
+package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import kotlin.math.abs
 
 /**
@@ -33,11 +33,11 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         var enable = mathConfig.steps.isNotEmpty() && mathConfig.steps[0].count != 0
         var path: Path = if (enable) pathEnable else pathDisable
 
-        mathConfig.steps.forEachIndexed { i, lvl ->
+        mathConfig.steps.forEachIndexed { i, step ->
             var horizontalStep = if (i % 2 == 0) -getStepX() else getStepX()
 
             when {
-                lvl.percents == 100 -> {
+                step.percents == 100 -> {
                     if (i == 0) {
                         path.rLineTo(0f, mathConfig.stepYFirst)
                         path.rLineTo(-getStepXFirst(), 0f)
@@ -50,7 +50,7 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
 
                 i == 0 -> {
                     path.rLineTo(0f, mathConfig.stepYFirst)
-                    val startPosDisable = calculateStartPositionDisableStrokeX(lvl, i)
+                    val startPosDisable = calculateStartPositionDisableStrokeX(step, i)
 
                     if (enable) {
                         path.rLineTo(-startPosDisable, 0f)
@@ -63,7 +63,7 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
                 }
 
                 enable -> {
-                    val startPosDisable = calculateStartPositionDisableStrokeX(lvl, i)
+                    val startPosDisable = calculateStartPositionDisableStrokeX(step, i)
 
                     horizontalStep = if (i % 2 == 0) -getStepX() else getStepX()
                     val finishPositionLineXEnable =
@@ -118,12 +118,12 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         ((mathConfig.stepY * mathConfig.steps.size) +
             mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
 
-    override fun getLeftCoordinates(lvl: TimelineStep): Float =
-        if (lvl.count == 0) -mathConfig.sizeIconProgress / 2f
+    override fun getLeftCoordinates(step: TimelineStep): Float =
+        if (step.count == 0) -mathConfig.sizeIconProgress / 2f
         else -startPositionDisableStrokeX - mathConfig.sizeIconProgress / 2f
 
-    override fun getTopCoordinates(lvl: TimelineStep): Float =
-        if (lvl.count == 0) -mathConfig.sizeIconProgress / 2f
+    override fun getTopCoordinates(step: TimelineStep): Float =
+        if (step.count == 0) -mathConfig.sizeIconProgress / 2f
         else mathConfig.stepYFirst - mathConfig.sizeIconProgress / 2f
 
     override fun getIconXCoordinates(align: Paint.Align): Float {
@@ -164,9 +164,9 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
     private fun calculateTitleYCoordinates(i: Int): Float =
         (mathConfig.stepY * i) + mathConfig.marginTopTitle
 
-    private fun calculateStartPositionDisableStrokeX(lvl: TimelineStep, i: Int): Float {
+    private fun calculateStartPositionDisableStrokeX(step: TimelineStep, i: Int): Float {
         val startPosition =
-            if (i == 0) getStepXFirst() / 100 * lvl.percents else getStepX() / 100 * lvl.percents
+            if (i == 0) getStepXFirst() / 100 * step.percents else getStepX() / 100 * step.percents
         startPositionDisableStrokeX = startPosition
         return startPosition
     }

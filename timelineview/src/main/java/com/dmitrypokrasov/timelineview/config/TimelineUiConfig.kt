@@ -1,8 +1,8 @@
-package com.dmitrypokrasov.timelineview.domain.data
+package com.dmitrypokrasov.timelineview.config
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import com.dmitrypokrasov.timelineview.data.TimelineConstants
+import com.dmitrypokrasov.timelineview.model.TimelineConstants
 
 /**
  * Конфигурация визуального оформления элементов таймлайна.
@@ -19,7 +19,7 @@ import com.dmitrypokrasov.timelineview.data.TimelineConstants
  * @property sizeStroke толщина линии
  *
  * Содержит только значения, используемые рендерерами. Вся логика подготовки
- * вынесена в реализации [com.dmitrypokrasov.timelineview.domain.TimelineUiRenderer].
+ * вынесена в реализации [com.dmitrypokrasov.timelineview.render.TimelineUiRenderer].
  */
 data class TimelineUiConfig(
     @DrawableRes val iconDisableLvl: Int = 0,

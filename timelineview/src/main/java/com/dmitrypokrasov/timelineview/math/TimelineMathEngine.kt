@@ -1,9 +1,9 @@
-package com.dmitrypokrasov.timelineview.domain
+package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 
 /**
  * Математический движок временной шкалы.
@@ -63,16 +63,16 @@ interface TimelineMathEngine {
     /**
      * Вычисляет левую координату иконки для указанного шага.
      *
-     * @param lvl шаг временной шкалы
+     * @param step шаг временной шкалы
      */
-    fun getLeftCoordinates(lvl: TimelineStep): Float
+    fun getLeftCoordinates(step: TimelineStep): Float
 
     /**
      * Вычисляет верхнюю координату иконки для указанного шага.
      *
-     * @param lvl шаг временной шкалы
+     * @param step шаг временной шкалы
      */
-    fun getTopCoordinates(lvl: TimelineStep): Float
+    fun getTopCoordinates(step: TimelineStep): Float
 
     /** Возвращает Y-координату иконки шага [i]. */
     fun getIconYCoordinates(i: Int): Float

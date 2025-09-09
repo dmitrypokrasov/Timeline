@@ -6,13 +6,12 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.SnakeTimelineMath
-import com.dmitrypokrasov.timelineview.domain.SnakeTimelineUi
-import com.dmitrypokrasov.timelineview.domain.TimelineMathEngine
-import com.dmitrypokrasov.timelineview.domain.TimelineUiRenderer
-import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.math.SnakeTimelineMath
+import com.dmitrypokrasov.timelineview.render.SnakeTimelineUi
+import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
@@ -52,9 +51,9 @@ class TimelineView @JvmOverloads constructor(
     private var currentSide: Paint.Align = Paint.Align.RIGHT
 
     init {
-        val (parsedMathConfig, parsedUiConfig) = ConfigParser(context).parse(attrs)
-        timelineMath = SnakeTimelineMath(parsedMathConfig)
-        timelineUi = SnakeTimelineUi(parsedUiConfig)
+        val config = TimelineConfigParser(context).parse(attrs)
+        timelineMath = SnakeTimelineMath(config.math)
+        timelineUi = SnakeTimelineUi(config.ui)
 
         initTools()
     }
@@ -88,43 +87,43 @@ class TimelineView @JvmOverloads constructor(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         timelineMath.setMeasuredWidth(measuredWidth)
-        timelineMath.buildPath(timelineUi.getPathEnable(), timelineUi.getPathDisable())
+        timelineMath.buildPath(timelineUi.getCompletedPath(), timelineUi.getRemainingPath())
         setMeasuredDimension(measuredWidth, timelineMath.getMeasuredHeight())
     }
 
     override fun onDraw(canvas: Canvas) {
-        timelineUi.resetFromPaintTools()
+        timelineUi.prepareStrokePaint()
 
         canvas.translate(timelineMath.getStartPosition(), 0f)
-        timelineUi.drawProgressPath(canvas)
-        timelineUi.drawDisablePath(canvas)
+        timelineUi.drawCompletedPath(canvas)
+        timelineUi.drawRemainingPath(canvas)
 
         // Отрисовка шагов: иконки, заголовки, описания
-        timelineUi.resetFromTextTools()
-        timelineUi.resetFromIconTools()
+        timelineUi.prepareTextPaint()
+        timelineUi.prepareIconPaint()
 
         currentSide = Paint.Align.RIGHT
         var printProgressIcon = false
         var align = Paint.Align.LEFT
 
-        timelineMath.getSteps().forEachIndexed { i, lvl ->
+        timelineMath.getSteps().forEachIndexed { i, step ->
             if (i == 0) {
-                timelineUi.printTitle(
+                timelineUi.drawTitle(
                     canvas,
-                    resources.getString(lvl.title),
+                    resources.getString(step.title),
                     timelineMath.getTitleXCoordinates(align),
                     timelineMath.getTitleYCoordinates(i),
                     align
                 )
-                timelineUi.printDescription(
+                timelineUi.drawDescription(
                     canvas,
-                    resources.getString(lvl.description),
+                    resources.getString(step.description),
                     timelineMath.getTitleXCoordinates(align),
                     timelineMath.getDescriptionYCoordinates(i),
                     align
                 )
-                timelineUi.printIcon(
-                    lvl,
+                timelineUi.drawStepIcon(
+                    step,
                     canvas,
                     align,
                     context,
@@ -132,17 +131,17 @@ class TimelineView @JvmOverloads constructor(
                     timelineMath.getIconYCoordinates(i)
                 )
 
-                if (lvl.percents != 100) {
-                    timelineUi.drawProgressBitmap(
+                if (step.percents != 100) {
+                    timelineUi.drawProgressIcon(
                         canvas,
-                        timelineMath.getLeftCoordinates(lvl),
-                        timelineMath.getTopCoordinates(lvl)
+                        timelineMath.getLeftCoordinates(step),
+                        timelineMath.getTopCoordinates(step)
                     )
                     printProgressIcon = true
                 }
             } else {
-                if (lvl.percents != 100 && !printProgressIcon) {
-                    timelineUi.drawProgressBitmap(
+                if (step.percents != 100 && !printProgressIcon) {
+                    timelineUi.drawProgressIcon(
                         canvas,
                         timelineMath.getHorizontalIconOffset(i),
                         timelineMath.getVerticalOffset(i)
@@ -152,22 +151,22 @@ class TimelineView @JvmOverloads constructor(
 
                 align = if (align == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
 
-                timelineUi.printTitle(
+                timelineUi.drawTitle(
                     canvas,
-                    resources.getString(lvl.title),
+                    resources.getString(step.title),
                     timelineMath.getTitleXCoordinates(align),
                     timelineMath.getTitleYCoordinates(i),
                     align
                 )
-                timelineUi.printDescription(
+                timelineUi.drawDescription(
                     canvas,
-                    resources.getString(lvl.description),
+                    resources.getString(step.description),
                     timelineMath.getTitleXCoordinates(align),
                     timelineMath.getDescriptionYCoordinates(i),
                     align
                 )
-                timelineUi.printIcon(
-                    lvl,
+                timelineUi.drawStepIcon(
+                    step,
                     canvas,
                     align,
                     context,

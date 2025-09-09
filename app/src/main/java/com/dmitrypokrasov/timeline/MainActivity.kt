@@ -3,11 +3,11 @@ package com.dmitrypokrasov.timeline
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.SnakeTimelineMath
-import com.dmitrypokrasov.timelineview.domain.SnakeTimelineUi
-import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.math.SnakeTimelineMath
+import com.dmitrypokrasov.timelineview.render.SnakeTimelineUi
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.ui.TimelineView
 
 class MainActivity : AppCompatActivity() {

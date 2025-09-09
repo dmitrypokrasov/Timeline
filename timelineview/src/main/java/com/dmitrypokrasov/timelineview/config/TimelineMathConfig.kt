@@ -1,7 +1,7 @@
-package com.dmitrypokrasov.timelineview.domain.data
+package com.dmitrypokrasov.timelineview.config
 
-import com.dmitrypokrasov.timelineview.data.TimelineConstants
-import com.dmitrypokrasov.timelineview.data.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineConstants
+import com.dmitrypokrasov.timelineview.model.TimelineStep
 
 /**
  * Конфигурация параметров позиционирования и размеров таймлайна.
@@ -20,7 +20,7 @@ import com.dmitrypokrasov.timelineview.data.TimelineStep
  * @property sizeImageLvl размер иконок шагов
  *
  * Хранит только данные без дополнительных вычислений. Вся логика расчётов
- * вынесена в реализации [com.dmitrypokrasov.timelineview.domain.TimelineMathEngine].
+ * вынесена в реализации [com.dmitrypokrasov.timelineview.math.TimelineMathEngine].
  */
 data class TimelineMathConfig(
     val startPosition: StartPosition = StartPosition.CENTER,
