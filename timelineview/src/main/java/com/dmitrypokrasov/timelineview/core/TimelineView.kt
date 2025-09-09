@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.linear.LinearMathConfig
 import com.dmitrypokrasov.timelineview.snake.SnakeMathConfig
 import com.dmitrypokrasov.timelineview.snake.SnakeTimelineMath
@@ -15,7 +16,7 @@ import com.dmitrypokrasov.timelineview.snake.SnakeUiConfig
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
  *
- * Поддерживает настройку через XML и код:
+ * Конфигурация выполняется программно и включает:
  * - визуальные параметры (цвета, размеры, иконки)
  * - математические параметры (отступы, шаги, смещения)
  * - автоматическую отрисовку линий прогресса и иконок
@@ -28,7 +29,7 @@ import com.dmitrypokrasov.timelineview.snake.SnakeUiConfig
  *
  * Использует [SnakeTimelineMath] как движок для всех вычислений и генерации координат.
  *
- * @constructor Создаёт [TimelineView], читая параметры из XML или по умолчанию.
+ * @constructor Создаёт [TimelineView] с настройками по умолчанию.
  */
 class TimelineView @JvmOverloads constructor(
     context: Context,
@@ -50,9 +51,15 @@ class TimelineView @JvmOverloads constructor(
     private var currentSide: Paint.Align = Paint.Align.RIGHT
 
     init {
-        val (mathCfg, uiCfg) = TimelineConfigParser(context).parse(attrs)
-        timelineMath = SnakeTimelineMath(mathCfg as SnakeMathConfig)
-        timelineUi = SnakeTimelineUi(uiCfg as SnakeUiConfig)
+        val mathCfg = SnakeMathConfig()
+        val uiCfg = SnakeUiConfig(
+            colorProgress = ContextCompat.getColor(context, TimelineConstants.DEFAULT_PROGRESS_COLOR),
+            colorStroke = ContextCompat.getColor(context, TimelineConstants.DEFAULT_STROKE_COLOR),
+            colorTitle = ContextCompat.getColor(context, TimelineConstants.DEFAULT_TITLE_COLOR),
+            colorDescription = ContextCompat.getColor(context, TimelineConstants.DEFAULT_DESCRIPTION_COLOR),
+        )
+        timelineMath = SnakeTimelineMath(mathCfg)
+        timelineUi = SnakeTimelineUi(uiCfg)
 
         initTools()
     }

@@ -20,35 +20,8 @@ dependencies {
 <com.dmitrypokrasov.timelineview.core.TimelineView
     android:id="@+id/timeline"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:timeline_progress_icon="@drawable/ic_progress_time_line"
-    app:timeline_disable_icon="@drawable/ic_tobacco_unactive" />
+    android:layout_height="wrap_content" />
 ```
-
-#### XML attributes
-
-| Attribute | Description |
-|----------|-------------|
-| `app:timeline_progress_color` | Color of completed part of the stroke. |
-| `app:timeline_stroke_color` | Color of the remaining part of the stroke. |
-| `app:timeline_title_color` | Color of step titles. |
-| `app:timeline_description_color` | Color of step descriptions. |
-| `app:timeline_progress_icon` | Drawable for the current progress icon. |
-| `app:timeline_disable_icon` | Drawable for inactive step icons. |
-| `app:timeline_stroke_size` | Thickness of the stroke. |
-| `app:timeline_title_size` | Text size of step titles. |
-| `app:timeline_description_size` | Text size of step descriptions. |
-| `app:timeline_radius_size` | Corner radius of the stroke path. |
-| `app:timeline_step_y_size` | Vertical distance between steps. |
-| `app:timeline_step_y_first_size` | Top offset before the first step. |
-| `app:timeline_margin_top_title` | Top margin for titles. |
-| `app:timeline_margin_top_description` | Top margin for descriptions. |
-| `app:timeline_margin_top_progress_icon` | Top margin for progress icon. |
-| `app:timeline_margin_horizontal_image` | Horizontal margin for step icons. |
-| `app:timeline_margin_horizontal_text` | Horizontal margin for text. |
-| `app:timeline_margin_horizontal_stroke` | Horizontal margin for the vertical stroke. |
-| `app:timeline_image_lvl_size` | Size of step icons. |
-| `app:timeline_icon_progress_size` | Size of the progress icon. |
 
 #### In code
 You can also provide custom math and UI engines. The example below shows a linear timeline in vertical orientation.
