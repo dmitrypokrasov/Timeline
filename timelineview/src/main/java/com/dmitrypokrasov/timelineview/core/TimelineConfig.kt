@@ -1,4 +1,4 @@
-package com.dmitrypokrasov.timelineview.config
+package com.dmitrypokrasov.timelineview.core
 
 /**
  * Base configuration combining math and UI settings. Library users may

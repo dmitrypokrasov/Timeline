@@ -2,8 +2,8 @@ package com.dmitrypokrasov.timelineview.linear
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
-import com.dmitrypokrasov.timelineview.model.TimelineConstants
+import com.dmitrypokrasov.timelineview.core.TimelineConstants
+import com.dmitrypokrasov.timelineview.core.TimelineUiConfig
 
 /**
  * Concrete UI configuration for linear strategy.

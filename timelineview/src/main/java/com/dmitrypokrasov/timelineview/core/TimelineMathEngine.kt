@@ -1,9 +1,7 @@
-package com.dmitrypokrasov.timelineview.math
+package com.dmitrypokrasov.timelineview.core
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStep
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 
 /**
  * Математический движок временной шкалы.

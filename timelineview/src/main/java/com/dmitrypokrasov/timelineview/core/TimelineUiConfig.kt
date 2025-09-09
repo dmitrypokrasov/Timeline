@@ -1,4 +1,4 @@
-package com.dmitrypokrasov.timelineview.config
+package com.dmitrypokrasov.timelineview.core
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes

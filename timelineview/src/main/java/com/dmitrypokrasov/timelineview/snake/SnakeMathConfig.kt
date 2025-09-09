@@ -1,8 +1,8 @@
 package com.dmitrypokrasov.timelineview.snake
 
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.model.TimelineConstants
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.core.TimelineConstants
+import com.dmitrypokrasov.timelineview.core.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.core.TimelineStep
 
 /**
  * Concrete math configuration for snake strategy.

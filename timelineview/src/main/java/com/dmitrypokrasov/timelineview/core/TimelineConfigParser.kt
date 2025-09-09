@@ -1,29 +1,24 @@
-package com.dmitrypokrasov.timelineview.config
+package com.dmitrypokrasov.timelineview.core
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.R
-import com.dmitrypokrasov.timelineview.model.TimelineConstants
-import com.dmitrypokrasov.timelineview.snake.SnakeConfig
+import com.dmitrypokrasov.timelineview.core.TimelineConstants
 import com.dmitrypokrasov.timelineview.snake.SnakeMathConfig
 import com.dmitrypokrasov.timelineview.snake.SnakeUiConfig
 
 /**
- * Utility class for parsing view attributes into a [TimelineConfig].
+ * Utility class for parsing view attributes into math and UI configs.
  */
 class TimelineConfigParser(private val context: Context) {
 
     @SuppressLint("CustomViewStyleable")
-    fun parse(attrs: AttributeSet?): TimelineConfig {
+    fun parse(attrs: AttributeSet?): Pair<TimelineMathConfig, TimelineUiConfig> {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
 
         val mathConfig = SnakeMathConfig(
-            startPosition = TimelineMathConfig.StartPosition.entries[typedArray.getInt(
-                R.styleable.TimelineView_timeline_start_position,
-                TimelineMathConfig.StartPosition.CENTER.ordinal
-            )],
             stepY = typedArray.getDimension(
                 R.styleable.TimelineView_timeline_step_y_size,
                 TimelineConstants.DEFAULT_STEP_Y_SIZE
@@ -111,7 +106,7 @@ class TimelineConfigParser(private val context: Context) {
 
         typedArray.recycle()
 
-        return SnakeConfig(mathConfig, uiConfig)
+        return mathConfig to uiConfig
     }
 }
 

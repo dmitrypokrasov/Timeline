@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="TimelineView">
-        <attr name="timeline_start_position" format="enum">
-            <enum name="START" value="0" />
-            <enum name="CENTER" value="1" />
-            <enum name="END" value="2" />
-        </attr>
         <attr name="timeline_progress_color" format="color" />
         <attr name="timeline_stroke_color" format="color" />
         <attr name="timeline_title_color" format="color" />

@@ -3,13 +3,13 @@ package com.dmitrypokrasov.timeline
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.dmitrypokrasov.timelineview.model.TimelineStep
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.core.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.core.TimelineStep
+import com.dmitrypokrasov.timelineview.core.TimelineView
 import com.dmitrypokrasov.timelineview.snake.SnakeMathConfig
 import com.dmitrypokrasov.timelineview.snake.SnakeTimelineMath
 import com.dmitrypokrasov.timelineview.snake.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.snake.SnakeUiConfig
-import com.dmitrypokrasov.timelineview.ui.TimelineView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

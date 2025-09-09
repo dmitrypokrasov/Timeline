@@ -13,10 +13,10 @@ import android.graphics.drawable.VectorDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
-import com.dmitrypokrasov.timelineview.model.TimelineStep
-import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.core.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.core.TimelineStep
+import com.dmitrypokrasov.timelineview.core.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.core.TimelineUiRenderer
 
 /**
  * Реализация [TimelineUiRenderer] для линейного таймлайна. Отрисовывает

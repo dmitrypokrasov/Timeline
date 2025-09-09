@@ -1,6 +1,4 @@
-package com.dmitrypokrasov.timelineview.config
-
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+package com.dmitrypokrasov.timelineview.core
 
 /**
  * Base interface describing math parameters required for timeline rendering.

@@ -2,9 +2,9 @@ package com.dmitrypokrasov.timelineview.snake
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.core.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.core.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.core.TimelineStep
 import kotlin.math.abs
 
 /**

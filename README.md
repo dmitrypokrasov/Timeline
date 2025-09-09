@@ -17,11 +17,10 @@ dependencies {
 #### In XML layout
 
 ```xml
-<com.dmitrypokrasov.timelineview.ui.TimelineView
+<com.dmitrypokrasov.timelineview.core.TimelineView
     android:id="@+id/timeline"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:timeline_start_position="CENTER"
     app:timeline_progress_icon="@drawable/ic_progress_time_line"
     app:timeline_disable_icon="@drawable/ic_tobacco_unactive" />
 ```
@@ -30,7 +29,6 @@ dependencies {
 
 | Attribute | Description |
 |----------|-------------|
-| `app:timeline_start_position` | Start position of the timeline (`START`, `CENTER`, `END`). |
 | `app:timeline_progress_color` | Color of completed part of the stroke. |
 | `app:timeline_stroke_color` | Color of the remaining part of the stroke. |
 | `app:timeline_title_color` | Color of step titles. |
@@ -57,13 +55,13 @@ You can also provide custom math and UI engines. The example below shows a linea
 
 ```kotlin
 import androidx.core.content.ContextCompat
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.core.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.core.TimelineStep
+import com.dmitrypokrasov.timelineview.core.TimelineView
 import com.dmitrypokrasov.timelineview.linear.LinearMathConfig
 import com.dmitrypokrasov.timelineview.linear.LinearTimelineMath
 import com.dmitrypokrasov.timelineview.linear.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.linear.LinearUiConfig
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.ui.TimelineView
 
 val timelineView = findViewById<TimelineView>(R.id.timeline)
 

@@ -1,12 +1,9 @@
-package com.dmitrypokrasov.timelineview.render
+package com.dmitrypokrasov.timelineview.core
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStep
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 
 /**
  * Интерфейс рендерера временной шкалы.

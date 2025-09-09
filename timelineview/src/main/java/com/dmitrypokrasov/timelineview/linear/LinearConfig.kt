@@ -1,8 +1,8 @@
 package com.dmitrypokrasov.timelineview.linear
 
-import com.dmitrypokrasov.timelineview.config.TimelineConfig
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.core.TimelineConfig
+import com.dmitrypokrasov.timelineview.core.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.core.TimelineUiConfig
 
 /**
  * Default configuration for linear timeline strategy.

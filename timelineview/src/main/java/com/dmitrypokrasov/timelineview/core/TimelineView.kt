@@ -1,4 +1,4 @@
-package com.dmitrypokrasov.timelineview.ui
+package com.dmitrypokrasov.timelineview.core
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,10 +6,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
-import com.dmitrypokrasov.timelineview.model.TimelineStep
-import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
-import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.linear.LinearMathConfig
 import com.dmitrypokrasov.timelineview.snake.SnakeMathConfig
 import com.dmitrypokrasov.timelineview.snake.SnakeTimelineMath
 import com.dmitrypokrasov.timelineview.snake.SnakeTimelineUi
@@ -53,9 +50,9 @@ class TimelineView @JvmOverloads constructor(
     private var currentSide: Paint.Align = Paint.Align.RIGHT
 
     init {
-        val config = TimelineConfigParser(context).parse(attrs)
-        timelineMath = SnakeTimelineMath(config.math as SnakeMathConfig)
-        timelineUi = SnakeTimelineUi(config.ui as SnakeUiConfig)
+        val (mathCfg, uiCfg) = TimelineConfigParser(context).parse(attrs)
+        timelineMath = SnakeTimelineMath(mathCfg as SnakeMathConfig)
+        timelineUi = SnakeTimelineUi(uiCfg as SnakeUiConfig)
 
         initTools()
     }
@@ -83,6 +80,17 @@ class TimelineView @JvmOverloads constructor(
     fun setUiRenderer(renderer: TimelineUiRenderer) {
         timelineUi = renderer
         initTools()
+        requestLayout()
+    }
+
+    /**
+     * Programmatically sets the start position of the timeline.
+     */
+    fun setStartPosition(position: TimelineMathConfig.StartPosition) {
+        when (val cfg = timelineMath.getConfig()) {
+            is SnakeMathConfig -> timelineMath.setConfig(cfg.copy(startPosition = position))
+            is LinearMathConfig -> timelineMath.setConfig(cfg.copy(startPosition = position))
+        }
         requestLayout()
     }
 
