@@ -2,34 +2,20 @@ package com.dmitrypokrasov.timelineview.config
 
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
-import com.dmitrypokrasov.timelineview.model.TimelineConstants
 
 /**
- * Конфигурация визуального оформления элементов таймлайна.
- *
- * @property iconDisableLvl иконка для заблокированных шагов
- * @property iconProgress иконка текущего прогресса
- * @property colorProgress цвет пройденной части линии
- * @property colorStroke цвет оставшейся части линии
- * @property colorTitle цвет заголовков шагов
- * @property colorDescription цвет описаний шагов
- * @property sizeDescription размер текста описания
- * @property sizeTitle размер текста заголовка
- * @property radius радиус скругления линии
- * @property sizeStroke толщина линии
- *
- * Содержит только значения, используемые рендерерами. Вся логика подготовки
- * вынесена в реализации [com.dmitrypokrasov.timelineview.render.TimelineUiRenderer].
+ * Base interface describing visual parameters of timeline rendering.
+ * Only minimal properties required for drawing are exposed.
  */
-data class TimelineUiConfig(
-    @DrawableRes val iconDisableLvl: Int = 0,
-    @DrawableRes val iconProgress: Int = 0,
-    @ColorInt var colorProgress: Int = 0,
-    @ColorInt var colorStroke: Int = 0,
-    @ColorInt var colorTitle: Int = 0,
-    @ColorInt var colorDescription: Int = 0,
-    val sizeDescription: Float = TimelineConstants.DEFAULT_DESCRIPTION_SIZE,
-    val sizeTitle: Float = TimelineConstants.DEFAULT_TITLE_SIZE,
-    val radius: Float = TimelineConstants.DEFAULT_RADIUS_SIZE,
-    val sizeStroke: Float = TimelineConstants.DEFAULT_STROKE_SIZE
-)
+interface TimelineUiConfig {
+    @get:DrawableRes val iconDisableLvl: Int
+    @get:DrawableRes val iconProgress: Int
+    @get:ColorInt var colorProgress: Int
+    @get:ColorInt var colorStroke: Int
+    @get:ColorInt var colorTitle: Int
+    @get:ColorInt var colorDescription: Int
+    val sizeDescription: Float
+    val sizeTitle: Float
+    val radius: Float
+    val sizeStroke: Float
+}

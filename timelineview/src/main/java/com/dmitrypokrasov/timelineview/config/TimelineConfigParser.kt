@@ -6,6 +6,9 @@ import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.model.TimelineConstants
+import com.dmitrypokrasov.timelineview.snake.SnakeConfig
+import com.dmitrypokrasov.timelineview.snake.SnakeMathConfig
+import com.dmitrypokrasov.timelineview.snake.SnakeUiConfig
 
 /**
  * Utility class for parsing view attributes into a [TimelineConfig].
@@ -16,7 +19,7 @@ class TimelineConfigParser(private val context: Context) {
     fun parse(attrs: AttributeSet?): TimelineConfig {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
 
-        val mathConfig = TimelineMathConfig(
+        val mathConfig = SnakeMathConfig(
             startPosition = TimelineMathConfig.StartPosition.entries[typedArray.getInt(
                 R.styleable.TimelineView_timeline_start_position,
                 TimelineMathConfig.StartPosition.CENTER.ordinal
@@ -63,7 +66,7 @@ class TimelineConfigParser(private val context: Context) {
             ),
         )
 
-        val uiConfig = TimelineUiConfig(
+        val uiConfig = SnakeUiConfig(
             iconDisableLvl = typedArray.getResourceId(
                 R.styleable.TimelineView_timeline_disable_icon,
                 0
@@ -108,7 +111,7 @@ class TimelineConfigParser(private val context: Context) {
 
         typedArray.recycle()
 
-        return TimelineConfig(mathConfig, uiConfig)
+        return SnakeConfig(mathConfig, uiConfig)
     }
 }
 

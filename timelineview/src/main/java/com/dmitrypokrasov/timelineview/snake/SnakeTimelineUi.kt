@@ -1,4 +1,4 @@
-package com.dmitrypokrasov.timelineview.render
+package com.dmitrypokrasov.timelineview.snake
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -14,16 +14,17 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
-import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
 /**
  * Публичная реализация [TimelineUiRenderer], использующая алгоритм "змейки",
  * ранее находившийся в `TimelineUi`.
  */
 class SnakeTimelineUi(
-    private var uiConfig: TimelineUiConfig,
+    private var uiConfig: SnakeUiConfig,
 ) : TimelineUiRenderer {
     companion object {
         private const val TAG = "SnakeTimelineUi"
@@ -58,18 +59,20 @@ class SnakeTimelineUi(
 
         pathEffect = CornerPathEffect(uiConfig.radius)
 
+        val mathConfig = timelineMathConfig as? SnakeMathConfig ?: return
+
         getBitmap(uiConfig.iconDisableLvl, context)?.let { bitmap ->
             iconDisableStep = bitmap.scale(
-                timelineMathConfig.sizeImageLvl.toInt(),
-                timelineMathConfig.sizeImageLvl.toInt(),
+                mathConfig.sizeImageLvl.toInt(),
+                mathConfig.sizeImageLvl.toInt(),
                 false
             )
         }
 
         getBitmap(uiConfig.iconProgress, context)?.let { bitmap ->
             iconProgressBitmap = bitmap.scale(
-                timelineMathConfig.sizeIconProgress.toInt(),
-                timelineMathConfig.sizeIconProgress.toInt(),
+                mathConfig.sizeIconProgress.toInt(),
+                mathConfig.sizeIconProgress.toInt(),
                 false
             )
         }
@@ -88,7 +91,7 @@ class SnakeTimelineUi(
     }
 
     override fun setConfig(config: TimelineUiConfig) {
-        uiConfig = config
+        uiConfig = (config as? SnakeUiConfig) ?: uiConfig
     }
 
     override fun getConfig(): TimelineUiConfig = uiConfig

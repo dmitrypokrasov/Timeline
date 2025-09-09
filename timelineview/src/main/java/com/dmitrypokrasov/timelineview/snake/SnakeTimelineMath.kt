@@ -1,23 +1,24 @@
-package com.dmitrypokrasov.timelineview.math
+package com.dmitrypokrasov.timelineview.snake
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.model.TimelineStep
 import kotlin.math.abs
 
 /**
  * Публичная реализация [TimelineMathEngine], основанная на "змейке".
  * Вся вычислительная логика перемещена сюда из конфигурации.
  */
-class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMathEngine {
+class SnakeTimelineMath(private var mathConfig: SnakeMathConfig) : TimelineMathEngine {
 
     private var startPositionX = 0f
     private var startPositionDisableStrokeX = 0f
     private var measuredWidth = 0
 
     override fun setConfig(config: TimelineMathConfig) {
-        mathConfig = config
+        mathConfig = (config as? SnakeMathConfig) ?: mathConfig
     }
 
     override fun getConfig(): TimelineMathConfig = mathConfig

@@ -1,12 +1,10 @@
 package com.dmitrypokrasov.timelineview.config
 
 /**
- * Aggregates math and UI configurations for the timeline view.
- *
- * @property math configuration for sizes and positioning.
- * @property ui configuration for visual appearance.
+ * Base configuration combining math and UI settings. Library users may
+ * provide their own implementations for specific strategies.
  */
-data class TimelineConfig(
-    val math: TimelineMathConfig,
+interface TimelineConfig {
+    val math: TimelineMathConfig
     val ui: TimelineUiConfig
-)
+}

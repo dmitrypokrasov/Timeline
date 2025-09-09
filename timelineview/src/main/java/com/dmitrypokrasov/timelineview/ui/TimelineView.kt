@@ -8,10 +8,12 @@ import android.util.Log
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
 import com.dmitrypokrasov.timelineview.model.TimelineStep
-import com.dmitrypokrasov.timelineview.math.SnakeTimelineMath
-import com.dmitrypokrasov.timelineview.render.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.snake.SnakeMathConfig
+import com.dmitrypokrasov.timelineview.snake.SnakeTimelineMath
+import com.dmitrypokrasov.timelineview.snake.SnakeTimelineUi
+import com.dmitrypokrasov.timelineview.snake.SnakeUiConfig
 
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
@@ -52,8 +54,8 @@ class TimelineView @JvmOverloads constructor(
 
     init {
         val config = TimelineConfigParser(context).parse(attrs)
-        timelineMath = SnakeTimelineMath(config.math)
-        timelineUi = SnakeTimelineUi(config.ui)
+        timelineMath = SnakeTimelineMath(config.math as SnakeMathConfig)
+        timelineUi = SnakeTimelineUi(config.ui as SnakeUiConfig)
 
         initTools()
     }

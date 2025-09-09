@@ -1,4 +1,4 @@
-package com.dmitrypokrasov.timelineview.render
+package com.dmitrypokrasov.timelineview.linear
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -13,16 +13,17 @@ import android.graphics.drawable.VectorDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
-import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
 /**
  * Реализация [TimelineUiRenderer] для линейного таймлайна. Отрисовывает
  * прямую линию и элементы шагов.
  */
 class LinearTimelineUi(
-    private var uiConfig: TimelineUiConfig,
+    private var uiConfig: LinearUiConfig,
 ) : TimelineUiRenderer {
 
     /** Путь для пройденных шагов. */
@@ -52,18 +53,20 @@ class LinearTimelineUi(
     override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) {
         pathEffect = CornerPathEffect(uiConfig.radius)
 
+        val mathConfig = timelineMathConfig as? LinearMathConfig ?: return
+
         getBitmap(uiConfig.iconDisableLvl, context)?.let { bitmap ->
             iconDisableStep = bitmap.scale(
-                timelineMathConfig.sizeImageLvl.toInt(),
-                timelineMathConfig.sizeImageLvl.toInt(),
+                mathConfig.sizeImageLvl.toInt(),
+                mathConfig.sizeImageLvl.toInt(),
                 false
             )
         }
 
         getBitmap(uiConfig.iconProgress, context)?.let { bitmap ->
             iconProgressBitmap = bitmap.scale(
-                timelineMathConfig.sizeIconProgress.toInt(),
-                timelineMathConfig.sizeIconProgress.toInt(),
+                mathConfig.sizeIconProgress.toInt(),
+                mathConfig.sizeIconProgress.toInt(),
                 false
             )
         }
@@ -82,7 +85,7 @@ class LinearTimelineUi(
     }
 
     override fun setConfig(config: TimelineUiConfig) {
-        uiConfig = config
+        uiConfig = (config as? LinearUiConfig) ?: uiConfig
     }
 
     override fun getConfig(): TimelineUiConfig = uiConfig
