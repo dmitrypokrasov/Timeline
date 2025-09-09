@@ -1,21 +1,19 @@
-package com.dmitrypokrasov.timelineview.ui
+package com.dmitrypokrasov.timelineview.config
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.R
-import com.dmitrypokrasov.timelineview.data.TimelineConstants
-import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.model.TimelineConstants
 
 /**
- * Utility class for parsing view attributes into math and UI configurations.
+ * Utility class for parsing view attributes into a [TimelineConfig].
  */
-class ConfigParser(private val context: Context) {
+class TimelineConfigParser(private val context: Context) {
 
     @SuppressLint("CustomViewStyleable")
-    fun parse(attrs: AttributeSet?): Pair<TimelineMathConfig, TimelineUiConfig> {
+    fun parse(attrs: AttributeSet?): TimelineConfig {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
 
         val mathConfig = TimelineMathConfig(
@@ -110,7 +108,7 @@ class ConfigParser(private val context: Context) {
 
         typedArray.recycle()
 
-        return mathConfig to uiConfig
+        return TimelineConfig(mathConfig, uiConfig)
     }
 }
 

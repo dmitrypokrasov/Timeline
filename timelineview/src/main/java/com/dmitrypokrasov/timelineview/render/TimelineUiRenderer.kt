@@ -1,12 +1,12 @@
-package com.dmitrypokrasov.timelineview.domain
+package com.dmitrypokrasov.timelineview.render
 
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 
 /**
  * Интерфейс рендерера временной шкалы.
@@ -34,15 +34,15 @@ interface TimelineUiRenderer {
     /**
      * Сбрасывает и настраивает кисть для рисования линий.
      */
-    fun resetFromPaintTools()
+    fun prepareStrokePaint()
 
     /**
      * Сбрасывает и настраивает кисть для рисования текста.
      */
-    fun resetFromTextTools()
+    fun prepareTextPaint()
 
     /** Сбрасывает и настраивает кисть для рисования иконок. */
-    fun resetFromIconTools()
+    fun prepareIconPaint()
 
     /**
      * Рисует bitmap текущего прогресса.
@@ -51,23 +51,23 @@ interface TimelineUiRenderer {
      * @param leftCoordinates левая координата вывода
      * @param topCoordinates верхняя координата вывода
      */
-    fun drawProgressBitmap(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float)
+    fun drawProgressIcon(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float)
 
     /**
      * Рисует путь пройденных шагов.
      */
-    fun drawProgressPath(canvas: Canvas)
+    fun drawCompletedPath(canvas: Canvas)
 
     /**
      * Рисует путь непройденных шагов.
      */
-    fun drawDisablePath(canvas: Canvas)
+    fun drawRemainingPath(canvas: Canvas)
 
     /** Возвращает путь пройденных шагов. */
-    fun getPathEnable(): Path
+    fun getCompletedPath(): Path
 
     /** Возвращает путь непройденных шагов. */
-    fun getPathDisable(): Path
+    fun getRemainingPath(): Path
 
     /**
      * Печатает заголовок шага.
@@ -78,7 +78,7 @@ interface TimelineUiRenderer {
      * @param y Y-координата текста
      * @param align выравнивание текста
      */
-    fun printTitle(canvas: Canvas, title: String, x: Float, y: Float, align: Paint.Align)
+    fun drawTitle(canvas: Canvas, title: String, x: Float, y: Float, align: Paint.Align)
 
     /**
      * Печатает описание шага.
@@ -89,24 +89,24 @@ interface TimelineUiRenderer {
      * @param y Y-координата текста
      * @param align выравнивание текста
      */
-    fun printDescription(canvas: Canvas, description: String, x: Float, y: Float, align: Paint.Align)
+    fun drawDescription(canvas: Canvas, description: String, x: Float, y: Float, align: Paint.Align)
 
     /**
      * Рисует иконку шага.
      *
      * В зависимости от состояния шага выбирает соответствующий ресурс.
      *
-     * @param lvl данные шага
+     * @param step данные шага
      * @param canvas холст для рисования
      * @param align выравнивание иконки
      * @param context Android контекст для получения ресурсов
      * @param x X-координата иконки
      * @param y Y-координата иконки
      */
-    fun printIcon(lvl: TimelineStep, canvas: Canvas, align: Paint.Align, context: Context, x: Float, y: Float)
+    fun drawStepIcon(step: TimelineStep, canvas: Canvas, align: Paint.Align, context: Context, x: Float, y: Float)
 
     /**
      * Возвращает текущее выравнивание текста, используемое кистью.
      */
-    fun getTextAlign(): Paint.Align
+    fun getTextAlignment(): Paint.Align
 }

@@ -57,11 +57,11 @@ You can also provide custom math and UI engines. The example below shows a linea
 
 ```kotlin
 import androidx.core.content.ContextCompat
-import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.LinearTimelineMath
-import com.dmitrypokrasov.timelineview.domain.LinearTimelineUi
-import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
+import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.ui.TimelineView
 
 val timelineView = findViewById<TimelineView>(R.id.timeline)

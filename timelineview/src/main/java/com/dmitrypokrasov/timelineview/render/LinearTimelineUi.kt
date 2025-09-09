@@ -1,4 +1,4 @@
-package com.dmitrypokrasov.timelineview.domain
+package com.dmitrypokrasov.timelineview.render
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -10,24 +10,20 @@ import android.graphics.Path
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
-import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.domain.data.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 
 /**
- * Публичная реализация [TimelineUiRenderer], использующая алгоритм "змейки",
- * ранее находившийся в `TimelineUi`.
+ * Реализация [TimelineUiRenderer] для линейного таймлайна. Отрисовывает
+ * прямую линию и элементы шагов.
  */
-class SnakeTimelineUi(
+class LinearTimelineUi(
     private var uiConfig: TimelineUiConfig,
 ) : TimelineUiRenderer {
-    companion object {
-        private const val TAG = "SnakeTimelineUi"
-    }
 
     /** Путь для пройденных шагов. */
     private val pathEnable = Path()
@@ -54,8 +50,6 @@ class SnakeTimelineUi(
     private val iconPaint = Paint()
 
     override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) {
-        Log.d(TAG, "initTools timelineUiConfig: $timelineMathConfig")
-
         pathEffect = CornerPathEffect(uiConfig.radius)
 
         getBitmap(uiConfig.iconDisableLvl, context)?.let { bitmap ->
@@ -75,14 +69,14 @@ class SnakeTimelineUi(
         }
     }
 
-    override fun resetFromPaintTools() {
+    override fun prepareStrokePaint() {
         linePaint.reset()
         linePaint.style = Paint.Style.STROKE
         linePaint.strokeWidth = uiConfig.sizeStroke
         linePaint.pathEffect = pathEffect
     }
 
-    override fun resetFromTextTools() {
+    override fun prepareTextPaint() {
         textPaint.reset()
         textPaint.isAntiAlias = true
     }
@@ -93,12 +87,12 @@ class SnakeTimelineUi(
 
     override fun getConfig(): TimelineUiConfig = uiConfig
 
-    override fun resetFromIconTools() {
+    override fun prepareIconPaint() {
         iconPaint.reset()
         iconPaint.isAntiAlias = true
     }
 
-    override fun drawProgressBitmap(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) {
+    override fun drawProgressIcon(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) {
         iconProgressBitmap?.let {
             canvas.drawBitmap(
                 it,
@@ -109,21 +103,21 @@ class SnakeTimelineUi(
         }
     }
 
-    override fun drawProgressPath(canvas: Canvas) {
+    override fun drawCompletedPath(canvas: Canvas) {
         linePaint.color = uiConfig.colorProgress
         canvas.drawPath(pathEnable, linePaint)
     }
 
-    override fun drawDisablePath(canvas: Canvas) {
+    override fun drawRemainingPath(canvas: Canvas) {
         linePaint.color = uiConfig.colorStroke
         canvas.drawPath(pathDisable, linePaint)
     }
 
-    override fun getPathEnable(): Path = pathEnable
+    override fun getCompletedPath(): Path = pathEnable
 
-    override fun getPathDisable(): Path = pathDisable
+    override fun getRemainingPath(): Path = pathDisable
 
-    override fun printTitle(
+    override fun drawTitle(
         canvas: Canvas,
         title: String,
         x: Float,
@@ -140,7 +134,7 @@ class SnakeTimelineUi(
         canvas.drawText(title, x, y, textPaint)
     }
 
-    override fun printDescription(
+    override fun drawDescription(
         canvas: Canvas,
         description: String,
         x: Float,
@@ -157,8 +151,8 @@ class SnakeTimelineUi(
         canvas.drawText(description, x, y, textPaint)
     }
 
-    override fun printIcon(
-        lvl: TimelineStep,
+    override fun drawStepIcon(
+        step: TimelineStep,
         canvas: Canvas,
         align: Paint.Align,
         context: Context,
@@ -166,7 +160,7 @@ class SnakeTimelineUi(
         y: Float
     ) {
         val bm: Bitmap? = when {
-            lvl.count == lvl.maxCount && lvl.icon != 0 -> getBitmap(lvl.icon, context)
+            step.count == step.maxCount && step.icon != 0 -> getBitmap(step.icon, context)
             else -> iconDisableStep
         }
         bm?.let {
@@ -175,9 +169,6 @@ class SnakeTimelineUi(
         }
     }
 
-    /**
-     * Получение Bitmap из ресурса, включая поддержку VectorDrawable.
-     */
     private fun getBitmap(drawableId: Int, context: Context): Bitmap? {
         if (drawableId == 0) return null
 
@@ -195,5 +186,6 @@ class SnakeTimelineUi(
         }
     }
 
-    override fun getTextAlign(): Paint.Align = textPaint.textAlign
+    override fun getTextAlignment(): Paint.Align = textPaint.textAlign
 }
+

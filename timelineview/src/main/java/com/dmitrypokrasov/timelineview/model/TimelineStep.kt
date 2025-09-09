@@ -1,4 +1,4 @@
-package com.dmitrypokrasov.timelineview.data
+package com.dmitrypokrasov.timelineview.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

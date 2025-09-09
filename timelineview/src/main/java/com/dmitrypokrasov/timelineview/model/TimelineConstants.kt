@@ -1,8 +1,11 @@
-package com.dmitrypokrasov.timelineview.data
+package com.dmitrypokrasov.timelineview.model
 
 import androidx.annotation.ColorRes
 import com.google.android.material.R.color
 
+/**
+ * Contains default values for timeline configuration.
+ */
 internal object TimelineConstants {
     const val DEFAULT_STEP_Y_SIZE = 150f
     const val DEFAULT_RADIUS_SIZE = 0f

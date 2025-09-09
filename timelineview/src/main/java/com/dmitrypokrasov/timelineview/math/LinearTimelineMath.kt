@@ -1,9 +1,9 @@
-package com.dmitrypokrasov.timelineview.domain
+package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.data.TimelineStep
-import com.dmitrypokrasov.timelineview.domain.data.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 
 /**
  * Простая реализация [TimelineMathEngine], строящая путь без чередования сторон.
@@ -109,9 +109,9 @@ class LinearTimelineMath(
         ((mathConfig.stepY * mathConfig.steps.size) +
             mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
 
-    override fun getLeftCoordinates(lvl: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
+    override fun getLeftCoordinates(step: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
 
-    override fun getTopCoordinates(lvl: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
+    override fun getTopCoordinates(step: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
 
     override fun getTitleXCoordinates(align: Paint.Align): Float {
         val stepX = getStepX()
