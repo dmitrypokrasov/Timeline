@@ -7,11 +7,13 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.model.TimelineStep
-import com.dmitrypokrasov.timelineview.math.SnakeTimelineMath
-import com.dmitrypokrasov.timelineview.render.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.strategy.snake.SnakeTimelineMath
+import com.dmitrypokrasov.timelineview.strategy.snake.SnakeTimelineUi
 
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
@@ -76,10 +78,28 @@ class TimelineView @JvmOverloads constructor(
     }
 
     /**
+     * Обновляет конфигурацию математического движка.
+     */
+    fun setMathConfig(config: TimelineMathConfig) {
+        timelineMath.setConfig(config)
+        initTools()
+        requestLayout()
+    }
+
+    /**
      * Устанавливает пользовательский рендерер интерфейса.
      */
     fun setUiRenderer(renderer: TimelineUiRenderer) {
         timelineUi = renderer
+        initTools()
+        requestLayout()
+    }
+
+    /**
+     * Обновляет конфигурацию рендерера интерфейса.
+     */
+    fun setUiConfig(config: TimelineUiConfig) {
+        timelineUi.setConfig(config)
         initTools()
         requestLayout()
     }

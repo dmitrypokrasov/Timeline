@@ -58,10 +58,11 @@ You can also provide custom math and UI engines. The example below shows a linea
 ```kotlin
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.model.TimelineStep
-import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
-import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
+import com.dmitrypokrasov.timelineview.config.DefaultTimelineMathConfig
+import com.dmitrypokrasov.timelineview.config.DefaultTimelineUiConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.strategy.linear.LinearTimelineMath
+import com.dmitrypokrasov.timelineview.strategy.linear.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.ui.TimelineView
 
 val timelineView = findViewById<TimelineView>(R.id.timeline)
@@ -84,13 +85,13 @@ val steps = listOf(
 )
 
 // build configs first
-val mathConfig = TimelineMathConfig(
+val mathConfig = DefaultTimelineMathConfig(
     steps = steps,
     startPosition = TimelineMathConfig.StartPosition.CENTER,
     stepY = 80f,
 )
 
-val uiConfig = TimelineUiConfig(
+val uiConfig = DefaultTimelineUiConfig(
     iconProgress = R.drawable.ic_progress_time_line,
     iconDisableLvl = R.drawable.ic_tobacco_unactive,
     colorProgress = ContextCompat.getColor(this, R.color.purple_700),

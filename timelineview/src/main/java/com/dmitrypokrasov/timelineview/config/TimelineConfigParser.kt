@@ -16,7 +16,7 @@ class TimelineConfigParser(private val context: Context) {
     fun parse(attrs: AttributeSet?): TimelineConfig {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TimelineView)
 
-        val mathConfig = TimelineMathConfig(
+        val mathConfig = DefaultTimelineMathConfig(
             startPosition = TimelineMathConfig.StartPosition.entries[typedArray.getInt(
                 R.styleable.TimelineView_timeline_start_position,
                 TimelineMathConfig.StartPosition.CENTER.ordinal
@@ -63,7 +63,7 @@ class TimelineConfigParser(private val context: Context) {
             ),
         )
 
-        val uiConfig = TimelineUiConfig(
+        val uiConfig = DefaultTimelineUiConfig(
             iconDisableLvl = typedArray.getResourceId(
                 R.styleable.TimelineView_timeline_disable_icon,
                 0
@@ -111,4 +111,3 @@ class TimelineConfigParser(private val context: Context) {
         return TimelineConfig(mathConfig, uiConfig)
     }
 }
-

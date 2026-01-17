@@ -1,9 +1,10 @@
-package com.dmitrypokrasov.timelineview.math
+package com.dmitrypokrasov.timelineview.strategy.snake
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.model.TimelineStep
 import kotlin.math.abs
 
 /**
@@ -23,7 +24,7 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
     override fun getConfig(): TimelineMathConfig = mathConfig
 
     override fun replaceSteps(steps: List<TimelineStep>) {
-        mathConfig = mathConfig.copy(steps = steps)
+        mathConfig = mathConfig.withSteps(steps)
     }
 
     override fun buildPath(pathEnable: Path, pathDisable: Path) {

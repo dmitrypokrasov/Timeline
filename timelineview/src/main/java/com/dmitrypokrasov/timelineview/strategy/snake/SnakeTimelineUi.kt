@@ -1,4 +1,4 @@
-package com.dmitrypokrasov.timelineview.render
+package com.dmitrypokrasov.timelineview.strategy.snake
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -10,20 +10,25 @@ import android.graphics.Path
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
-import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
 /**
- * Реализация [TimelineUiRenderer] для линейного таймлайна. Отрисовывает
- * прямую линию и элементы шагов.
+ * Публичная реализация [TimelineUiRenderer], использующая алгоритм "змейки",
+ * ранее находившийся в `TimelineUi`.
  */
-class LinearTimelineUi(
+class SnakeTimelineUi(
     private var uiConfig: TimelineUiConfig,
 ) : TimelineUiRenderer {
+    companion object {
+        private const val TAG = "SnakeTimelineUi"
+    }
 
     /** Путь для пройденных шагов. */
     private val pathEnable = Path()
@@ -50,6 +55,8 @@ class LinearTimelineUi(
     private val iconPaint = Paint()
 
     override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) {
+        Log.d(TAG, "initTools timelineUiConfig: $timelineMathConfig")
+
         pathEffect = CornerPathEffect(uiConfig.radius)
 
         getBitmap(uiConfig.iconDisableLvl, context)?.let { bitmap ->
@@ -169,6 +176,9 @@ class LinearTimelineUi(
         }
     }
 
+    /**
+     * Получение Bitmap из ресурса, включая поддержку VectorDrawable.
+     */
     private fun getBitmap(drawableId: Int, context: Context): Bitmap? {
         if (drawableId == 0) return null
 
@@ -188,4 +198,3 @@ class LinearTimelineUi(
 
     override fun getTextAlignment(): Paint.Align = textPaint.textAlign
 }
-

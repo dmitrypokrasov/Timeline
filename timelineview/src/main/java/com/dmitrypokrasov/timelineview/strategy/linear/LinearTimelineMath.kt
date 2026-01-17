@@ -1,9 +1,10 @@
-package com.dmitrypokrasov.timelineview.math
+package com.dmitrypokrasov.timelineview.strategy.linear
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.model.TimelineStep
 
 /**
  * Простая реализация [TimelineMathEngine], строящая путь без чередования сторон.
@@ -28,7 +29,7 @@ class LinearTimelineMath(
     override fun getConfig(): TimelineMathConfig = mathConfig
 
     override fun replaceSteps(steps: List<TimelineStep>) {
-        mathConfig = mathConfig.copy(steps = steps)
+        mathConfig = mathConfig.withSteps(steps)
     }
 
     override fun buildPath(pathEnable: Path, pathDisable: Path) {
