@@ -43,13 +43,7 @@ class LinearTimelineMath(
         var drawEnable = true
 
         mathConfig.steps.forEachIndexed { index, step ->
-            val segment = if (orientation == Orientation.VERTICAL) {
-                if (index == 0) mathConfig.stepYFirst
-                else if (index == mathConfig.steps.size - 1) mathConfig.stepY / 2
-                else mathConfig.stepY
-            } else {
-                if (index == 0) startPositionX - mathConfig.marginHorizontalStroke else getStepX()
-            }
+            val segment = getSegmentLength(index)
 
             if (drawEnable) {
                 val progress = segment * step.percents / 100f
@@ -86,32 +80,66 @@ class LinearTimelineMath(
 
     override fun setMeasuredWidth(measuredWidth: Int) {
         this.measuredWidth = measuredWidth
-        startPositionX = when (mathConfig.startPosition) {
-            TimelineMathConfig.StartPosition.START -> mathConfig.marginHorizontalStroke
-            TimelineMathConfig.StartPosition.CENTER -> measuredWidth / 2f
-            TimelineMathConfig.StartPosition.END -> measuredWidth.toFloat() - mathConfig.marginHorizontalStroke
+        startPositionX = if (orientation == Orientation.VERTICAL) {
+            when (mathConfig.startPosition) {
+                TimelineMathConfig.StartPosition.START -> mathConfig.marginHorizontalStroke
+                TimelineMathConfig.StartPosition.CENTER -> measuredWidth / 2f
+                TimelineMathConfig.StartPosition.END -> measuredWidth.toFloat() - mathConfig.marginHorizontalStroke
+            }
+        } else {
+            val totalLength = getTotalLength()
+            when (mathConfig.startPosition) {
+                TimelineMathConfig.StartPosition.START -> mathConfig.marginHorizontalStroke
+                TimelineMathConfig.StartPosition.CENTER -> (measuredWidth - totalLength) / 2f
+                TimelineMathConfig.StartPosition.END ->
+                    measuredWidth.toFloat() - totalLength - mathConfig.marginHorizontalStroke
+            }
         }
     }
 
     override fun getHorizontalIconOffset(i: Int): Float {
-        return if (orientation == Orientation.VERTICAL) -mathConfig.sizeIconProgress / 2f
-        else calculateVerticalOffset(i)
+        return if (orientation == Orientation.VERTICAL) {
+            -mathConfig.sizeIconProgress / 2f
+        } else {
+            getHorizontalProgressLeft(i)
+        }
     }
 
     override fun getVerticalOffset(i: Int): Float {
-        return if (orientation == Orientation.VERTICAL) calculateVerticalOffset(i)
-        else -mathConfig.sizeIconProgress / 2f
+        return if (orientation == Orientation.VERTICAL) {
+            calculateVerticalOffset(i)
+        } else {
+            getHorizontalProgressTop()
+        }
     }
 
     override fun getSteps(): List<TimelineStep> = mathConfig.steps
 
     override fun getMeasuredHeight(): Int =
-        ((mathConfig.stepY * mathConfig.steps.size) +
-            mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
+        if (orientation == Orientation.VERTICAL) {
+            ((mathConfig.stepY * mathConfig.steps.size) +
+                mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
+        } else {
+            val maxIcon = maxOf(mathConfig.sizeImageLvl, mathConfig.sizeIconProgress)
+            (maxIcon + mathConfig.marginTopTitle + mathConfig.marginTopDescription).toInt()
+        }
 
-    override fun getLeftCoordinates(step: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
+    override fun getLeftCoordinates(step: TimelineStep): Float {
+        return if (orientation == Orientation.VERTICAL) {
+            -mathConfig.sizeIconProgress / 2f
+        } else {
+            val index = mathConfig.steps.indexOf(step).coerceAtLeast(0)
+            getHorizontalProgressLeft(index)
+        }
+    }
 
-    override fun getTopCoordinates(step: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
+    override fun getTopCoordinates(step: TimelineStep): Float {
+        return if (orientation == Orientation.VERTICAL) {
+            -mathConfig.sizeIconProgress / 2f
+        } else {
+            getHorizontalProgressTop()
+        }
+    }
 
     override fun getTitleXCoordinates(align: Paint.Align): Float {
         val stepX = getStepX()
@@ -156,4 +184,81 @@ class LinearTimelineMath(
 
     private fun calculateTitleYCoordinates(i: Int): Float =
         (mathConfig.stepY * i) + mathConfig.marginTopTitle
+
+    private fun getSegmentLength(index: Int): Float {
+        return if (orientation == Orientation.VERTICAL || orientation == Orientation.HORIZONTAL) {
+            if (index == 0) mathConfig.stepYFirst
+            else if (index == mathConfig.steps.size - 1) mathConfig.stepY / 2
+            else mathConfig.stepY
+        } else {
+            mathConfig.stepY
+        }
+    }
+
+    private fun getHorizontalStepPosition(index: Int): Float =
+        if (index == 0) mathConfig.stepYFirst else mathConfig.stepYFirst + mathConfig.stepY * index
+
+    private fun getTotalLength(): Float =
+        mathConfig.steps.indices.sumOf { getSegmentLength(it).toDouble() }.toFloat()
+
+    private fun getHorizontalProgressLeft(index: Int): Float =
+        getHorizontalStepPosition(index) - mathConfig.sizeIconProgress / 2f
+
+    private fun getHorizontalProgressTop(): Float = -mathConfig.sizeIconProgress / 2f
+
+    override fun buildLayout(): TimelineLayout {
+        val layoutSteps = if (orientation == Orientation.HORIZONTAL) {
+            mathConfig.steps.mapIndexed { index, step ->
+                val positionX = getHorizontalStepPosition(index)
+                TimelineLayoutStep(
+                    step = step,
+                    titleX = positionX,
+                    titleY = mathConfig.marginTopTitle,
+                    descriptionX = positionX,
+                    descriptionY = mathConfig.marginTopTitle + mathConfig.marginTopDescription,
+                    iconX = positionX - mathConfig.sizeImageLvl / 2f,
+                    iconY = -mathConfig.sizeImageLvl / 2f,
+                    textAlign = Paint.Align.CENTER
+                )
+            }
+        } else {
+            val align = when (mathConfig.startPosition) {
+                TimelineMathConfig.StartPosition.END -> Paint.Align.LEFT
+                else -> Paint.Align.RIGHT
+            }
+
+            mathConfig.steps.mapIndexed { index, step ->
+                TimelineLayoutStep(
+                    step = step,
+                    titleX = getTitleXCoordinates(align),
+                    titleY = getTitleYCoordinates(index),
+                    descriptionX = getTitleXCoordinates(align),
+                    descriptionY = getDescriptionYCoordinates(index),
+                    iconX = getIconXCoordinates(align),
+                    iconY = getIconYCoordinates(index),
+                    textAlign = align
+                )
+            }
+        }
+
+        val progressIndex = mathConfig.steps.indexOfFirst { it.percents != 100 }
+        val progressIcon = if (progressIndex >= 0) {
+            if (progressIndex == 0) {
+                val step = mathConfig.steps[progressIndex]
+                TimelineProgressIcon(
+                    left = getLeftCoordinates(step),
+                    top = getTopCoordinates(step)
+                )
+            } else {
+                TimelineProgressIcon(
+                    left = getHorizontalIconOffset(progressIndex),
+                    top = getVerticalOffset(progressIndex)
+                )
+            }
+        } else {
+            null
+        }
+
+        return TimelineLayout(layoutSteps, progressIcon)
+    }
 }

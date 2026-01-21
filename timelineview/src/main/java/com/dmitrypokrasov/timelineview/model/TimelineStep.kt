@@ -29,5 +29,9 @@ data class TimelineStep(
      * @return Значение от 0 до 100, отражающее текущий прогресс.
      */
     val percents: Int
-        get() = (count.toDouble() / (maxCount.toDouble() / 100)).toInt().coerceIn(0, 100)
+        get() = if (maxCount <= 0) {
+            0
+        } else {
+            (count.toDouble() / (maxCount.toDouble() / 100)).toInt().coerceIn(0, 100)
+        }
 }

@@ -39,6 +39,11 @@ open class BaseTimelineUi(
     /** Bitmap for progress icon. */
     private var iconProgressBitmap: Bitmap? = null
 
+    /** Cache for step icon bitmaps. */
+    private val stepIconCache = mutableMapOf<Int, Bitmap>()
+
+    private var stepIconSize: Int = 0
+
     /** Paint for lines. */
     private val linePaint = Paint()
 
@@ -50,6 +55,8 @@ open class BaseTimelineUi(
 
     override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) {
         pathEffect = CornerPathEffect(uiConfig.radius)
+        stepIconSize = timelineMathConfig.sizeImageLvl.toInt()
+        stepIconCache.clear()
 
         getBitmap(uiConfig.iconDisableLvl, context)?.let { bitmap ->
             iconDisableStep = bitmap.scale(
@@ -153,7 +160,7 @@ open class BaseTimelineUi(
         y: Float
     ) {
         val bm: Bitmap? = when {
-            step.count == step.maxCount && step.icon != 0 -> getBitmap(step.icon, context)
+            step.count == step.maxCount && step.icon != 0 -> getStepIconBitmap(step.icon, context)
             else -> iconDisableStep
         }
         bm?.let {
@@ -169,6 +176,16 @@ open class BaseTimelineUi(
     override fun getConfig(): TimelineUiConfig = uiConfig
 
     override fun getTextAlignment(): Paint.Align = textPaint.textAlign
+
+    private fun getStepIconBitmap(drawableId: Int, context: Context): Bitmap? {
+        if (drawableId == 0) return null
+        stepIconCache[drawableId]?.let { return it }
+
+        val bitmap = getBitmap(drawableId, context)?.scale(stepIconSize, stepIconSize, false)
+            ?: return null
+        stepIconCache[drawableId] = bitmap
+        return bitmap
+    }
 
     private fun getBitmap(drawableId: Int, context: Context): Bitmap? {
         if (drawableId == 0) return null

@@ -31,6 +31,8 @@ dependencies {
 | Attribute | Description |
 |----------|-------------|
 | `app:timeline_start_position` | Start position of the timeline (`START`, `CENTER`, `END`). |
+| `app:timeline_math_strategy` | Math strategy for positioning (`SNAKE`, `LINEAR_VERTICAL`, `LINEAR_HORIZONTAL`). |
+| `app:timeline_ui_strategy` | UI rendering strategy (`SNAKE`, `LINEAR`). |
 | `app:timeline_progress_color` | Color of completed part of the stroke. |
 | `app:timeline_stroke_color` | Color of the remaining part of the stroke. |
 | `app:timeline_title_color` | Color of step titles. |
@@ -103,4 +105,20 @@ val uiRenderer = LinearTimelineUi(uiConfig)
 
 timelineView.setMathEngine(mathEngine)
 timelineView.setUiRenderer(uiRenderer)
+```
+
+#### Switching strategies in code
+Use a composite strategy to swap both math and UI renderers together.
+
+```kotlin
+import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
+import com.dmitrypokrasov.timelineview.config.TimelineStrategy
+import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
+
+timelineView.setStrategy(
+    TimelineStrategy(
+        math = TimelineMathStrategy.LINEAR_HORIZONTAL,
+        ui = TimelineUiStrategy.LINEAR
+    )
+)
 ```
