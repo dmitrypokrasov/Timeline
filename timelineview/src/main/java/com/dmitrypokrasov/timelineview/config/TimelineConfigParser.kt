@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.model.TimelineConstants
+import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
+import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 
 /**
  * Utility class for parsing view attributes into a [TimelineConfig].
@@ -106,9 +108,22 @@ class TimelineConfigParser(private val context: Context) {
             ),
         )
 
+        val mathStrategy = TimelineMathStrategy.entries[typedArray.getInt(
+            R.styleable.TimelineView_timeline_math_strategy,
+            TimelineMathStrategy.SNAKE.ordinal
+        )]
+        val uiStrategy = TimelineUiStrategy.entries[typedArray.getInt(
+            R.styleable.TimelineView_timeline_ui_strategy,
+            TimelineUiStrategy.SNAKE.ordinal
+        )]
+
         typedArray.recycle()
 
-        return TimelineConfig(mathConfig, uiConfig)
+        return TimelineConfig(
+            math = mathConfig,
+            ui = uiConfig,
+            mathStrategy = mathStrategy,
+            uiStrategy = uiStrategy
+        )
     }
 }
-
