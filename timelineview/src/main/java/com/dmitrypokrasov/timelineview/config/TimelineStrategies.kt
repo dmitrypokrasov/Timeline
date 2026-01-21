@@ -6,7 +6,9 @@ package com.dmitrypokrasov.timelineview.config
 enum class TimelineMathStrategy {
     SNAKE,
     LINEAR_VERTICAL,
-    LINEAR_HORIZONTAL
+    LINEAR_HORIZONTAL;
+
+    val id: String = name.lowercase()
 }
 
 /**
@@ -14,5 +16,7 @@ enum class TimelineMathStrategy {
  */
 enum class TimelineUiStrategy {
     SNAKE,
-    LINEAR
+    LINEAR;
+
+    val id: String = name.lowercase()
 }

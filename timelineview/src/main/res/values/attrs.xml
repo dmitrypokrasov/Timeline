@@ -6,10 +6,12 @@
             <enum name="LINEAR_VERTICAL" value="1" />
             <enum name="LINEAR_HORIZONTAL" value="2" />
         </attr>
+        <attr name="timeline_math_strategy_id" format="string" />
         <attr name="timeline_ui_strategy" format="enum">
             <enum name="SNAKE" value="0" />
             <enum name="LINEAR" value="1" />
         </attr>
+        <attr name="timeline_ui_strategy_id" format="string" />
         <attr name="timeline_start_position" format="enum">
             <enum name="START" value="0" />
             <enum name="CENTER" value="1" />

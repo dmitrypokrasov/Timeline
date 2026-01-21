@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
+import com.dmitrypokrasov.timelineview.config.TimelineConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
@@ -15,6 +16,7 @@ import com.dmitrypokrasov.timelineview.math.TimelineMathFactory
 import com.dmitrypokrasov.timelineview.math.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.render.TimelineUiFactory
+import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
@@ -62,8 +64,8 @@ class TimelineView @JvmOverloads constructor(
 
     init {
         val config = TimelineConfigParser(context).parse(attrs)
-        timelineMath = TimelineMathFactory.create(config.mathStrategy, config.math)
-        timelineUi = TimelineUiFactory.create(config.uiStrategy, config.ui)
+        timelineMath = createMathEngine(config)
+        timelineUi = createUiRenderer(config)
 
         initTools()
         rebuildTextCache()
@@ -119,6 +121,30 @@ class TimelineView @JvmOverloads constructor(
      */
     fun setStrategy(strategy: TimelineStrategy) {
         setStrategy(strategy.math, strategy.ui)
+    }
+
+    /**
+     * Устанавливает стратегии расчётов и отрисовки через зарегистрированные идентификаторы.
+     */
+    fun setStrategy(mathStrategyId: String, uiStrategyId: String) {
+        val mathConfig = timelineMath.getConfig()
+        val uiConfig = timelineUi.getConfig()
+        val mathProvider = requireNotNull(
+            TimelineStrategyRegistry.getMathProvider(mathStrategyId)
+        ) {
+            "No math strategy registered for id: $mathStrategyId"
+        }
+        val uiProvider = requireNotNull(
+            TimelineStrategyRegistry.getUiProvider(uiStrategyId)
+        ) {
+            "No UI strategy registered for id: $uiStrategyId"
+        }
+        timelineMath = mathProvider.create(mathConfig)
+        timelineUi = uiProvider.create(uiConfig)
+        initTools()
+        rebuildTextCache()
+        requestLayout()
+        invalidate()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -190,6 +216,26 @@ class TimelineView @JvmOverloads constructor(
                 description = resources.getString(step.description)
             )
         }
+    }
+
+    private fun createMathEngine(config: TimelineConfig): TimelineMathEngine {
+        val strategyId = config.mathStrategyId
+        if (strategyId != null) {
+            val provider = TimelineStrategyRegistry.getMathProvider(strategyId)
+                ?: error("No math strategy registered for id: $strategyId")
+            return provider.create(config.math)
+        }
+        return TimelineMathFactory.create(config.mathStrategy, config.math)
+    }
+
+    private fun createUiRenderer(config: TimelineConfig): TimelineUiRenderer {
+        val strategyId = config.uiStrategyId
+        if (strategyId != null) {
+            val provider = TimelineStrategyRegistry.getUiProvider(strategyId)
+                ?: error("No UI strategy registered for id: $strategyId")
+            return provider.create(config.ui)
+        }
+        return TimelineUiFactory.create(config.uiStrategy, config.ui)
     }
 
 }
