@@ -64,15 +64,17 @@ interface TimelineMathEngine {
      * Вычисляет левую координату иконки для указанного шага.
      *
      * @param step шаг временной шкалы
+     * @param index индекс шага в списке
      */
-    fun getLeftCoordinates(step: TimelineStep): Float
+    fun getLeftCoordinates(step: TimelineStep, index: Int): Float
 
     /**
      * Вычисляет верхнюю координату иконки для указанного шага.
      *
      * @param step шаг временной шкалы
+     * @param index индекс шага в списке
      */
-    fun getTopCoordinates(step: TimelineStep): Float
+    fun getTopCoordinates(step: TimelineStep, index: Int): Float
 
     /** Возвращает Y-координату иконки шага [i]. */
     fun getIconYCoordinates(i: Int): Float

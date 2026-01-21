@@ -7,11 +7,13 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
+import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
+import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.model.TimelineStep
-import com.dmitrypokrasov.timelineview.math.SnakeTimelineMath
-import com.dmitrypokrasov.timelineview.render.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.math.TimelineMathFactory
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.render.TimelineUiFactory
 
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
@@ -27,7 +29,7 @@ import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
  * - иконку текущего шага (progress icon)
  * - заголовки и описания
  *
- * Использует [SnakeTimelineMath] как движок для всех вычислений и генерации координат.
+ * Использует выбранный [TimelineMathEngine] как движок для вычислений и генерации координат.
  *
  * @constructor Создаёт [TimelineView], читая параметры из XML или по умолчанию.
  */
@@ -52,8 +54,8 @@ class TimelineView @JvmOverloads constructor(
 
     init {
         val config = TimelineConfigParser(context).parse(attrs)
-        timelineMath = SnakeTimelineMath(config.math)
-        timelineUi = SnakeTimelineUi(config.ui)
+        timelineMath = TimelineMathFactory.create(config.mathStrategy, config.math)
+        timelineUi = TimelineUiFactory.create(config.uiStrategy, config.ui)
 
         initTools()
     }
@@ -64,6 +66,7 @@ class TimelineView @JvmOverloads constructor(
     fun replaceSteps(steps: List<TimelineStep>) {
         timelineMath.replaceSteps(steps)
         requestLayout()
+        invalidate()
     }
 
     /**
@@ -73,6 +76,7 @@ class TimelineView @JvmOverloads constructor(
         timelineMath = engine
         initTools()
         requestLayout()
+        invalidate()
     }
 
     /**
@@ -82,6 +86,20 @@ class TimelineView @JvmOverloads constructor(
         timelineUi = renderer
         initTools()
         requestLayout()
+        invalidate()
+    }
+
+    /**
+     * Устанавливает стратегии расчётов и отрисовки.
+     */
+    fun setStrategy(mathStrategy: TimelineMathStrategy, uiStrategy: TimelineUiStrategy) {
+        val mathConfig = timelineMath.getConfig()
+        val uiConfig = timelineUi.getConfig()
+        timelineMath = TimelineMathFactory.create(mathStrategy, mathConfig)
+        timelineUi = TimelineUiFactory.create(uiStrategy, uiConfig)
+        initTools()
+        requestLayout()
+        invalidate()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -134,8 +152,8 @@ class TimelineView @JvmOverloads constructor(
                 if (step.percents != 100) {
                     timelineUi.drawProgressIcon(
                         canvas,
-                        timelineMath.getLeftCoordinates(step),
-                        timelineMath.getTopCoordinates(step)
+                        timelineMath.getLeftCoordinates(step, i),
+                        timelineMath.getTopCoordinates(step, i)
                     )
                     printProgressIcon = true
                 }

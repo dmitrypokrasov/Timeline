@@ -109,9 +109,9 @@ class LinearTimelineMath(
         ((mathConfig.stepY * mathConfig.steps.size) +
             mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
 
-    override fun getLeftCoordinates(step: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
+    override fun getLeftCoordinates(step: TimelineStep, index: Int): Float = -mathConfig.sizeIconProgress / 2f
 
-    override fun getTopCoordinates(step: TimelineStep): Float = -mathConfig.sizeIconProgress / 2f
+    override fun getTopCoordinates(step: TimelineStep, index: Int): Float = -mathConfig.sizeIconProgress / 2f
 
     override fun getTitleXCoordinates(align: Paint.Align): Float {
         val stepX = getStepX()

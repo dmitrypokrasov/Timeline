@@ -13,7 +13,6 @@ import kotlin.math.abs
 class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMathEngine {
 
     private var startPositionX = 0f
-    private var startPositionDisableStrokeX = 0f
     private var measuredWidth = 0
 
     override fun setConfig(config: TimelineMathConfig) {
@@ -118,13 +117,21 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         ((mathConfig.stepY * mathConfig.steps.size) +
             mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
 
-    override fun getLeftCoordinates(step: TimelineStep): Float =
-        if (step.count == 0) -mathConfig.sizeIconProgress / 2f
-        else -startPositionDisableStrokeX - mathConfig.sizeIconProgress / 2f
+    override fun getLeftCoordinates(step: TimelineStep, index: Int): Float {
+        if (step.count == 0) return -mathConfig.sizeIconProgress / 2f
+        val startPositionDisableStrokeX = calculateStartPositionDisableStrokeX(step, index)
+        return -startPositionDisableStrokeX - mathConfig.sizeIconProgress / 2f
+    }
 
-    override fun getTopCoordinates(step: TimelineStep): Float =
-        if (step.count == 0) -mathConfig.sizeIconProgress / 2f
-        else mathConfig.stepYFirst - mathConfig.sizeIconProgress / 2f
+    override fun getTopCoordinates(step: TimelineStep, index: Int): Float {
+        return if (step.count == 0) {
+            -mathConfig.sizeIconProgress / 2f
+        } else if (index == 0) {
+            mathConfig.stepYFirst - mathConfig.sizeIconProgress / 2f
+        } else {
+            -mathConfig.sizeIconProgress / 2f
+        }
+    }
 
     override fun getIconXCoordinates(align: Paint.Align): Float {
         val stepX = getStepX()
@@ -165,10 +172,8 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         (mathConfig.stepY * i) + mathConfig.marginTopTitle
 
     private fun calculateStartPositionDisableStrokeX(step: TimelineStep, i: Int): Float {
-        val startPosition =
-            if (i == 0) getStepXFirst() / 100 * step.percents else getStepX() / 100 * step.percents
-        startPositionDisableStrokeX = startPosition
-        return startPosition
+        return if (i == 0) getStepXFirst() / 100 * step.percents
+        else getStepX() / 100 * step.percents
     }
 
     private fun getStepX(): Float =
@@ -177,6 +182,7 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
     private fun getStepXFirst(): Float = startPositionX - mathConfig.marginHorizontalStroke
 
     private fun calculateHorizontalOffset(i: Int): Float {
+        val startPositionDisableStrokeX = calculateStartPositionDisableStrokeX(mathConfig.steps[i], i)
         return if (i % 2 == 0)
             when (mathConfig.startPosition) {
                 TimelineMathConfig.StartPosition.START -> -startPositionDisableStrokeX + getStepX()
