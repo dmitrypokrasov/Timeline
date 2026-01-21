@@ -108,6 +108,13 @@ class TimelineConfigParser(private val context: Context) {
             ),
         )
 
+        val mathStrategyId = typedArray.getString(
+            R.styleable.TimelineView_timeline_math_strategy_id
+        )?.trim()?.takeIf { it.isNotEmpty() }
+        val uiStrategyId = typedArray.getString(
+            R.styleable.TimelineView_timeline_ui_strategy_id
+        )?.trim()?.takeIf { it.isNotEmpty() }
+
         val mathStrategy = TimelineMathStrategy.entries[typedArray.getInt(
             R.styleable.TimelineView_timeline_math_strategy,
             TimelineMathStrategy.SNAKE.ordinal
@@ -123,7 +130,9 @@ class TimelineConfigParser(private val context: Context) {
             math = mathConfig,
             ui = uiConfig,
             mathStrategy = mathStrategy,
-            uiStrategy = uiStrategy
+            uiStrategy = uiStrategy,
+            mathStrategyId = mathStrategyId,
+            uiStrategyId = uiStrategyId
         )
     }
 }

@@ -32,7 +32,9 @@ dependencies {
 |----------|-------------|
 | `app:timeline_start_position` | Start position of the timeline (`START`, `CENTER`, `END`). |
 | `app:timeline_math_strategy` | Math strategy for positioning (`SNAKE`, `LINEAR_VERTICAL`, `LINEAR_HORIZONTAL`). |
+| `app:timeline_math_strategy_id` | Custom math strategy ID (overrides `timeline_math_strategy` if provided). |
 | `app:timeline_ui_strategy` | UI rendering strategy (`SNAKE`, `LINEAR`). |
+| `app:timeline_ui_strategy_id` | Custom UI strategy ID (overrides `timeline_ui_strategy` if provided). |
 | `app:timeline_progress_color` | Color of completed part of the stroke. |
 | `app:timeline_stroke_color` | Color of the remaining part of the stroke. |
 | `app:timeline_title_color` | Color of step titles. |
@@ -120,5 +122,38 @@ timelineView.setStrategy(
         math = TimelineMathStrategy.LINEAR_HORIZONTAL,
         ui = TimelineUiStrategy.LINEAR
     )
+)
+```
+
+#### Registering custom strategies
+You can register your own math/UI implementations and reference them by ID.
+Built-in IDs are `snake`, `linear_vertical`, `linear_horizontal`, and `linear`.
+
+```kotlin
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider
+import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
+import com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider
+
+TimelineStrategyRegistry.registerMath(object : TimelineMathProvider {
+    override val id: String = "custom_math"
+    override fun create(config: TimelineMathConfig): TimelineMathEngine {
+        return MyCustomMath(config)
+    }
+})
+
+TimelineStrategyRegistry.registerUi(object : TimelineUiProvider {
+    override val id: String = "custom_ui"
+    override fun create(config: TimelineUiConfig): TimelineUiRenderer {
+        return MyCustomUi(config)
+    }
+})
+
+timelineView.setStrategy(
+    mathStrategyId = "custom_math",
+    uiStrategyId = "custom_ui"
 )
 ```
