@@ -30,7 +30,7 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         pathDisable.reset()
         pathEnable.reset()
 
-        var enable = mathConfig.steps.isNotEmpty() && mathConfig.steps[0].count != 0
+        var enable = mathConfig.steps.isNotEmpty() && mathConfig.steps[0].percents != 0
         var path: Path = if (enable) pathEnable else pathDisable
 
         mathConfig.steps.forEachIndexed { i, step ->
@@ -119,11 +119,11 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
             mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
 
     override fun getLeftCoordinates(step: TimelineStep): Float =
-        if (step.count == 0) -mathConfig.sizeIconProgress / 2f
+        if (step.percents == 0) -mathConfig.sizeIconProgress / 2f
         else -startPositionDisableStrokeX - mathConfig.sizeIconProgress / 2f
 
     override fun getTopCoordinates(step: TimelineStep): Float =
-        if (step.count == 0) -mathConfig.sizeIconProgress / 2f
+        if (step.percents == 0) -mathConfig.sizeIconProgress / 2f
         else mathConfig.stepYFirst - mathConfig.sizeIconProgress / 2f
 
     override fun getIconXCoordinates(align: Paint.Align): Float {
@@ -184,5 +184,42 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
                 TimelineMathConfig.StartPosition.END -> -startPositionDisableStrokeX
             }
         else startPositionDisableStrokeX - startPositionX + mathConfig.marginHorizontalStroke
+    }
+
+    override fun buildLayout(): TimelineLayout {
+        val steps = mathConfig.steps
+        val layoutSteps = steps.mapIndexed { index, step ->
+            val align = if (index % 2 == 0) Paint.Align.LEFT else Paint.Align.RIGHT
+            TimelineLayoutStep(
+                step = step,
+                titleX = getTitleXCoordinates(align),
+                titleY = getTitleYCoordinates(index),
+                descriptionX = getTitleXCoordinates(align),
+                descriptionY = getDescriptionYCoordinates(index),
+                iconX = getIconXCoordinates(align),
+                iconY = getIconYCoordinates(index),
+                textAlign = align
+            )
+        }
+
+        val progressIndex = steps.indexOfFirst { it.percents != 100 }
+        val progressIcon = if (progressIndex >= 0) {
+            val step = steps[progressIndex]
+            if (progressIndex == 0) {
+                TimelineProgressIcon(
+                    left = getLeftCoordinates(step),
+                    top = getTopCoordinates(step)
+                )
+            } else {
+                TimelineProgressIcon(
+                    left = getHorizontalIconOffset(progressIndex),
+                    top = getVerticalOffset(progressIndex)
+                )
+            }
+        } else {
+            null
+        }
+
+        return TimelineLayout(layoutSteps, progressIcon)
     }
 }

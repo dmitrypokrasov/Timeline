@@ -2,16 +2,17 @@ package com.dmitrypokrasov.timelineview.ui
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
+import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.math.TimelineMathFactory
+import com.dmitrypokrasov.timelineview.math.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.render.TimelineUiFactory
 
@@ -50,7 +51,14 @@ class TimelineView @JvmOverloads constructor(
     private var timelineUi: TimelineUiRenderer
 
     /** Текущая сторона отрисовки (LEFT/RIGHT). */
-    private var currentSide: Paint.Align = Paint.Align.RIGHT
+    private var layout: TimelineLayout? = null
+
+    private var stepTextCache: List<StepText> = emptyList()
+
+    private data class StepText(
+        val title: String,
+        val description: String
+    )
 
     init {
         val config = TimelineConfigParser(context).parse(attrs)
@@ -58,6 +66,7 @@ class TimelineView @JvmOverloads constructor(
         timelineUi = TimelineUiFactory.create(config.uiStrategy, config.ui)
 
         initTools()
+        rebuildTextCache()
     }
 
     /**
@@ -65,6 +74,7 @@ class TimelineView @JvmOverloads constructor(
      */
     fun replaceSteps(steps: List<TimelineStep>) {
         timelineMath.replaceSteps(steps)
+        rebuildTextCache()
         requestLayout()
         invalidate()
     }
@@ -75,6 +85,7 @@ class TimelineView @JvmOverloads constructor(
     fun setMathEngine(engine: TimelineMathEngine) {
         timelineMath = engine
         initTools()
+        rebuildTextCache()
         requestLayout()
         invalidate()
     }
@@ -98,14 +109,23 @@ class TimelineView @JvmOverloads constructor(
         timelineMath = TimelineMathFactory.create(mathStrategy, mathConfig)
         timelineUi = TimelineUiFactory.create(uiStrategy, uiConfig)
         initTools()
+        rebuildTextCache()
         requestLayout()
         invalidate()
+    }
+
+    /**
+     * Устанавливает стратегии расчётов и отрисовки через композитную модель.
+     */
+    fun setStrategy(strategy: TimelineStrategy) {
+        setStrategy(strategy.math, strategy.ui)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         timelineMath.setMeasuredWidth(measuredWidth)
         timelineMath.buildPath(timelineUi.getCompletedPath(), timelineUi.getRemainingPath())
+        layout = timelineMath.buildLayout()
         setMeasuredDimension(measuredWidth, timelineMath.getMeasuredHeight())
     }
 
@@ -120,81 +140,34 @@ class TimelineView @JvmOverloads constructor(
         timelineUi.prepareTextPaint()
         timelineUi.prepareIconPaint()
 
-        currentSide = Paint.Align.RIGHT
-        var printProgressIcon = false
-        var align = Paint.Align.LEFT
+        layout?.progressIcon?.let { progress ->
+            timelineUi.drawProgressIcon(canvas, progress.left, progress.top)
+        }
 
-        timelineMath.getSteps().forEachIndexed { i, step ->
-            if (i == 0) {
-                timelineUi.drawTitle(
-                    canvas,
-                    resources.getString(step.title),
-                    timelineMath.getTitleXCoordinates(align),
-                    timelineMath.getTitleYCoordinates(i),
-                    align
-                )
-                timelineUi.drawDescription(
-                    canvas,
-                    resources.getString(step.description),
-                    timelineMath.getTitleXCoordinates(align),
-                    timelineMath.getDescriptionYCoordinates(i),
-                    align
-                )
-                timelineUi.drawStepIcon(
-                    step,
-                    canvas,
-                    align,
-                    context,
-                    timelineMath.getIconXCoordinates(align),
-                    timelineMath.getIconYCoordinates(i)
-                )
-
-                if (step.percents != 100) {
-                    timelineUi.drawProgressIcon(
-                        canvas,
-                        timelineMath.getLeftCoordinates(step),
-                        timelineMath.getTopCoordinates(step)
-                    )
-                    printProgressIcon = true
-                }
-            } else {
-                if (step.percents != 100 && !printProgressIcon) {
-                    timelineUi.drawProgressIcon(
-                        canvas,
-                        timelineMath.getHorizontalIconOffset(i),
-                        timelineMath.getVerticalOffset(i)
-                    )
-                    printProgressIcon = true
-                }
-
-                align = if (align == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
-
-                timelineUi.drawTitle(
-                    canvas,
-                    resources.getString(step.title),
-                    timelineMath.getTitleXCoordinates(align),
-                    timelineMath.getTitleYCoordinates(i),
-                    align
-                )
-                timelineUi.drawDescription(
-                    canvas,
-                    resources.getString(step.description),
-                    timelineMath.getTitleXCoordinates(align),
-                    timelineMath.getDescriptionYCoordinates(i),
-                    align
-                )
-                timelineUi.drawStepIcon(
-                    step,
-                    canvas,
-                    align,
-                    context,
-                    timelineMath.getIconXCoordinates(align),
-                    timelineMath.getIconYCoordinates(i)
-                )
-            }
-
-            currentSide =
-                if (currentSide == Paint.Align.LEFT) Paint.Align.RIGHT else Paint.Align.LEFT
+        layout?.steps?.forEachIndexed { index, stepLayout ->
+            val stepText = stepTextCache.getOrNull(index)
+            timelineUi.drawTitle(
+                canvas,
+                stepText?.title ?: resources.getString(stepLayout.step.title),
+                stepLayout.titleX,
+                stepLayout.titleY,
+                stepLayout.textAlign
+            )
+            timelineUi.drawDescription(
+                canvas,
+                stepText?.description ?: resources.getString(stepLayout.step.description),
+                stepLayout.descriptionX,
+                stepLayout.descriptionY,
+                stepLayout.textAlign
+            )
+            timelineUi.drawStepIcon(
+                stepLayout.step,
+                canvas,
+                stepLayout.textAlign,
+                context,
+                stepLayout.iconX,
+                stepLayout.iconY
+            )
         }
     }
 
@@ -208,6 +181,15 @@ class TimelineView @JvmOverloads constructor(
         )
 
         timelineUi.initTools(timelineMath.getConfig(), context)
+    }
+
+    private fun rebuildTextCache() {
+        stepTextCache = timelineMath.getSteps().map { step ->
+            StepText(
+                title = resources.getString(step.title),
+                description = resources.getString(step.description)
+            )
+        }
     }
 
 }
