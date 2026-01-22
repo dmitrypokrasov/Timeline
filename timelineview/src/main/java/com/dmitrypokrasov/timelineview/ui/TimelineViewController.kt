@@ -12,6 +12,8 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.math.TimelineLayout
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
+import com.dmitrypokrasov.timelineview.model.toTimelineStepData
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController
 
@@ -27,14 +29,8 @@ class TimelineViewController(
     private var timelineMath: TimelineMathEngine
     private var timelineUi: TimelineUiRenderer
     private var layout: TimelineLayout? = null
-    private var stepTextCache: List<StepText> = emptyList()
     private val strategyController = TimelineViewStrategyController()
     private val heightCalculator = TimelineHeightCalculator()
-
-    private data class StepText(
-        val title: String,
-        val description: String
-    )
 
     init {
         val config = TimelineConfigParser(context).parse(attrs)
@@ -42,18 +38,19 @@ class TimelineViewController(
         timelineMath = resolved.math
         timelineUi = resolved.ui
         initTools()
-        rebuildTextCache()
     }
 
-    fun replaceSteps(steps: List<TimelineStep>) {
+    fun replaceSteps(steps: List<TimelineStepData>) {
         timelineMath.replaceSteps(steps)
-        rebuildTextCache()
+    }
+
+    fun replaceLegacySteps(steps: List<TimelineStep>) {
+        replaceSteps(steps.toTimelineStepData(context))
     }
 
     fun setMathEngine(engine: TimelineMathEngine) {
         timelineMath = engine
         initTools()
-        rebuildTextCache()
     }
 
     fun setUiRenderer(renderer: TimelineUiRenderer) {
@@ -68,7 +65,6 @@ class TimelineViewController(
         timelineMath = resolved.math
         timelineUi = resolved.ui
         initTools()
-        rebuildTextCache()
     }
 
     fun setStrategy(strategy: TimelineStrategy) {
@@ -89,14 +85,12 @@ class TimelineViewController(
         timelineMath = resolved.math
         timelineUi = resolved.ui
         initTools()
-        rebuildTextCache()
     }
 
     fun setStrategies(mathEngine: TimelineMathEngine, uiRenderer: TimelineUiRenderer) {
         timelineMath = mathEngine
         timelineUi = uiRenderer
         initTools()
-        rebuildTextCache()
     }
 
     fun measure(width: Int): Int {
@@ -121,17 +115,16 @@ class TimelineViewController(
         }
 
         layout?.steps?.forEachIndexed { index, stepLayout ->
-            val stepText = stepTextCache.getOrNull(index)
             timelineUi.drawTitle(
                 canvas,
-                stepText?.title ?: context.resources.getString(stepLayout.step.title),
+                stepLayout.step.title ?: "",
                 stepLayout.titleX,
                 stepLayout.titleY,
                 stepLayout.textAlign
             )
             timelineUi.drawDescription(
                 canvas,
-                stepText?.description ?: context.resources.getString(stepLayout.step.description),
+                stepLayout.step.description ?: "",
                 stepLayout.descriptionX,
                 stepLayout.descriptionY,
                 stepLayout.textAlign
@@ -154,14 +147,5 @@ class TimelineViewController(
         )
 
         timelineUi.initTools(timelineMath.getConfig(), context)
-    }
-
-    private fun rebuildTextCache() {
-        stepTextCache = timelineMath.getSteps().map { step ->
-            StepText(
-                title = context.resources.getString(step.title),
-                description = context.resources.getString(step.description)
-            )
-        }
     }
 }

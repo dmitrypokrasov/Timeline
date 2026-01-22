@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 
@@ -78,7 +78,7 @@ interface TimelineUiRenderer {
      * @param y Y-координата текста
      * @param align выравнивание текста
      */
-    fun drawTitle(canvas: Canvas, title: String, x: Float, y: Float, align: Paint.Align)
+    fun drawTitle(canvas: Canvas, title: CharSequence, x: Float, y: Float, align: Paint.Align)
 
     /**
      * Печатает описание шага.
@@ -89,7 +89,7 @@ interface TimelineUiRenderer {
      * @param y Y-координата текста
      * @param align выравнивание текста
      */
-    fun drawDescription(canvas: Canvas, description: String, x: Float, y: Float, align: Paint.Align)
+    fun drawDescription(canvas: Canvas, description: CharSequence, x: Float, y: Float, align: Paint.Align)
 
     /**
      * Рисует иконку шага.
@@ -103,7 +103,7 @@ interface TimelineUiRenderer {
      * @param x X-координата иконки
      * @param y Y-координата иконки
      */
-    fun drawStepIcon(step: TimelineStep, canvas: Canvas, align: Paint.Align, context: Context, x: Float, y: Float)
+    fun drawStepIcon(step: TimelineStepData, canvas: Canvas, align: Paint.Align, context: Context, x: Float, y: Float)
 
     /**
      * Возвращает текущее выравнивание текста, используемое кистью.

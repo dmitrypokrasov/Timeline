@@ -9,6 +9,7 @@ import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
@@ -45,8 +46,18 @@ class TimelineView @JvmOverloads constructor(
     /**
      * Обновляет список шагов и перерисовывает таймлайн.
      */
-    fun replaceSteps(steps: List<TimelineStep>) {
+    fun replaceSteps(steps: List<TimelineStepData>) {
         controller.replaceSteps(steps)
+        requestLayout()
+        invalidate()
+    }
+
+    /**
+     * Обновляет список шагов старой модели и перерисовывает таймлайн.
+     */
+    @JvmName("replaceLegacySteps")
+    fun replaceSteps(steps: List<TimelineStep>) {
+        controller.replaceLegacySteps(steps)
         requestLayout()
         invalidate()
     }

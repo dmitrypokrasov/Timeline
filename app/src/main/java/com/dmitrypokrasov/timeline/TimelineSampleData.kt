@@ -4,50 +4,53 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 object TimelineSampleData {
-    fun buildSteps(): List<TimelineStep> {
+    fun buildSteps(context: Context): List<TimelineStepData> {
+        fun progress(count: Int, maxCount: Int): Int {
+            return if (maxCount <= 0) {
+                0
+            } else {
+                (count.toDouble() / (maxCount.toDouble() / 100)).toInt().coerceIn(0, 100)
+            }
+        }
+
         return listOf(
-            TimelineStep(
-                title = R.string.title_1_lvl,
-                description = R.string.description_1_9_steps,
-                icon = R.drawable.ic_active,
-                count = 5,
-                maxCount = 9
+            TimelineStepData(
+                title = context.getString(R.string.title_1_lvl),
+                description = context.getString(R.string.description_1_9_steps),
+                iconRes = R.drawable.ic_active,
+                progress = progress(5, 9)
             ),
-            TimelineStep(
-                title = R.string.title_2_lvl,
-                description = R.string.description_10_99_steps,
-                icon = R.drawable.ic_active,
-                count = 0,
-                maxCount = 99
+            TimelineStepData(
+                title = context.getString(R.string.title_2_lvl),
+                description = context.getString(R.string.description_10_99_steps),
+                iconRes = R.drawable.ic_active,
+                progress = progress(0, 99)
             ),
-            TimelineStep(
-                title = R.string.title_3_lvl,
-                description = R.string.description_100_999_steps,
-                icon = R.drawable.ic_active,
-                count = 0,
-                maxCount = 999
+            TimelineStepData(
+                title = context.getString(R.string.title_3_lvl),
+                description = context.getString(R.string.description_100_999_steps),
+                iconRes = R.drawable.ic_active,
+                progress = progress(0, 999)
             ),
-            TimelineStep(
-                title = R.string.title_4_lvl,
-                description = R.string.description_1000_9999_steps,
-                icon = R.drawable.ic_active,
-                count = 0,
-                maxCount = 9999
+            TimelineStepData(
+                title = context.getString(R.string.title_4_lvl),
+                description = context.getString(R.string.description_1000_9999_steps),
+                iconRes = R.drawable.ic_active,
+                progress = progress(0, 9999)
             ),
-            TimelineStep(
-                title = R.string.title_5_lvl,
-                description = R.string.description_10000_99999_steps,
-                icon = R.drawable.ic_unactive,
-                count = 0,
-                maxCount = 99999
+            TimelineStepData(
+                title = context.getString(R.string.title_5_lvl),
+                description = context.getString(R.string.description_10000_99999_steps),
+                iconRes = R.drawable.ic_unactive,
+                progress = progress(0, 99999)
             )
         )
     }
 
-    fun buildMathConfig(context: Context, steps: List<TimelineStep>): TimelineMathConfig {
+    fun buildMathConfig(context: Context, steps: List<TimelineStepData>): TimelineMathConfig {
         return TimelineMathConfig(
             steps = steps,
             stepY = context.resources.getDimension(R.dimen.dimen_80dp),
