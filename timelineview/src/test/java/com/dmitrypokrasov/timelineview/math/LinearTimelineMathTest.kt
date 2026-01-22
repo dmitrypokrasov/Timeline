@@ -123,6 +123,23 @@ class LinearTimelineMathTest {
         assertEquals(null, layout.progressIcon)
     }
 
+    @Test
+    fun `repeated calculations return same results without changes`() {
+        val config = progressConfig(progresses = listOf(25, 100, 100))
+        val math = LinearTimelineMath(config, LinearTimelineMath.Orientation.HORIZONTAL)
+
+        val firstLayout = math.buildLayout()
+        val secondLayout = math.buildLayout()
+
+        assertEquals(firstLayout, secondLayout)
+
+        val step = config.steps[1]
+        val firstLeft = math.getLeftCoordinates(step)
+        val secondLeft = math.getLeftCoordinates(step)
+
+        assertEquals(firstLeft, secondLeft, 0.01f)
+    }
+
     private fun steps(): List<TimelineStepData> = listOf(
         TimelineStepData(title = "1", description = "1", iconRes = 1, progress = 0),
         TimelineStepData(title = "2", description = "2", iconRes = 2, progress = 50),
