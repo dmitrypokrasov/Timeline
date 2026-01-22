@@ -114,10 +114,6 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
 
     override fun getSteps(): List<TimelineStep> = mathConfig.steps
 
-    override fun getMeasuredHeight(): Int =
-        ((mathConfig.stepY * mathConfig.steps.size) +
-            mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
-
     override fun getLeftCoordinates(step: TimelineStep): Float =
         if (step.percents == 0) -mathConfig.sizeIconProgress / 2f
         else -startPositionDisableStrokeX - mathConfig.sizeIconProgress / 2f
