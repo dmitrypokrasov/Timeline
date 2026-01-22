@@ -18,7 +18,7 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedEnd = config.stepYFirst + config.stepY + config.stepY / 2f
+        val expectedEnd = config.stepYFirst + config.stepY * 2
         val lastStepPosition = layout.steps.last().titleX
 
         assertEquals(expectedEnd, lastStepPosition, 0.01f)
@@ -36,7 +36,7 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedEnd = config.stepYFirst + config.stepY + config.stepY / 2f
+        val expectedEnd = config.stepYFirst + config.stepY * 2
         val lastStepPosition = layout.steps.last().titleY - config.marginTopTitle
 
         assertEquals(expectedEnd, lastStepPosition, 0.01f)

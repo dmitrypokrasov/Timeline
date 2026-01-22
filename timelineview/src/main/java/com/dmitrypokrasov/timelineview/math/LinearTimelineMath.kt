@@ -113,7 +113,7 @@ class LinearTimelineMath(
 
     override fun getVerticalOffset(i: Int): Float =
         if (orientation == Orientation.VERTICAL) {
-            calculateVerticalOffset(i)
+            getStepPosition(i) + mathConfig.marginTopProgressIcon - mathConfig.sizeIconProgress / 2f
         } else {
             getHorizontalProgressTop()
         }
@@ -122,8 +122,7 @@ class LinearTimelineMath(
 
     override fun getMeasuredHeight(): Int =
         if (orientation == Orientation.VERTICAL) {
-            ((mathConfig.stepY * mathConfig.steps.size) +
-                mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
+            (getTotalLength() + mathConfig.sizeIconProgress / 2f).toInt()
         } else {
             val maxIcon = maxOf(mathConfig.sizeImageLvl, mathConfig.sizeIconProgress)
             (maxIcon + mathConfig.marginTopTitle + mathConfig.marginTopDescription).toInt()
@@ -140,7 +139,8 @@ class LinearTimelineMath(
 
     override fun getTopCoordinates(step: TimelineStep): Float {
         return if (orientation == Orientation.VERTICAL) {
-            -mathConfig.sizeIconProgress / 2f
+            val index = mathConfig.steps.indexOf(step).coerceAtLeast(0)
+            getStepPosition(index) - mathConfig.sizeIconProgress / 2f
         } else {
             getHorizontalProgressTop()
         }
@@ -184,20 +184,11 @@ class LinearTimelineMath(
     private fun getStepX(): Float =
         (measuredWidth - mathConfig.marginHorizontalStroke * 2)
 
-    private fun calculateVerticalOffset(i: Int): Float =
-        (mathConfig.stepY * i) + mathConfig.marginTopProgressIcon
-
     private fun calculateTitleYCoordinates(i: Int): Float =
-        (mathConfig.stepY * i) + mathConfig.marginTopTitle
+        getStepPosition(i) - mathConfig.stepYFirst + mathConfig.marginTopTitle
 
     private fun getSegmentLength(index: Int): Float {
-        return if (index == 0) {
-            mathConfig.stepYFirst
-        } else if (index == mathConfig.steps.size - 1) {
-            mathConfig.stepY / 2
-        } else {
-            mathConfig.stepY
-        }
+        return if (index == 0) mathConfig.stepYFirst else mathConfig.stepY
     }
 
     private fun getHorizontalStepPosition(index: Int): Float =
@@ -239,15 +230,14 @@ class LinearTimelineMath(
             }
 
             mathConfig.steps.mapIndexed { index, step ->
-                val positionY = segments[index].stepPosition
                 TimelineLayoutStep(
                     step = step,
                     titleX = getTitleXCoordinates(align),
-                    titleY = positionY + mathConfig.marginTopTitle,
+                    titleY = getTitleYCoordinates(index),
                     descriptionX = getTitleXCoordinates(align),
-                    descriptionY = positionY + mathConfig.marginTopTitle + mathConfig.marginTopDescription,
+                    descriptionY = getDescriptionYCoordinates(index),
                     iconX = getIconXCoordinates(align),
-                    iconY = positionY - mathConfig.sizeImageLvl / 2f,
+                    iconY = getIconYCoordinates(index),
                     textAlign = align
                 )
             }
@@ -282,4 +272,7 @@ class LinearTimelineMath(
             SegmentInfo(length = length, stepPosition = position)
         }
     }
+
+    private fun getStepPosition(index: Int): Float =
+        buildSegments().getOrNull(index)?.stepPosition ?: 0f
 }
