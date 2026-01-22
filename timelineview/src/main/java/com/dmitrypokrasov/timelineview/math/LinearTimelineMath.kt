@@ -283,7 +283,7 @@ class LinearTimelineMath(
         val startPosition = segment.stepPosition - segment.length
         val progress = segment.length * mathConfig.steps[index].percents / 100f
         return if (orientation == Orientation.VERTICAL && progress == 0f) {
-            startPosition + segment.length - mathConfig.stepYFirst
+            segment.stepPosition
         } else {
             startPosition + progress
         }
