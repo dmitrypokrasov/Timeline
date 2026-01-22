@@ -15,8 +15,9 @@ import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
  * Composes math and UI engines for the [com.dmitrypokrasov.timelineview.ui.TimelineView].
  */
 class TimelineViewStrategyController(
-    private val resolver: TimelineStrategyResolver = TimelineStrategyResolver()
+    registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry
 ) {
+    private val resolver = TimelineStrategyResolver(registry)
     fun resolve(config: TimelineConfig): TimelineViewStrategies {
         return TimelineViewStrategies(
             math = resolver.resolveMath(config),

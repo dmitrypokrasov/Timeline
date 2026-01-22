@@ -13,7 +13,7 @@ import com.dmitrypokrasov.timelineview.render.TimelineUiFactory
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
 class TimelineStrategyResolver(
-    private val registry: TimelineStrategyRegistry = TimelineStrategyRegistry
+    private val registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry
 ) {
     companion object {
         private const val TAG = "TimelineStrategyResolver"

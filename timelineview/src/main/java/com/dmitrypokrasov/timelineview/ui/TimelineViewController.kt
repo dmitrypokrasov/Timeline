@@ -15,25 +15,28 @@ import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.model.toTimelineStepData
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
+import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
 import com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController
 
 class TimelineViewController(
     private val context: Context,
-    attrs: AttributeSet?
+    attrs: AttributeSet?,
+    registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry
 ) {
 
     companion object {
         private const val TAG = "TimelineView"
     }
 
+    private val config = TimelineConfigParser(context).parse(attrs)
     private var timelineMath: TimelineMathEngine
     private var timelineUi: TimelineUiRenderer
     private var layout: TimelineLayout? = null
-    private val strategyController = TimelineViewStrategyController()
+    private var strategyController = TimelineViewStrategyController(registry)
     private val heightCalculator = TimelineHeightCalculator()
 
     init {
-        val config = TimelineConfigParser(context).parse(attrs)
         val resolved = strategyController.resolve(config)
         timelineMath = resolved.math
         timelineUi = resolved.ui
@@ -91,6 +94,20 @@ class TimelineViewController(
         timelineMath = mathEngine
         timelineUi = uiRenderer
         initTools()
+    }
+
+    fun setStrategyRegistry(registry: TimelineStrategyRegistryContract) {
+        strategyController = TimelineViewStrategyController(registry)
+        val resolved = strategyController.resolve(config)
+        timelineMath = resolved.math
+        timelineUi = resolved.ui
+        initTools()
+    }
+
+    fun setStrategyRegistry(configure: TimelineStrategyRegistryContract.() -> Unit) {
+        val registry = TimelineStrategyRegistry.createLocalRegistry()
+        configure(registry)
+        setStrategyRegistry(registry)
     }
 
     fun measure(width: Int): Int {

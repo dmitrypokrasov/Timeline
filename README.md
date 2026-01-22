@@ -130,8 +130,8 @@ You can register your own math/UI implementations and reference them by key.
 Built-in keys are `snake`, `linear_vertical`, `linear_horizontal`, and `linear`.
 
 ```kotlin
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.StrategyKey
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
@@ -156,5 +156,42 @@ TimelineStrategyRegistry.registerUi(object : TimelineUiProvider {
 timelineView.setStrategy(
     mathStrategyKey = StrategyKey("custom_math"),
     uiStrategyKey = StrategyKey("custom_ui")
+)
+```
+
+#### Local registry per TimelineView
+If you want different strategy sets for different views, create a local registry and pass it to a single
+`TimelineView` instance (or use the builder).
+
+```kotlin
+import com.dmitrypokrasov.timelineview.config.StrategyKey
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
+import com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider
+import com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider
+
+val localRegistry = TimelineStrategyRegistry.createLocalRegistry()
+
+localRegistry.registerMath(object : TimelineMathProvider {
+    override val key: StrategyKey = StrategyKey("local_math")
+    override fun create(config: TimelineMathConfig): TimelineMathEngine {
+        return MyCustomMath(config)
+    }
+})
+
+localRegistry.registerUi(object : TimelineUiProvider {
+    override val key: StrategyKey = StrategyKey("local_ui")
+    override fun create(config: TimelineUiConfig): TimelineUiRenderer {
+        return MyCustomUi(config)
+    }
+})
+
+timelineView.setStrategyRegistry(localRegistry)
+timelineView.setStrategy(
+    mathStrategyKey = StrategyKey("local_math"),
+    uiStrategyKey = StrategyKey("local_ui")
 )
 ```
