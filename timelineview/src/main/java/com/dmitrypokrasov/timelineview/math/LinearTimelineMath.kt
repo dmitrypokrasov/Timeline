@@ -111,19 +111,19 @@ class LinearTimelineMath(
         }
     }
 
-    override fun getVerticalOffset(i: Int): Float {
-        return if (orientation == Orientation.VERTICAL) {
-            getStepPosition(i) + mathConfig.marginTopProgressIcon
+    override fun getVerticalOffset(i: Int): Float =
+        if (orientation == Orientation.VERTICAL) {
+            calculateVerticalOffset(i)
         } else {
             getHorizontalProgressTop()
         }
-    }
 
     override fun getSteps(): List<TimelineStep> = mathConfig.steps
 
     override fun getMeasuredHeight(): Int =
         if (orientation == Orientation.VERTICAL) {
-            (getTotalLength() + mathConfig.sizeIconProgress / 2f).toInt()
+            ((mathConfig.stepY * mathConfig.steps.size) +
+                mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
         } else {
             val maxIcon = maxOf(mathConfig.sizeImageLvl, mathConfig.sizeIconProgress)
             (maxIcon + mathConfig.marginTopTitle + mathConfig.marginTopDescription).toInt()
@@ -169,23 +169,26 @@ class LinearTimelineMath(
     }
 
     override fun getIconYCoordinates(i: Int): Float {
-        return if (orientation == Orientation.VERTICAL) {
-            getStepPosition(i) - mathConfig.sizeImageLvl / 2f
-        } else {
-            -mathConfig.sizeIconProgress / 2f
-        }
+        return if (orientation == Orientation.VERTICAL)
+            calculateTitleYCoordinates(i) - (mathConfig.stepY - mathConfig.sizeImageLvl) / 2
+        else -mathConfig.sizeIconProgress / 2f
     }
 
-    override fun getTitleYCoordinates(i: Int): Float =
-        getStepPosition(i) + mathConfig.marginTopTitle
+    override fun getTitleYCoordinates(i: Int): Float = calculateTitleYCoordinates(i)
 
     override fun getDescriptionYCoordinates(i: Int): Float =
-        getTitleYCoordinates(i) + mathConfig.marginTopDescription
+        calculateTitleYCoordinates(i) + mathConfig.marginTopDescription
 
     // --- Private helpers ---
 
     private fun getStepX(): Float =
         (measuredWidth - mathConfig.marginHorizontalStroke * 2)
+
+    private fun calculateVerticalOffset(i: Int): Float =
+        (mathConfig.stepY * i) + mathConfig.marginTopProgressIcon
+
+    private fun calculateTitleYCoordinates(i: Int): Float =
+        (mathConfig.stepY * i) + mathConfig.marginTopTitle
 
     private fun getSegmentLength(index: Int): Float {
         return if (index == 0) {
@@ -197,11 +200,14 @@ class LinearTimelineMath(
         }
     }
 
+    private fun getHorizontalStepPosition(index: Int): Float =
+        if (index == 0) mathConfig.stepYFirst else mathConfig.stepYFirst + mathConfig.stepY * index
+
     private fun getTotalLength(): Float =
-        buildSegments().lastOrNull()?.stepPosition ?: 0f
+        mathConfig.steps.indices.sumOf { getSegmentLength(it).toDouble() }.toFloat()
 
     private fun getHorizontalProgressLeft(index: Int): Float =
-        getStepPosition(index) - mathConfig.sizeIconProgress / 2f
+        getHorizontalStepPosition(index) - mathConfig.sizeIconProgress / 2f
 
     private fun getHorizontalProgressTop(): Float = -mathConfig.sizeIconProgress / 2f
 
@@ -271,7 +277,4 @@ class LinearTimelineMath(
             SegmentInfo(length = length, stepPosition = position)
         }
     }
-
-    private fun getStepPosition(index: Int): Float =
-        buildSegments().getOrNull(index)?.stepPosition ?: 0f
 }
