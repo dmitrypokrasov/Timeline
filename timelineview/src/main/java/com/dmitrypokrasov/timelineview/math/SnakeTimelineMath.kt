@@ -2,7 +2,7 @@ package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import kotlin.math.abs
 
@@ -22,7 +22,7 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
 
     override fun getConfig(): TimelineMathConfig = mathConfig
 
-    override fun replaceSteps(steps: List<TimelineStep>) {
+    override fun replaceSteps(steps: List<TimelineStepData>) {
         mathConfig = mathConfig.copy(steps = steps)
     }
 
@@ -30,14 +30,14 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         pathDisable.reset()
         pathEnable.reset()
 
-        var enable = mathConfig.steps.isNotEmpty() && mathConfig.steps[0].percents != 0
+        var enable = mathConfig.steps.isNotEmpty() && mathConfig.steps[0].progress != 0
         var path: Path = if (enable) pathEnable else pathDisable
 
         mathConfig.steps.forEachIndexed { i, step ->
             var horizontalStep = if (i % 2 == 0) -getStepX() else getStepX()
 
             when {
-                step.percents == 100 -> {
+                step.progress == 100 -> {
                     if (i == 0) {
                         path.rLineTo(0f, mathConfig.stepYFirst)
                         path.rLineTo(-getStepXFirst(), 0f)
@@ -112,14 +112,14 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
     override fun getVerticalOffset(i: Int): Float =
         (mathConfig.stepY * i) + mathConfig.marginTopProgressIcon
 
-    override fun getSteps(): List<TimelineStep> = mathConfig.steps
+    override fun getSteps(): List<TimelineStepData> = mathConfig.steps
 
-    override fun getLeftCoordinates(step: TimelineStep): Float =
-        if (step.percents == 0) -mathConfig.sizeIconProgress / 2f
+    override fun getLeftCoordinates(step: TimelineStepData): Float =
+        if (step.progress == 0) -mathConfig.sizeIconProgress / 2f
         else -startPositionDisableStrokeX - mathConfig.sizeIconProgress / 2f
 
-    override fun getTopCoordinates(step: TimelineStep): Float =
-        if (step.percents == 0) -mathConfig.sizeIconProgress / 2f
+    override fun getTopCoordinates(step: TimelineStepData): Float =
+        if (step.progress == 0) -mathConfig.sizeIconProgress / 2f
         else mathConfig.stepYFirst - mathConfig.sizeIconProgress / 2f
 
     override fun getIconXCoordinates(align: Paint.Align): Float {
@@ -160,9 +160,9 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
     private fun calculateTitleYCoordinates(i: Int): Float =
         (mathConfig.stepY * i) + mathConfig.marginTopTitle
 
-    private fun calculateStartPositionDisableStrokeX(step: TimelineStep, i: Int): Float {
+    private fun calculateStartPositionDisableStrokeX(step: TimelineStepData, i: Int): Float {
         val startPosition =
-            if (i == 0) getStepXFirst() / 100 * step.percents else getStepX() / 100 * step.percents
+            if (i == 0) getStepXFirst() / 100 * step.progress else getStepX() / 100 * step.progress
         startPositionDisableStrokeX = startPosition
         return startPosition
     }
@@ -198,7 +198,7 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
             )
         }
 
-        val progressIndex = steps.indexOfFirst { it.percents != 100 }
+        val progressIndex = steps.indexOfFirst { it.progress != 100 }
         val progressIcon = if (progressIndex >= 0) {
             val step = steps[progressIndex]
             if (progressIndex == 0) {

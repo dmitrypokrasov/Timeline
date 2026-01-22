@@ -1,7 +1,7 @@
 package com.dmitrypokrasov.timelineview.math
 
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -42,9 +42,9 @@ class LinearTimelineMathTest {
         assertEquals(expectedEnd, lastStepPosition, 0.01f)
     }
 
-    private fun steps(): List<TimelineStep> = listOf(
-        TimelineStep(title = 1, description = 1, icon = 1, count = 0, maxCount = 10),
-        TimelineStep(title = 2, description = 2, icon = 2, count = 5, maxCount = 10),
-        TimelineStep(title = 3, description = 3, icon = 3, count = 10, maxCount = 10)
+    private fun steps(): List<TimelineStepData> = listOf(
+        TimelineStepData(title = "1", description = "1", iconRes = 1, progress = 0),
+        TimelineStepData(title = "2", description = "2", iconRes = 2, progress = 50),
+        TimelineStepData(title = "3", description = "3", iconRes = 3, progress = 100)
     )
 }

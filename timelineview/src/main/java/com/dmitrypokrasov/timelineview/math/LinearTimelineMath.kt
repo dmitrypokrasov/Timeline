@@ -2,7 +2,7 @@ package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 
 /**
@@ -32,7 +32,7 @@ class LinearTimelineMath(
 
     override fun getConfig(): TimelineMathConfig = mathConfig
 
-    override fun replaceSteps(steps: List<TimelineStep>) {
+    override fun replaceSteps(steps: List<TimelineStepData>) {
         mathConfig = mathConfig.copy(steps = steps)
     }
 
@@ -52,7 +52,7 @@ class LinearTimelineMath(
             val segment = segments[index].length
 
             if (drawEnable) {
-                val progress = segment * step.percents / 100f
+                val progress = segment * step.progress / 100f
                 val progressLength = if (orientation == Orientation.VERTICAL && progress == 0f) {
                     segment
                 } else {
@@ -123,9 +123,9 @@ class LinearTimelineMath(
             getHorizontalProgressTop()
         }
 
-    override fun getSteps(): List<TimelineStep> = mathConfig.steps
+    override fun getSteps(): List<TimelineStepData> = mathConfig.steps
 
-    override fun getLeftCoordinates(step: TimelineStep): Float {
+    override fun getLeftCoordinates(step: TimelineStepData): Float {
         return if (orientation == Orientation.VERTICAL) {
             -mathConfig.sizeIconProgress / 2f
         } else {
@@ -134,7 +134,7 @@ class LinearTimelineMath(
         }
     }
 
-    override fun getTopCoordinates(step: TimelineStep): Float {
+    override fun getTopCoordinates(step: TimelineStepData): Float {
         return if (orientation == Orientation.VERTICAL) {
             val index = mathConfig.steps.indexOf(step).coerceAtLeast(0)
             getProgressPosition(index) + mathConfig.marginTopProgressIcon - mathConfig.sizeIconProgress / 2f
@@ -240,7 +240,7 @@ class LinearTimelineMath(
             }
         }
 
-        val progressIndex = mathConfig.steps.indexOfFirst { it.percents != 100 }
+        val progressIndex = mathConfig.steps.indexOfFirst { it.progress != 100 }
         val progressIcon = if (progressIndex >= 0) {
             val progressPosition = getProgressPosition(progressIndex)
             if (orientation == Orientation.VERTICAL) {
@@ -277,7 +277,7 @@ class LinearTimelineMath(
         val segments = buildSegments()
         val segment = segments.getOrNull(index) ?: return 0f
         val startPosition = segment.stepPosition - segment.length
-        val progress = segment.length * mathConfig.steps[index].percents / 100f
+        val progress = segment.length * mathConfig.steps[index].progress / 100f
         return if (orientation == Orientation.VERTICAL && progress == 0f) {
             segment.stepPosition
         } else {

@@ -1,7 +1,7 @@
 package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 /**
  * Layout data for rendering the timeline.
@@ -15,7 +15,7 @@ data class TimelineLayout(
  * Layout data for a single timeline step.
  */
 data class TimelineLayoutStep(
-    val step: TimelineStep,
+    val step: TimelineStepData,
     val titleX: Float,
     val titleY: Float,
     val descriptionX: Float,

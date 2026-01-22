@@ -2,7 +2,7 @@ package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 
 /**
@@ -25,7 +25,7 @@ interface TimelineMathEngine {
      *
      * @param steps новый список шагов
      */
-    fun replaceSteps(steps: List<TimelineStep>)
+    fun replaceSteps(steps: List<TimelineStepData>)
 
     /**
      * Перестраивает пути для отображения прогресса.
@@ -58,21 +58,21 @@ interface TimelineMathEngine {
     fun getVerticalOffset(i: Int): Float
 
     /** Возвращает список шагов таймлайна. */
-    fun getSteps(): List<TimelineStep>
+    fun getSteps(): List<TimelineStepData>
 
     /**
      * Вычисляет левую координату иконки для указанного шага.
      *
      * @param step шаг временной шкалы
      */
-    fun getLeftCoordinates(step: TimelineStep): Float
+    fun getLeftCoordinates(step: TimelineStepData): Float
 
     /**
      * Вычисляет верхнюю координату иконки для указанного шага.
      *
      * @param step шаг временной шкалы
      */
-    fun getTopCoordinates(step: TimelineStep): Float
+    fun getTopCoordinates(step: TimelineStepData): Float
 
     /** Возвращает Y-координату иконки шага [i]. */
     fun getIconYCoordinates(i: Int): Float

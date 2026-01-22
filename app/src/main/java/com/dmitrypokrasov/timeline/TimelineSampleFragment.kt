@@ -28,7 +28,7 @@ class TimelineSampleFragment : Fragment() {
         val timelineView = view.findViewById<TimelineView>(R.id.timeline)
         val sample = requireArguments().getSerializable(ARG_SAMPLE) as TimelineSample
 
-        val steps = TimelineSampleData.buildSteps()
+        val steps = TimelineSampleData.buildSteps(requireContext())
         val mathConfig = TimelineSampleData.buildMathConfig(requireContext(), steps)
         val uiConfig = TimelineSampleData.buildUiConfig(requireContext())
 

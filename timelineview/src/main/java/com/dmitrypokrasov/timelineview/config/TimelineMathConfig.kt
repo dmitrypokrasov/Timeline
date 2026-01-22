@@ -1,7 +1,7 @@
 package com.dmitrypokrasov.timelineview.config
 
 import com.dmitrypokrasov.timelineview.model.TimelineConstants
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 /**
  * Конфигурация параметров позиционирования и размеров таймлайна.
@@ -24,7 +24,7 @@ import com.dmitrypokrasov.timelineview.model.TimelineStep
  */
 data class TimelineMathConfig(
     val startPosition: StartPosition = StartPosition.CENTER,
-    val steps: List<TimelineStep> = listOf(),
+    val steps: List<TimelineStepData> = listOf(),
     val stepY: Float = TimelineConstants.DEFAULT_STEP_Y_SIZE,
     val stepYFirst: Float = TimelineConstants.DEFAULT_STEP_Y_FIRST_SIZE,
     val marginTopDescription: Float = TimelineConstants.DEFAULT_MARGIN_TOP_DESCRIPTION,

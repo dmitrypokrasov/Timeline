@@ -15,7 +15,7 @@ import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
-import com.dmitrypokrasov.timelineview.model.TimelineStep
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 /**
  * Base implementation for timeline UI renderers with shared drawing logic.
@@ -119,7 +119,7 @@ open class BaseTimelineUi(
 
     override fun drawTitle(
         canvas: Canvas,
-        title: String,
+        title: CharSequence,
         x: Float,
         y: Float,
         align: Paint.Align
@@ -131,12 +131,12 @@ open class BaseTimelineUi(
             color = uiConfig.colorTitle
         }
 
-        canvas.drawText(title, x, y, textPaint)
+        canvas.drawText(title.toString(), x, y, textPaint)
     }
 
     override fun drawDescription(
         canvas: Canvas,
-        description: String,
+        description: CharSequence,
         x: Float,
         y: Float,
         align: Paint.Align
@@ -148,11 +148,11 @@ open class BaseTimelineUi(
             color = uiConfig.colorDescription
         }
 
-        canvas.drawText(description, x, y, textPaint)
+        canvas.drawText(description.toString(), x, y, textPaint)
     }
 
     override fun drawStepIcon(
-        step: TimelineStep,
+        step: TimelineStepData,
         canvas: Canvas,
         align: Paint.Align,
         context: Context,
@@ -160,7 +160,7 @@ open class BaseTimelineUi(
         y: Float
     ) {
         val bm: Bitmap? = when {
-            step.count == step.maxCount && step.icon != 0 -> getStepIconBitmap(step.icon, context)
+            step.progress == 100 && step.iconRes != null -> getStepIconBitmap(step.iconRes, context)
             else -> iconDisableStep
         }
         bm?.let {
