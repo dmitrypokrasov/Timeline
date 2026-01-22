@@ -29,6 +29,7 @@ class TimelineViewController(
     private var layout: TimelineLayout? = null
     private var stepTextCache: List<StepText> = emptyList()
     private val strategyController = TimelineViewStrategyController()
+    private val heightCalculator = TimelineHeightCalculator()
 
     private data class StepText(
         val title: String,
@@ -102,7 +103,7 @@ class TimelineViewController(
         timelineMath.setMeasuredWidth(width)
         timelineMath.buildPath(timelineUi.getCompletedPath(), timelineUi.getRemainingPath())
         layout = timelineMath.buildLayout()
-        return timelineMath.getMeasuredHeight()
+        return heightCalculator.calculateHeight(timelineMath, timelineUi.getConfig())
     }
 
     fun draw(canvas: Canvas) {

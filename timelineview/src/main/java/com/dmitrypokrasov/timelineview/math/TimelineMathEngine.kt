@@ -102,11 +102,6 @@ interface TimelineMathEngine {
     fun getDescriptionYCoordinates(i: Int): Float
 
     /**
-     * Возвращает рассчитанную высоту View после всех вычислений.
-     */
-    fun getMeasuredHeight(): Int
-
-    /**
      * Строит layout-данные для отрисовки шагов и прогресс-иконки.
      */
     fun buildLayout(): TimelineLayout

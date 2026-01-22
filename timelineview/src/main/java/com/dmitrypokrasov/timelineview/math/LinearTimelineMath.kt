@@ -125,15 +125,6 @@ class LinearTimelineMath(
 
     override fun getSteps(): List<TimelineStep> = mathConfig.steps
 
-    override fun getMeasuredHeight(): Int =
-        if (orientation == Orientation.VERTICAL) {
-            ((mathConfig.stepY * mathConfig.steps.size) +
-                mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f).toInt()
-        } else {
-            val maxIcon = maxOf(mathConfig.sizeImageLvl, mathConfig.sizeIconProgress)
-            (maxIcon + mathConfig.marginTopTitle + mathConfig.marginTopDescription).toInt()
-        }
-
     override fun getLeftCoordinates(step: TimelineStep): Float {
         return if (orientation == Orientation.VERTICAL) {
             -mathConfig.sizeIconProgress / 2f
