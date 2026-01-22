@@ -119,18 +119,19 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 
 timelineView.setStrategy(
     TimelineStrategy(
-        math = TimelineMathStrategy.LINEAR_HORIZONTAL,
-        ui = TimelineUiStrategy.LINEAR
+        math = TimelineMathStrategy.LinearHorizontal,
+        ui = TimelineUiStrategy.Linear
     )
 )
 ```
 
 #### Registering custom strategies
-You can register your own math/UI implementations and reference them by ID.
-Built-in IDs are `snake`, `linear_vertical`, `linear_horizontal`, and `linear`.
+You can register your own math/UI implementations and reference them by key.
+Built-in keys are `snake`, `linear_vertical`, `linear_horizontal`, and `linear`.
 
 ```kotlin
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
@@ -139,21 +140,21 @@ import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider
 
 TimelineStrategyRegistry.registerMath(object : TimelineMathProvider {
-    override val id: String = "custom_math"
+    override val key: StrategyKey = StrategyKey("custom_math")
     override fun create(config: TimelineMathConfig): TimelineMathEngine {
         return MyCustomMath(config)
     }
 })
 
 TimelineStrategyRegistry.registerUi(object : TimelineUiProvider {
-    override val id: String = "custom_ui"
+    override val key: StrategyKey = StrategyKey("custom_ui")
     override fun create(config: TimelineUiConfig): TimelineUiRenderer {
         return MyCustomUi(config)
     }
 })
 
 timelineView.setStrategy(
-    mathStrategyId = "custom_math",
-    uiStrategyId = "custom_ui"
+    mathStrategyKey = StrategyKey("custom_math"),
+    uiStrategyKey = StrategyKey("custom_ui")
 )
 ```

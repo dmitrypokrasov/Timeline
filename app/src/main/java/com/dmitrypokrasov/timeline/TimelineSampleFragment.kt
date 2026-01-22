@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
@@ -63,8 +64,8 @@ class TimelineSampleFragment : Fragment() {
                 timelineView.setMathEngine(SnakeTimelineMath(mathConfig))
                 timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
                 timelineView.setStrategy(
-                    mathStrategyId = CUSTOM_MATH_ID,
-                    uiStrategyId = CUSTOM_UI_ID
+                    mathStrategyKey = StrategyKey(CUSTOM_MATH_ID),
+                    uiStrategyKey = StrategyKey(CUSTOM_UI_ID)
                 )
             }
         }
@@ -72,11 +73,11 @@ class TimelineSampleFragment : Fragment() {
 
     private fun registerCustomStrategies() {
         TimelineStrategyRegistry.registerMath(object : TimelineMathProvider {
-            override val id: String = CUSTOM_MATH_ID
+            override val key: StrategyKey = StrategyKey(CUSTOM_MATH_ID)
             override fun create(config: TimelineMathConfig) = SnakeTimelineMath(config)
         })
         TimelineStrategyRegistry.registerUi(object : TimelineUiProvider {
-            override val id: String = CUSTOM_UI_ID
+            override val key: StrategyKey = StrategyKey(CUSTOM_UI_ID)
             override fun create(config: TimelineUiConfig) = LinearTimelineUi(config)
         })
     }

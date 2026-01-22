@@ -9,8 +9,8 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 object TimelineUiFactory {
     fun create(strategy: TimelineUiStrategy, config: TimelineUiConfig): TimelineUiRenderer {
         return when (strategy) {
-            TimelineUiStrategy.SNAKE -> SnakeTimelineUi(config)
-            TimelineUiStrategy.LINEAR -> LinearTimelineUi(config)
+            TimelineUiStrategy.Snake -> SnakeTimelineUi(config)
+            TimelineUiStrategy.Linear -> LinearTimelineUi(config)
         }
     }
 }
