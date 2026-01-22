@@ -6,8 +6,6 @@ import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.model.TimelineConstants
-import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
-import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 
 /**
  * Utility class for parsing view attributes into a [TimelineConfig].
@@ -108,21 +106,21 @@ class TimelineConfigParser(private val context: Context) {
             ),
         )
 
-        val mathStrategyId = typedArray.getString(
+        val mathStrategyKey = typedArray.getString(
             R.styleable.TimelineView_timeline_math_strategy_id
-        )?.trim()?.takeIf { it.isNotEmpty() }
-        val uiStrategyId = typedArray.getString(
+        )?.trim()?.takeIf { it.isNotEmpty() }?.let { StrategyKey(it) }
+        val uiStrategyKey = typedArray.getString(
             R.styleable.TimelineView_timeline_ui_strategy_id
-        )?.trim()?.takeIf { it.isNotEmpty() }
+        )?.trim()?.takeIf { it.isNotEmpty() }?.let { StrategyKey(it) }
 
-        val mathStrategy = TimelineMathStrategy.entries[typedArray.getInt(
+        val mathStrategy = TimelineMathStrategy.fromOrdinal(typedArray.getInt(
             R.styleable.TimelineView_timeline_math_strategy,
-            TimelineMathStrategy.SNAKE.ordinal
-        )]
-        val uiStrategy = TimelineUiStrategy.entries[typedArray.getInt(
+            TimelineMathStrategy.entries.indexOf(TimelineMathStrategy.Snake)
+        ))
+        val uiStrategy = TimelineUiStrategy.fromOrdinal(typedArray.getInt(
             R.styleable.TimelineView_timeline_ui_strategy,
-            TimelineUiStrategy.SNAKE.ordinal
-        )]
+            TimelineUiStrategy.entries.indexOf(TimelineUiStrategy.Snake)
+        ))
 
         typedArray.recycle()
 
@@ -131,8 +129,8 @@ class TimelineConfigParser(private val context: Context) {
             ui = uiConfig,
             mathStrategy = mathStrategy,
             uiStrategy = uiStrategy,
-            mathStrategyId = mathStrategyId,
-            uiStrategyId = uiStrategyId
+            mathStrategyKey = mathStrategyKey,
+            uiStrategyKey = uiStrategyKey
         )
     }
 }

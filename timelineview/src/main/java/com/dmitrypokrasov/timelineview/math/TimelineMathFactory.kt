@@ -9,10 +9,10 @@ import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 object TimelineMathFactory {
     fun create(strategy: TimelineMathStrategy, config: TimelineMathConfig): TimelineMathEngine {
         return when (strategy) {
-            TimelineMathStrategy.SNAKE -> SnakeTimelineMath(config)
-            TimelineMathStrategy.LINEAR_VERTICAL ->
+            TimelineMathStrategy.Snake -> SnakeTimelineMath(config)
+            TimelineMathStrategy.LinearVertical ->
                 LinearTimelineMath(config, LinearTimelineMath.Orientation.VERTICAL)
-            TimelineMathStrategy.LINEAR_HORIZONTAL ->
+            TimelineMathStrategy.LinearHorizontal ->
                 LinearTimelineMath(config, LinearTimelineMath.Orientation.HORIZONTAL)
         }
     }

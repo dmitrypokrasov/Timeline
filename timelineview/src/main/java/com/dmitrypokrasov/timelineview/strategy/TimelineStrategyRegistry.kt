@@ -1,5 +1,6 @@
 package com.dmitrypokrasov.timelineview.strategy
 
+import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
@@ -15,53 +16,65 @@ import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
  * Registry for timeline strategies to allow custom strategy extensions.
  */
 object TimelineStrategyRegistry {
-    private val mathProviders = mutableMapOf<String, TimelineMathProvider>()
-    private val uiProviders = mutableMapOf<String, TimelineUiProvider>()
+    private val mathProviders = mutableMapOf<StrategyKey, TimelineMathProvider>()
+    private val uiProviders = mutableMapOf<StrategyKey, TimelineUiProvider>()
 
     init {
         registerMath(object : TimelineMathProvider {
-            override val id: String = TimelineMathStrategy.SNAKE.id
+            override val key: StrategyKey = TimelineMathStrategy.Snake.key
             override fun create(config: TimelineMathConfig): TimelineMathEngine = SnakeTimelineMath(config)
         })
         registerMath(object : TimelineMathProvider {
-            override val id: String = TimelineMathStrategy.LINEAR_VERTICAL.id
+            override val key: StrategyKey = TimelineMathStrategy.LinearVertical.key
             override fun create(config: TimelineMathConfig): TimelineMathEngine =
                 LinearTimelineMath(config, LinearTimelineMath.Orientation.VERTICAL)
         })
         registerMath(object : TimelineMathProvider {
-            override val id: String = TimelineMathStrategy.LINEAR_HORIZONTAL.id
+            override val key: StrategyKey = TimelineMathStrategy.LinearHorizontal.key
             override fun create(config: TimelineMathConfig): TimelineMathEngine =
                 LinearTimelineMath(config, LinearTimelineMath.Orientation.HORIZONTAL)
         })
 
         registerUi(object : TimelineUiProvider {
-            override val id: String = TimelineUiStrategy.SNAKE.id
+            override val key: StrategyKey = TimelineUiStrategy.Snake.key
             override fun create(config: TimelineUiConfig): TimelineUiRenderer = SnakeTimelineUi(config)
         })
         registerUi(object : TimelineUiProvider {
-            override val id: String = TimelineUiStrategy.LINEAR.id
+            override val key: StrategyKey = TimelineUiStrategy.Linear.key
             override fun create(config: TimelineUiConfig): TimelineUiRenderer = LinearTimelineUi(config)
         })
     }
 
     fun registerMath(provider: TimelineMathProvider) {
-        mathProviders[provider.id] = provider
+        val key = provider.key
+        require(!mathProviders.containsKey(key)) {
+            "Math strategy already registered for key: ${key.value}"
+        }
+        mathProviders[key] = provider
     }
 
     fun registerUi(provider: TimelineUiProvider) {
-        uiProviders[provider.id] = provider
+        val key = provider.key
+        require(!uiProviders.containsKey(key)) {
+            "UI strategy already registered for key: ${key.value}"
+        }
+        uiProviders[key] = provider
     }
 
-    fun getMathProvider(id: String): TimelineMathProvider? = mathProviders[id]
+    fun unregisterMath(key: StrategyKey): TimelineMathProvider? = mathProviders.remove(key)
 
-    fun getUiProvider(id: String): TimelineUiProvider? = uiProviders[id]
+    fun unregisterUi(key: StrategyKey): TimelineUiProvider? = uiProviders.remove(key)
+
+    fun getMathProvider(key: StrategyKey): TimelineMathProvider? = mathProviders[key]
+
+    fun getUiProvider(key: StrategyKey): TimelineUiProvider? = uiProviders[key]
 }
 
 /**
  * Factory provider for math strategy implementations.
  */
 interface TimelineMathProvider {
-    val id: String
+    val key: StrategyKey
     fun create(config: TimelineMathConfig): TimelineMathEngine
 }
 
@@ -69,6 +82,6 @@ interface TimelineMathProvider {
  * Factory provider for UI strategy implementations.
  */
 interface TimelineUiProvider {
-    val id: String
+    val key: StrategyKey
     fun create(config: TimelineUiConfig): TimelineUiRenderer
 }

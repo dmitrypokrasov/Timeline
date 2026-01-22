@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
+import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
@@ -13,7 +14,7 @@ import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.math.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
-import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyResolver
+import com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController
 
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
@@ -53,7 +54,7 @@ class TimelineView @JvmOverloads constructor(
     private var layout: TimelineLayout? = null
 
     private var stepTextCache: List<StepText> = emptyList()
-    private val strategyResolver = TimelineStrategyResolver()
+    private val strategyController = TimelineViewStrategyController()
 
     private data class StepText(
         val title: String,
@@ -62,8 +63,9 @@ class TimelineView @JvmOverloads constructor(
 
     init {
         val config = TimelineConfigParser(context).parse(attrs)
-        timelineMath = strategyResolver.resolveMath(config)
-        timelineUi = strategyResolver.resolveUi(config)
+        val resolved = strategyController.resolve(config)
+        timelineMath = resolved.math
+        timelineUi = resolved.ui
 
         initTools()
         rebuildTextCache()
@@ -106,8 +108,9 @@ class TimelineView @JvmOverloads constructor(
     fun setStrategy(mathStrategy: TimelineMathStrategy, uiStrategy: TimelineUiStrategy) {
         val mathConfig = timelineMath.getConfig()
         val uiConfig = timelineUi.getConfig()
-        timelineMath = strategyResolver.resolveMath(null, mathStrategy, mathConfig)
-        timelineUi = strategyResolver.resolveUi(null, uiStrategy, uiConfig)
+        val resolved = strategyController.resolve(mathStrategy, uiStrategy, mathConfig, uiConfig)
+        timelineMath = resolved.math
+        timelineUi = resolved.ui
         initTools()
         rebuildTextCache()
         requestLayout()
@@ -122,21 +125,33 @@ class TimelineView @JvmOverloads constructor(
     }
 
     /**
-     * Устанавливает стратегии расчётов и отрисовки через зарегистрированные идентификаторы.
+     * Устанавливает стратегии расчётов и отрисовки через зарегистрированные ключи.
      */
-    fun setStrategy(mathStrategyId: String, uiStrategyId: String) {
+    fun setStrategy(mathStrategyKey: StrategyKey?, uiStrategyKey: StrategyKey?) {
         val mathConfig = timelineMath.getConfig()
         val uiConfig = timelineUi.getConfig()
-        timelineMath = strategyResolver.resolveMath(
-            mathStrategyId,
-            TimelineMathStrategy.SNAKE,
-            mathConfig
+        val resolved = strategyController.resolve(
+            mathStrategyKey = mathStrategyKey,
+            uiStrategyKey = uiStrategyKey,
+            fallbackMath = TimelineMathStrategy.Snake,
+            fallbackUi = TimelineUiStrategy.Snake,
+            mathConfig = mathConfig,
+            uiConfig = uiConfig
         )
-        timelineUi = strategyResolver.resolveUi(
-            uiStrategyId,
-            TimelineUiStrategy.SNAKE,
-            uiConfig
-        )
+        timelineMath = resolved.math
+        timelineUi = resolved.ui
+        initTools()
+        rebuildTextCache()
+        requestLayout()
+        invalidate()
+    }
+
+    /**
+     * Устанавливает одновременно математический движок и рендерер интерфейса.
+     */
+    fun setStrategies(mathEngine: TimelineMathEngine, uiRenderer: TimelineUiRenderer) {
+        timelineMath = mathEngine
+        timelineUi = uiRenderer
         initTools()
         rebuildTextCache()
         requestLayout()
