@@ -42,7 +42,7 @@ class LinearTimelineMath(
 
         val segments = buildSegments()
         var x = 0f
-        var y = 0f
+        var y = if (orientation == Orientation.HORIZONTAL) getHorizontalBaseline() else 0f
         pathEnable.moveTo(x, y)
         pathDisable.moveTo(x, y)
 
@@ -209,27 +209,32 @@ class LinearTimelineMath(
     private fun getHorizontalProgressLeft(index: Int): Float =
         getHorizontalStepPosition(index) - mathConfig.sizeIconProgress / 2f
 
-    private fun getHorizontalProgressTop(): Float = -mathConfig.sizeIconProgress / 2f
+    private fun getHorizontalProgressTop(): Float =
+        getHorizontalBaseline() - mathConfig.sizeIconProgress / 2f
+
+    private fun getHorizontalBaseline(): Float =
+        maxOf(mathConfig.sizeImageLvl, mathConfig.sizeIconProgress) / 2f
 
     override fun buildLayout(): TimelineLayout {
         val segments = buildSegments()
         val layoutSteps = if (orientation == Orientation.HORIZONTAL) {
             mathConfig.steps.mapIndexed { index, step ->
                 val positionX = segments[index].stepPosition
+                val baseline = getHorizontalBaseline()
                 TimelineLayoutStep(
                     step = step,
                     titleX = positionX,
-                    titleY = mathConfig.marginTopTitle,
+                    titleY = baseline + mathConfig.marginTopTitle,
                     descriptionX = positionX,
-                    descriptionY = mathConfig.marginTopTitle + mathConfig.marginTopDescription,
+                    descriptionY = baseline + mathConfig.marginTopTitle + mathConfig.marginTopDescription,
                     iconX = positionX - mathConfig.sizeImageLvl / 2f,
-                    iconY = -mathConfig.sizeImageLvl / 2f,
+                    iconY = baseline - mathConfig.sizeImageLvl / 2f,
                     textAlign = Paint.Align.CENTER
                 )
             }
         } else {
             val align = when (mathConfig.startPosition) {
-                TimelineMathConfig.StartPosition.END -> Paint.Align.LEFT
+                TimelineMathConfig.StartPosition.START -> Paint.Align.LEFT
                 else -> Paint.Align.RIGHT
             }
 
