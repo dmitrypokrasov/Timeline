@@ -3,18 +3,14 @@ package com.dmitrypokrasov.timelineview.ui
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
-import com.dmitrypokrasov.timelineview.math.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
-import com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController
 
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
@@ -40,43 +36,17 @@ class TimelineView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    companion object {
-        private const val TAG = "TimelineView"
-    }
-
-    /** Математический движок таймлайна. */
-    private var timelineMath: TimelineMathEngine
-
-    /** Рендерер визуальной части таймлайна. */
-    private var timelineUi: TimelineUiRenderer
-
-    /** Текущая сторона отрисовки (LEFT/RIGHT). */
-    private var layout: TimelineLayout? = null
-
-    private var stepTextCache: List<StepText> = emptyList()
-    private val strategyController = TimelineViewStrategyController()
-
-    private data class StepText(
-        val title: String,
-        val description: String
-    )
+    private val controller = TimelineViewController(context, attrs)
 
     init {
-        val config = TimelineConfigParser(context).parse(attrs)
-        val resolved = strategyController.resolve(config)
-        timelineMath = resolved.math
-        timelineUi = resolved.ui
-
-        initTools()
-        rebuildTextCache()
+        // Intentionally empty. Initialization is delegated to the controller.
     }
 
     /**
      * Обновляет список шагов и перерисовывает таймлайн.
      */
     fun replaceSteps(steps: List<TimelineStep>) {
-        timelineMath.replaceSteps(steps)
-        rebuildTextCache()
+        controller.replaceSteps(steps)
         requestLayout()
         invalidate()
     }
@@ -85,9 +55,7 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает пользовательский математический движок.
      */
     fun setMathEngine(engine: TimelineMathEngine) {
-        timelineMath = engine
-        initTools()
-        rebuildTextCache()
+        controller.setMathEngine(engine)
         requestLayout()
         invalidate()
     }
@@ -96,8 +64,7 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает пользовательский рендерер интерфейса.
      */
     fun setUiRenderer(renderer: TimelineUiRenderer) {
-        timelineUi = renderer
-        initTools()
+        controller.setUiRenderer(renderer)
         requestLayout()
         invalidate()
     }
@@ -106,13 +73,7 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает стратегии расчётов и отрисовки.
      */
     fun setStrategy(mathStrategy: TimelineMathStrategy, uiStrategy: TimelineUiStrategy) {
-        val mathConfig = timelineMath.getConfig()
-        val uiConfig = timelineUi.getConfig()
-        val resolved = strategyController.resolve(mathStrategy, uiStrategy, mathConfig, uiConfig)
-        timelineMath = resolved.math
-        timelineUi = resolved.ui
-        initTools()
-        rebuildTextCache()
+        controller.setStrategy(mathStrategy, uiStrategy)
         requestLayout()
         invalidate()
     }
@@ -121,27 +82,16 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает стратегии расчётов и отрисовки через композитную модель.
      */
     fun setStrategy(strategy: TimelineStrategy) {
-        setStrategy(strategy.math, strategy.ui)
+        controller.setStrategy(strategy)
+        requestLayout()
+        invalidate()
     }
 
     /**
      * Устанавливает стратегии расчётов и отрисовки через зарегистрированные ключи.
      */
     fun setStrategy(mathStrategyKey: StrategyKey?, uiStrategyKey: StrategyKey?) {
-        val mathConfig = timelineMath.getConfig()
-        val uiConfig = timelineUi.getConfig()
-        val resolved = strategyController.resolve(
-            mathStrategyKey = mathStrategyKey,
-            uiStrategyKey = uiStrategyKey,
-            fallbackMath = TimelineMathStrategy.Snake,
-            fallbackUi = TimelineUiStrategy.Snake,
-            mathConfig = mathConfig,
-            uiConfig = uiConfig
-        )
-        timelineMath = resolved.math
-        timelineUi = resolved.ui
-        initTools()
-        rebuildTextCache()
+        controller.setStrategy(mathStrategyKey, uiStrategyKey)
         requestLayout()
         invalidate()
     }
@@ -150,83 +100,19 @@ class TimelineView @JvmOverloads constructor(
      * Устанавливает одновременно математический движок и рендерер интерфейса.
      */
     fun setStrategies(mathEngine: TimelineMathEngine, uiRenderer: TimelineUiRenderer) {
-        timelineMath = mathEngine
-        timelineUi = uiRenderer
-        initTools()
-        rebuildTextCache()
+        controller.setStrategies(mathEngine, uiRenderer)
         requestLayout()
         invalidate()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        timelineMath.setMeasuredWidth(measuredWidth)
-        timelineMath.buildPath(timelineUi.getCompletedPath(), timelineUi.getRemainingPath())
-        layout = timelineMath.buildLayout()
-        setMeasuredDimension(measuredWidth, timelineMath.getMeasuredHeight())
+        val measuredHeight = controller.measure(measuredWidth)
+        setMeasuredDimension(measuredWidth, measuredHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
-        timelineUi.prepareStrokePaint()
-
-        canvas.translate(timelineMath.getStartPosition(), 0f)
-        timelineUi.drawCompletedPath(canvas)
-        timelineUi.drawRemainingPath(canvas)
-
-        // Отрисовка шагов: иконки, заголовки, описания
-        timelineUi.prepareTextPaint()
-        timelineUi.prepareIconPaint()
-
-        layout?.progressIcon?.let { progress ->
-            timelineUi.drawProgressIcon(canvas, progress.left, progress.top)
-        }
-
-        layout?.steps?.forEachIndexed { index, stepLayout ->
-            val stepText = stepTextCache.getOrNull(index)
-            timelineUi.drawTitle(
-                canvas,
-                stepText?.title ?: resources.getString(stepLayout.step.title),
-                stepLayout.titleX,
-                stepLayout.titleY,
-                stepLayout.textAlign
-            )
-            timelineUi.drawDescription(
-                canvas,
-                stepText?.description ?: resources.getString(stepLayout.step.description),
-                stepLayout.descriptionX,
-                stepLayout.descriptionY,
-                stepLayout.textAlign
-            )
-            timelineUi.drawStepIcon(
-                stepLayout.step,
-                canvas,
-                stepLayout.textAlign,
-                context,
-                stepLayout.iconX,
-                stepLayout.iconY
-            )
-        }
-    }
-
-    /**
-     * Инициализирует визуальные элементы (битмапы, pathEffect).
-     */
-    private fun initTools() {
-        Log.d(
-            TAG,
-            "initTools timelineMathConfig: ${timelineMath.getConfig()}, timelineUiConfig: ${timelineUi.getConfig()}"
-        )
-
-        timelineUi.initTools(timelineMath.getConfig(), context)
-    }
-
-    private fun rebuildTextCache() {
-        stepTextCache = timelineMath.getSteps().map { step ->
-            StepText(
-                title = resources.getString(step.title),
-                description = resources.getString(step.description)
-            )
-        }
+        controller.draw(canvas)
     }
 
 }
