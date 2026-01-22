@@ -53,32 +53,44 @@ object TimelineSampleData {
     fun buildMathConfig(context: Context, steps: List<TimelineStepData>): TimelineMathConfig {
         return TimelineMathConfig(
             steps = steps,
-            stepY = context.resources.getDimension(R.dimen.dimen_80dp),
             startPosition = TimelineMathConfig.StartPosition.START,
-            marginHorizontalStroke = context.resources.getDimension(R.dimen.dimen_40dp),
-            marginHorizontalText = context.resources.getDimension(R.dimen.dimen_80dp),
-            marginHorizontalImage = context.resources.getDimension(R.dimen.dimen_16dp),
-            marginTopTitle = context.resources.getDimension(R.dimen.dimen_52dp),
-            marginTopDescription = context.resources.getDimension(R.dimen.dimen_16dp),
-            marginTopProgressIcon = context.resources.getDimension(R.dimen.dimen_6dp),
-            stepYFirst = context.resources.getDimension(R.dimen.dimen_20dp),
-            sizeImageLvl = context.resources.getDimension(R.dimen.dimen_48dp),
-            sizeIconProgress = context.resources.getDimension(R.dimen.dimen_28dp),
+            spacing = TimelineMathConfig.Spacing(
+                stepY = context.resources.getDimension(R.dimen.dimen_80dp),
+                marginHorizontalStroke = context.resources.getDimension(R.dimen.dimen_40dp),
+                marginHorizontalText = context.resources.getDimension(R.dimen.dimen_80dp),
+                marginHorizontalImage = context.resources.getDimension(R.dimen.dimen_16dp),
+                marginTopTitle = context.resources.getDimension(R.dimen.dimen_52dp),
+                marginTopDescription = context.resources.getDimension(R.dimen.dimen_16dp),
+                marginTopProgressIcon = context.resources.getDimension(R.dimen.dimen_6dp),
+                stepYFirst = context.resources.getDimension(R.dimen.dimen_20dp)
+            ),
+            sizes = TimelineMathConfig.Sizes(
+                sizeImageLvl = context.resources.getDimension(R.dimen.dimen_48dp),
+                sizeIconProgress = context.resources.getDimension(R.dimen.dimen_28dp)
+            )
         )
     }
 
     fun buildUiConfig(context: Context): TimelineUiConfig {
         return TimelineUiConfig(
-            iconProgress = R.drawable.ic_progress_timeline,
-            iconDisableLvl = R.drawable.ic_unactive,
-            colorTitle = ContextCompat.getColor(context, R.color.black),
-            sizeTitle = context.resources.getDimension(R.dimen.dimen_12sp),
-            sizeDescription = context.resources.getDimension(R.dimen.dimen_12sp),
-            sizeStroke = context.resources.getDimension(R.dimen.dimen_6dp),
-            colorDescription = ContextCompat.getColor(context, R.color.black),
-            radius = context.resources.getDimension(R.dimen.dimen_48dp),
-            colorStroke = ContextCompat.getColor(context, R.color.teal_700),
-            colorProgress = ContextCompat.getColor(context, R.color.teal_200),
+            icons = TimelineUiConfig.Icons(
+                iconProgress = R.drawable.ic_progress_timeline,
+                iconDisableLvl = R.drawable.ic_unactive
+            ),
+            colors = TimelineUiConfig.Colors(
+                colorTitle = ContextCompat.getColor(context, R.color.black),
+                colorDescription = ContextCompat.getColor(context, R.color.black),
+                colorStroke = ContextCompat.getColor(context, R.color.teal_700),
+                colorProgress = ContextCompat.getColor(context, R.color.teal_200)
+            ),
+            textSizes = TimelineUiConfig.TextSizes(
+                sizeTitle = context.resources.getDimension(R.dimen.dimen_12sp),
+                sizeDescription = context.resources.getDimension(R.dimen.dimen_12sp)
+            ),
+            stroke = TimelineUiConfig.Stroke(
+                sizeStroke = context.resources.getDimension(R.dimen.dimen_6dp),
+                radius = context.resources.getDimension(R.dimen.dimen_48dp)
+            )
         )
     }
 }
