@@ -42,6 +42,22 @@ class LinearTimelineMathTest {
         assertEquals(expectedEnd, lastStepPosition, 0.01f)
     }
 
+    @Test
+    fun `layout handles empty steps`() {
+        val config = TimelineMathConfig(
+            steps = emptyList(),
+            stepY = 0f,
+            stepYFirst = 0f,
+            marginTopTitle = 0f
+        )
+        val math = LinearTimelineMath(config, LinearTimelineMath.Orientation.VERTICAL)
+
+        val layout = math.buildLayout()
+
+        assertEquals(0, layout.steps.size)
+        assertEquals(null, layout.progressIcon)
+    }
+
     private fun steps(): List<TimelineStepData> = listOf(
         TimelineStepData(title = "1", description = "1", iconRes = 1, progress = 0),
         TimelineStepData(title = "2", description = "2", iconRes = 2, progress = 50),

@@ -22,14 +22,23 @@ import com.dmitrypokrasov.timelineview.model.TimelineConstants
  * вынесена в реализации [com.dmitrypokrasov.timelineview.render.TimelineUiRenderer].
  */
 data class TimelineUiConfig(
-    @DrawableRes val iconDisableLvl: Int = 0,
-    @DrawableRes val iconProgress: Int = 0,
+    @DrawableRes var iconDisableLvl: Int = 0,
+    @DrawableRes var iconProgress: Int = 0,
     @ColorInt var colorProgress: Int = 0,
     @ColorInt var colorStroke: Int = 0,
     @ColorInt var colorTitle: Int = 0,
     @ColorInt var colorDescription: Int = 0,
-    val sizeDescription: Float = TimelineConstants.DEFAULT_DESCRIPTION_SIZE,
-    val sizeTitle: Float = TimelineConstants.DEFAULT_TITLE_SIZE,
-    val radius: Float = TimelineConstants.DEFAULT_RADIUS_SIZE,
-    val sizeStroke: Float = TimelineConstants.DEFAULT_STROKE_SIZE
-)
+    var sizeDescription: Float = TimelineConstants.DEFAULT_DESCRIPTION_SIZE,
+    var sizeTitle: Float = TimelineConstants.DEFAULT_TITLE_SIZE,
+    var radius: Float = TimelineConstants.DEFAULT_RADIUS_SIZE,
+    var sizeStroke: Float = TimelineConstants.DEFAULT_STROKE_SIZE
+) {
+    init {
+        iconDisableLvl = iconDisableLvl.coerceAtLeast(0)
+        iconProgress = iconProgress.coerceAtLeast(0)
+        sizeDescription = sizeDescription.coerceAtLeast(0f)
+        sizeTitle = sizeTitle.coerceAtLeast(0f)
+        radius = radius.coerceAtLeast(0f)
+        sizeStroke = sizeStroke.coerceAtLeast(0f)
+    }
+}
