@@ -25,22 +25,26 @@ class LinearTimelineMath(
 
     private var startPositionX = 0f
     private var measuredWidth = 0
+    private var cachedSegments: List<SegmentInfo> = emptyList()
+    private var segmentsValid = false
 
     override fun setConfig(config: TimelineMathConfig) {
         mathConfig = config
+        segmentsValid = false
     }
 
     override fun getConfig(): TimelineMathConfig = mathConfig
 
     override fun replaceSteps(steps: List<TimelineStepData>) {
         mathConfig = mathConfig.copy(steps = steps)
+        segmentsValid = false
     }
 
     override fun buildPath(pathEnable: Path, pathDisable: Path) {
         pathEnable.reset()
         pathDisable.reset()
 
-        val segments = buildSegments()
+        val segments = getSegments()
         var x = 0f
         var y = if (orientation == Orientation.HORIZONTAL) getHorizontalBaseline() else 0f
         pathEnable.moveTo(x, y)
@@ -200,7 +204,7 @@ class LinearTimelineMath(
         maxOf(mathConfig.sizeImageLvl, mathConfig.sizeIconProgress) / 2f
 
     override fun buildLayout(): TimelineLayout {
-        val segments = buildSegments()
+        val segments = getSegments()
         val layoutSteps = if (orientation == Orientation.HORIZONTAL) {
             mathConfig.steps.mapIndexed { index, step ->
                 val positionX = segments[index].stepPosition
@@ -266,11 +270,19 @@ class LinearTimelineMath(
         }
     }
 
+    private fun getSegments(): List<SegmentInfo> {
+        if (!segmentsValid) {
+            cachedSegments = buildSegments()
+            segmentsValid = true
+        }
+        return cachedSegments
+    }
+
     private fun getStepPosition(index: Int): Float =
-        buildSegments().getOrNull(index)?.stepPosition ?: 0f
+        getSegments().getOrNull(index)?.stepPosition ?: 0f
 
     private fun getProgressPosition(index: Int): Float {
-        val segments = buildSegments()
+        val segments = getSegments()
         val segment = segments.getOrNull(index) ?: return 0f
         val startPosition = segment.stepPosition - segment.length
         val progress = segment.length * mathConfig.steps[index].progress / 100f
