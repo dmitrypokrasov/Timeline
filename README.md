@@ -136,12 +136,6 @@ val uiConfig = TimelineUiConfig(
     )
 )
 
-// or use the transitional builder
-val uiConfigFromBuilder = TimelineUiConfig.builder()
-    .iconProgress(R.drawable.ic_progress_time_line)
-    .colorProgress(ContextCompat.getColor(this, R.color.purple_700))
-    .build()
-
 // configure custom linear engines in vertical orientation
 val mathEngine = LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL)
 val uiRenderer = LinearTimelineUi(uiConfig)
