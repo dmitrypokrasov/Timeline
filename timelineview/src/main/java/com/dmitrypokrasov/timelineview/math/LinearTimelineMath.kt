@@ -53,19 +53,24 @@ class LinearTimelineMath(
 
             if (drawEnable) {
                 val progress = segment * step.percents / 100f
+                val progressLength = if (orientation == Orientation.VERTICAL && progress == 0f) {
+                    segment
+                } else {
+                    progress
+                }
                 if (orientation == Orientation.VERTICAL) {
-                    pathEnable.rLineTo(0f, progress)
-                    if (progress < segment) {
-                        pathDisable.moveTo(x, y + progress)
-                        pathDisable.rLineTo(0f, segment - progress)
+                    pathEnable.rLineTo(0f, progressLength)
+                    if (progressLength < segment) {
+                        pathDisable.moveTo(x, y + progressLength)
+                        pathDisable.rLineTo(0f, segment - progressLength)
                         drawEnable = false
                     }
                     y += segment
                 } else {
-                    pathEnable.rLineTo(progress, 0f)
-                    if (progress < segment) {
-                        pathDisable.moveTo(x + progress, y)
-                        pathDisable.rLineTo(segment - progress, 0f)
+                    pathEnable.rLineTo(progressLength, 0f)
+                    if (progressLength < segment) {
+                        pathDisable.moveTo(x + progressLength, y)
+                        pathDisable.rLineTo(segment - progressLength, 0f)
                         drawEnable = false
                     }
                     x += segment
