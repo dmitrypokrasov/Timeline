@@ -12,6 +12,8 @@ import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
+import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
 
 /**
  * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
@@ -114,6 +116,24 @@ class TimelineView @JvmOverloads constructor(
         controller.setStrategies(mathEngine, uiRenderer)
         requestLayout()
         invalidate()
+    }
+
+    /**
+     * Устанавливает локальный реестр стратегий для этого экземпляра.
+     */
+    fun setStrategyRegistry(registry: TimelineStrategyRegistryContract) {
+        controller.setStrategyRegistry(registry)
+        requestLayout()
+        invalidate()
+    }
+
+    /**
+     * Создаёт локальный реестр стратегий и применяет конфигурацию через builder.
+     */
+    fun setStrategyRegistry(configure: TimelineStrategyRegistryContract.() -> Unit) {
+        val registry = TimelineStrategyRegistry.createLocalRegistry()
+        configure(registry)
+        setStrategyRegistry(registry)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
