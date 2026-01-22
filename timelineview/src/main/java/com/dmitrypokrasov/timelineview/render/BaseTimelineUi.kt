@@ -54,22 +54,22 @@ open class BaseTimelineUi(
     private val iconPaint = Paint()
 
     override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) {
-        pathEffect = CornerPathEffect(uiConfig.radius)
-        stepIconSize = timelineMathConfig.sizeImageLvl.toInt()
+        pathEffect = CornerPathEffect(uiConfig.stroke.radius)
+        stepIconSize = timelineMathConfig.sizes.sizeImageLvl.toInt()
         stepIconCache.clear()
 
-        getBitmap(uiConfig.iconDisableLvl, context)?.let { bitmap ->
+        getBitmap(uiConfig.icons.iconDisableLvl, context)?.let { bitmap ->
             iconDisableStep = bitmap.scale(
-                timelineMathConfig.sizeImageLvl.toInt(),
-                timelineMathConfig.sizeImageLvl.toInt(),
+                timelineMathConfig.sizes.sizeImageLvl.toInt(),
+                timelineMathConfig.sizes.sizeImageLvl.toInt(),
                 false
             )
         }
 
-        getBitmap(uiConfig.iconProgress, context)?.let { bitmap ->
+        getBitmap(uiConfig.icons.iconProgress, context)?.let { bitmap ->
             iconProgressBitmap = bitmap.scale(
-                timelineMathConfig.sizeIconProgress.toInt(),
-                timelineMathConfig.sizeIconProgress.toInt(),
+                timelineMathConfig.sizes.sizeIconProgress.toInt(),
+                timelineMathConfig.sizes.sizeIconProgress.toInt(),
                 false
             )
         }
@@ -78,7 +78,7 @@ open class BaseTimelineUi(
     override fun prepareStrokePaint() {
         linePaint.reset()
         linePaint.style = Paint.Style.STROKE
-        linePaint.strokeWidth = uiConfig.sizeStroke
+        linePaint.strokeWidth = uiConfig.stroke.sizeStroke
         linePaint.pathEffect = pathEffect
     }
 
@@ -104,12 +104,12 @@ open class BaseTimelineUi(
     }
 
     override fun drawCompletedPath(canvas: Canvas) {
-        linePaint.color = uiConfig.colorProgress
+        linePaint.color = uiConfig.colors.colorProgress
         canvas.drawPath(pathEnable, linePaint)
     }
 
     override fun drawRemainingPath(canvas: Canvas) {
-        linePaint.color = uiConfig.colorStroke
+        linePaint.color = uiConfig.colors.colorStroke
         canvas.drawPath(pathDisable, linePaint)
     }
 
@@ -129,9 +129,9 @@ open class BaseTimelineUi(
 
         textPaint.apply {
             textAlign = align
-            textSize = uiConfig.sizeTitle
+            textSize = uiConfig.textSizes.sizeTitle
             typeface = Typeface.DEFAULT_BOLD
-            color = uiConfig.colorTitle
+            color = uiConfig.colors.colorTitle
         }
 
         canvas.drawText(titleText, x, y, textPaint)
@@ -149,9 +149,9 @@ open class BaseTimelineUi(
 
         textPaint.apply {
             textAlign = align
-            textSize = uiConfig.sizeDescription
+            textSize = uiConfig.textSizes.sizeDescription
             typeface = Typeface.DEFAULT
-            color = uiConfig.colorDescription
+            color = uiConfig.colors.colorDescription
         }
 
         canvas.drawText(descriptionText, x, y, textPaint)

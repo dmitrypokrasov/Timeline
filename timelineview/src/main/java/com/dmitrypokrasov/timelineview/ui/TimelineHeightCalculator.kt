@@ -19,18 +19,20 @@ class TimelineHeightCalculator {
         val horizontal = mathEngine is LinearTimelineMath &&
             mathEngine.orientation == LinearTimelineMath.Orientation.HORIZONTAL
         val baseHeight = if (horizontal) {
-            max(mathConfig.sizeImageLvl, mathConfig.sizeIconProgress)
+            max(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress)
         } else {
-            (mathConfig.stepY * stepsCount) + mathConfig.stepYFirst + mathConfig.sizeIconProgress / 2f
+            (mathConfig.spacing.stepY * stepsCount) + mathConfig.spacing.stepYFirst +
+                mathConfig.sizes.sizeIconProgress / 2f
         }
         val textHeight = if (stepsCount == 0) {
             0f
         } else {
             val textBlockHeight = getTextBlockHeight(mathConfig, uiConfig)
             if (horizontal) {
-                max(mathConfig.sizeImageLvl, mathConfig.sizeIconProgress) / 2f + textBlockHeight
+                max(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress) / 2f +
+                    textBlockHeight
             } else {
-                (mathConfig.stepY * (stepsCount - 1)) + textBlockHeight
+                (mathConfig.spacing.stepY * (stepsCount - 1)) + textBlockHeight
             }
         }
 
@@ -41,10 +43,10 @@ class TimelineHeightCalculator {
         mathConfig: TimelineMathConfig,
         uiConfig: TimelineUiConfig
     ): Float {
-        val titleHeight = measureTextHeight(uiConfig.sizeTitle, Typeface.DEFAULT_BOLD)
-        val descriptionHeight = measureTextHeight(uiConfig.sizeDescription, Typeface.DEFAULT)
-        return mathConfig.marginTopTitle + titleHeight +
-            mathConfig.marginTopDescription + descriptionHeight
+        val titleHeight = measureTextHeight(uiConfig.textSizes.sizeTitle, Typeface.DEFAULT_BOLD)
+        val descriptionHeight = measureTextHeight(uiConfig.textSizes.sizeDescription, Typeface.DEFAULT)
+        return mathConfig.spacing.marginTopTitle + titleHeight +
+            mathConfig.spacing.marginTopDescription + descriptionHeight
     }
 
     private fun measureTextHeight(textSize: Float, typeface: Typeface): Float {
