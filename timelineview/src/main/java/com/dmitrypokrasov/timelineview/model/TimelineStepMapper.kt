@@ -7,8 +7,8 @@ import android.content.Context
  */
 fun TimelineStep.toTimelineStepData(context: Context): TimelineStepData {
     return TimelineStepData(
-        title = context.getString(title),
-        description = context.getString(description),
+        title = context.safeString(title),
+        description = context.safeString(description),
         iconRes = icon.takeIf { it != 0 },
         progress = percents
     )
@@ -19,4 +19,10 @@ fun TimelineStep.toTimelineStepData(context: Context): TimelineStepData {
  */
 fun List<TimelineStep>.toTimelineStepData(context: Context): List<TimelineStepData> {
     return map { it.toTimelineStepData(context) }
+}
+
+private fun Context.safeString(resourceId: Int): CharSequence? {
+    if (resourceId == 0) return null
+    val value = getString(resourceId)
+    return value.takeIf { it.isNotBlank() }
 }

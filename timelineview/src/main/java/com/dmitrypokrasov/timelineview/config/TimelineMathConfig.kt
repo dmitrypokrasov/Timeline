@@ -25,17 +25,30 @@ import com.dmitrypokrasov.timelineview.model.TimelineStepData
 data class TimelineMathConfig(
     val startPosition: StartPosition = StartPosition.CENTER,
     val steps: List<TimelineStepData> = listOf(),
-    val stepY: Float = TimelineConstants.DEFAULT_STEP_Y_SIZE,
-    val stepYFirst: Float = TimelineConstants.DEFAULT_STEP_Y_FIRST_SIZE,
-    val marginTopDescription: Float = TimelineConstants.DEFAULT_MARGIN_TOP_DESCRIPTION,
-    val marginTopTitle: Float = TimelineConstants.DEFAULT_MARGIN_TOP_TITLE,
-    val marginTopProgressIcon: Float = TimelineConstants.DEFAULT_MARGIN_TOP_PROGRESS_ICON,
-    val marginHorizontalImage: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_IMAGE,
-    val marginHorizontalText: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_TEXT,
-    val marginHorizontalStroke: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_STROKE,
-    val sizeIconProgress: Float = TimelineConstants.DEFAULT_ICON_PROGRESS_SIZE,
-    val sizeImageLvl: Float = TimelineConstants.DEFAULT_IMAGE_LVL_SIZE
+    var stepY: Float = TimelineConstants.DEFAULT_STEP_Y_SIZE,
+    var stepYFirst: Float = TimelineConstants.DEFAULT_STEP_Y_FIRST_SIZE,
+    var marginTopDescription: Float = TimelineConstants.DEFAULT_MARGIN_TOP_DESCRIPTION,
+    var marginTopTitle: Float = TimelineConstants.DEFAULT_MARGIN_TOP_TITLE,
+    var marginTopProgressIcon: Float = TimelineConstants.DEFAULT_MARGIN_TOP_PROGRESS_ICON,
+    var marginHorizontalImage: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_IMAGE,
+    var marginHorizontalText: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_TEXT,
+    var marginHorizontalStroke: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_STROKE,
+    var sizeIconProgress: Float = TimelineConstants.DEFAULT_ICON_PROGRESS_SIZE,
+    var sizeImageLvl: Float = TimelineConstants.DEFAULT_IMAGE_LVL_SIZE
 ) {
+    init {
+        stepY = stepY.coerceAtLeast(0f)
+        stepYFirst = stepYFirst.coerceAtLeast(0f)
+        marginTopDescription = marginTopDescription.coerceAtLeast(0f)
+        marginTopTitle = marginTopTitle.coerceAtLeast(0f)
+        marginTopProgressIcon = marginTopProgressIcon.coerceAtLeast(0f)
+        marginHorizontalImage = marginHorizontalImage.coerceAtLeast(0f)
+        marginHorizontalText = marginHorizontalText.coerceAtLeast(0f)
+        marginHorizontalStroke = marginHorizontalStroke.coerceAtLeast(0f)
+        sizeIconProgress = sizeIconProgress.coerceAtLeast(0f)
+        sizeImageLvl = sizeImageLvl.coerceAtLeast(0f)
+    }
+
     /** Положение первого шага таймлайна относительно контейнера. */
     enum class StartPosition { START, CENTER, END }
 }

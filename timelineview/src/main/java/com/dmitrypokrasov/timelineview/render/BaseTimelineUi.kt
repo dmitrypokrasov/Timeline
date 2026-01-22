@@ -124,6 +124,9 @@ open class BaseTimelineUi(
         y: Float,
         align: Paint.Align
     ) {
+        val titleText = title.toString()
+        if (titleText.isBlank()) return
+
         textPaint.apply {
             textAlign = align
             textSize = uiConfig.sizeTitle
@@ -131,7 +134,7 @@ open class BaseTimelineUi(
             color = uiConfig.colorTitle
         }
 
-        canvas.drawText(title.toString(), x, y, textPaint)
+        canvas.drawText(titleText, x, y, textPaint)
     }
 
     override fun drawDescription(
@@ -141,6 +144,9 @@ open class BaseTimelineUi(
         y: Float,
         align: Paint.Align
     ) {
+        val descriptionText = description.toString()
+        if (descriptionText.isBlank()) return
+
         textPaint.apply {
             textAlign = align
             textSize = uiConfig.sizeDescription
@@ -148,7 +154,7 @@ open class BaseTimelineUi(
             color = uiConfig.colorDescription
         }
 
-        canvas.drawText(description.toString(), x, y, textPaint)
+        canvas.drawText(descriptionText, x, y, textPaint)
     }
 
     override fun drawStepIcon(
