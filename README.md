@@ -92,7 +92,6 @@ You can also provide custom math and UI engines. The example below shows a linea
 
 ```kotlin
 import androidx.core.content.ContextCompat
-import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
 import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig

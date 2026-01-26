@@ -11,9 +11,7 @@ import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.math.TimelineLayout
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
-import com.dmitrypokrasov.timelineview.model.TimelineStep
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
-import com.dmitrypokrasov.timelineview.model.toTimelineStepData
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
@@ -45,10 +43,6 @@ class TimelineViewController(
 
     fun replaceSteps(steps: List<TimelineStepData>) {
         timelineMath.replaceSteps(steps)
-    }
-
-    fun replaceLegacySteps(steps: List<TimelineStep>) {
-        replaceSteps(steps.toTimelineStepData(context))
     }
 
     fun setMathEngine(engine: TimelineMathEngine) {
