@@ -13,7 +13,7 @@ import com.dmitrypokrasov.timelineview.math.SnakeTimelineMath
 import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.render.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider
-import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
+import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
 import com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider
 import com.dmitrypokrasov.timelineview.ui.TimelineView
 
@@ -60,7 +60,9 @@ class TimelineSampleFragment : Fragment() {
             }
 
             TimelineSample.CUSTOM_REGISTRY -> {
-                registerCustomStrategies()
+                timelineView.setStrategyRegistry {
+                    registerCustomStrategies(this)
+                }
                 timelineView.setMathEngine(SnakeTimelineMath(mathConfig))
                 timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
                 timelineView.setStrategy(
@@ -71,12 +73,12 @@ class TimelineSampleFragment : Fragment() {
         }
     }
 
-    private fun registerCustomStrategies() {
-        TimelineStrategyRegistry.registerMath(object : TimelineMathProvider {
+    private fun registerCustomStrategies(registry: TimelineStrategyRegistryContract) {
+        registry.registerMath(object : TimelineMathProvider {
             override val key: StrategyKey = StrategyKey(CUSTOM_MATH_ID)
             override fun create(config: TimelineMathConfig) = SnakeTimelineMath(config)
         })
-        TimelineStrategyRegistry.registerUi(object : TimelineUiProvider {
+        registry.registerUi(object : TimelineUiProvider {
             override val key: StrategyKey = StrategyKey(CUSTOM_UI_ID)
             override fun create(config: TimelineUiConfig) = LinearTimelineUi(config)
         })
