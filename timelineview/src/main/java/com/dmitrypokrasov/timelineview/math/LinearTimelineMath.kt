@@ -2,8 +2,11 @@ package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
+import com.dmitrypokrasov.timelineview.math.data.TimelineLayoutStep
+import com.dmitrypokrasov.timelineview.math.data.TimelineProgressIcon
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 /**
  * Простая реализация [TimelineMathEngine], строящая путь без чередования сторон.
@@ -218,7 +221,7 @@ class LinearTimelineMath(
                     titleY = baseline + mathConfig.spacing.marginTopTitle,
                     descriptionX = positionX,
                     descriptionY = baseline + mathConfig.spacing.marginTopTitle +
-                        mathConfig.spacing.marginTopDescription,
+                            mathConfig.spacing.marginTopDescription,
                     iconX = positionX - mathConfig.sizes.sizeImageLvl / 2f,
                     iconY = baseline - mathConfig.sizes.sizeImageLvl / 2f,
                     textAlign = Paint.Align.CENTER
@@ -251,7 +254,7 @@ class LinearTimelineMath(
                 TimelineProgressIcon(
                     left = -mathConfig.sizes.sizeIconProgress / 2f,
                     top = progressPosition + mathConfig.spacing.marginTopProgressIcon -
-                        mathConfig.sizes.sizeIconProgress / 2f
+                            mathConfig.sizes.sizeIconProgress / 2f
                 )
             } else {
                 TimelineProgressIcon(

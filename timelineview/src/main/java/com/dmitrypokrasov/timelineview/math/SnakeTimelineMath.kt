@@ -2,8 +2,11 @@ package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
+import com.dmitrypokrasov.timelineview.math.data.TimelineLayoutStep
+import com.dmitrypokrasov.timelineview.math.data.TimelineProgressIcon
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import kotlin.math.abs
 
 /**

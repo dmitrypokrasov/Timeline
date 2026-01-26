@@ -1,15 +1,7 @@
-package com.dmitrypokrasov.timelineview.math
+package com.dmitrypokrasov.timelineview.math.data
 
 import android.graphics.Paint
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
-
-/**
- * Layout data for rendering the timeline.
- */
-data class TimelineLayout(
-    val steps: List<TimelineLayoutStep>,
-    val progressIcon: TimelineProgressIcon?
-)
 
 /**
  * Layout data for a single timeline step.
@@ -23,12 +15,4 @@ data class TimelineLayoutStep(
     val iconX: Float,
     val iconY: Float,
     val textAlign: Paint.Align
-)
-
-/**
- * Layout data for the progress icon.
- */
-data class TimelineProgressIcon(
-    val left: Float,
-    val top: Float
 )

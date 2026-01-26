@@ -9,8 +9,8 @@ import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
-import com.dmitrypokrasov.timelineview.math.TimelineLayout
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry

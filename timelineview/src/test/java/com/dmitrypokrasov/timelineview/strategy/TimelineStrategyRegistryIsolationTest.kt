@@ -7,9 +7,9 @@ import android.graphics.Path
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
-import com.dmitrypokrasov.timelineview.math.TimelineLayout
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
-import com.dmitrypokrasov.timelineview.math.TimelineLayoutStep
+import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
+import com.dmitrypokrasov.timelineview.math.data.TimelineLayoutStep
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 import org.junit.Assert.assertEquals

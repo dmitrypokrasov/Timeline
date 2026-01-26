@@ -13,18 +13,6 @@ import com.dmitrypokrasov.timelineview.render.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
 /**
- * Contract for timeline strategy registries.
- */
-interface TimelineStrategyRegistryContract {
-    fun registerMath(provider: TimelineMathProvider)
-    fun registerUi(provider: TimelineUiProvider)
-    fun unregisterMath(key: StrategyKey): TimelineMathProvider?
-    fun unregisterUi(key: StrategyKey): TimelineUiProvider?
-    fun getMathProvider(key: StrategyKey): TimelineMathProvider?
-    fun getUiProvider(key: StrategyKey): TimelineUiProvider?
-}
-
-/**
  * Default registry for timeline strategies to allow custom strategy extensions.
  */
 object TimelineStrategyRegistry : TimelineStrategyRegistryContract {
@@ -50,47 +38,7 @@ object TimelineStrategyRegistry : TimelineStrategyRegistryContract {
     }
 }
 
-/**
- * Independent registry instance for custom strategy collections.
- */
-class TimelineStrategyRegistryImpl(
-    registerDefaults: Boolean = true
-) : TimelineStrategyRegistryContract {
-    private val mathProviders = mutableMapOf<StrategyKey, TimelineMathProvider>()
-    private val uiProviders = mutableMapOf<StrategyKey, TimelineUiProvider>()
-
-    init {
-        if (registerDefaults) {
-            registerDefaults(this)
-        }
-    }
-
-    override fun registerMath(provider: TimelineMathProvider) {
-        val key = provider.key
-        require(!mathProviders.containsKey(key)) {
-            "Math strategy already registered for key: ${key.value}"
-        }
-        mathProviders[key] = provider
-    }
-
-    override fun registerUi(provider: TimelineUiProvider) {
-        val key = provider.key
-        require(!uiProviders.containsKey(key)) {
-            "UI strategy already registered for key: ${key.value}"
-        }
-        uiProviders[key] = provider
-    }
-
-    override fun unregisterMath(key: StrategyKey): TimelineMathProvider? = mathProviders.remove(key)
-
-    override fun unregisterUi(key: StrategyKey): TimelineUiProvider? = uiProviders.remove(key)
-
-    override fun getMathProvider(key: StrategyKey): TimelineMathProvider? = mathProviders[key]
-
-    override fun getUiProvider(key: StrategyKey): TimelineUiProvider? = uiProviders[key]
-}
-
-private fun registerDefaults(registry: TimelineStrategyRegistryContract) {
+fun registerDefaults(registry: TimelineStrategyRegistryContract) {
     registry.registerMath(object : TimelineMathProvider {
         override val key: StrategyKey = TimelineMathStrategy.Snake.key
         override fun create(config: TimelineMathConfig): TimelineMathEngine = SnakeTimelineMath(config)
@@ -116,18 +64,3 @@ private fun registerDefaults(registry: TimelineStrategyRegistryContract) {
     })
 }
 
-/**
- * Factory provider for math strategy implementations.
- */
-interface TimelineMathProvider {
-    val key: StrategyKey
-    fun create(config: TimelineMathConfig): TimelineMathEngine
-}
-
-/**
- * Factory provider for UI strategy implementations.
- */
-interface TimelineUiProvider {
-    val key: StrategyKey
-    fun create(config: TimelineUiConfig): TimelineUiRenderer
-}
