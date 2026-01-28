@@ -12,6 +12,46 @@ dependencies {
 }
 ```
 
+### Publishing to GitHub Packages
+
+This module can be published to GitHub Packages via `maven-publish`.
+
+1. Create a GitHub personal access token with `write:packages` (and `repo` if the repository is private).
+2. Add credentials to `~/.gradle/gradle.properties`:
+
+```
+gpr.user=YOUR_GITHUB_USERNAME
+gpr.key=YOUR_GITHUB_TOKEN
+```
+
+You can also create the file with a simple shell snippet:
+
+```bash
+mkdir -p ~/.gradle
+cat <<'EOF' > ~/.gradle/gradle.properties
+gpr.user=YOUR_GITHUB_USERNAME
+gpr.key=YOUR_GITHUB_TOKEN
+EOF
+```
+
+3. Publish the release artifact:
+
+```bash
+./gradlew :timelineview:publishReleasePublicationToGitHubPackagesRepository
+```
+
+4. In the consuming project, add the repository and dependency:
+
+```gradle
+repositories {
+    maven { url "https://maven.pkg.github.com/dmitrypokrasov/Timeline" }
+}
+
+dependencies {
+    implementation "com.github.dmitrypokrasov:timelineview:1.0.0"
+}
+```
+
 ### 2. Usage
 
 #### In XML layout
