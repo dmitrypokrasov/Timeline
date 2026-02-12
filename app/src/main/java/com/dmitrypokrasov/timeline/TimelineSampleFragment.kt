@@ -11,6 +11,7 @@ import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
 import com.dmitrypokrasov.timelineview.math.SnakeTimelineMath
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.render.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider
@@ -38,8 +39,10 @@ class TimelineSampleFragment : Fragment() {
         timelineView.setOnStepClickListener { index, _ ->
             Toast.makeText(requireContext(), "Step index: $index", Toast.LENGTH_SHORT).show()
         }
-        timelineView.setOnProgressIconClickListener { index, _ ->
-            Toast.makeText(requireContext(), "Progress index: $index", Toast.LENGTH_SHORT).show()
+        timelineView.setOnProgressIconClickListener {
+            val progressIndex = resolveProgressStepIndex(steps)
+            Toast.makeText(requireContext(), "Progress index: $progressIndex", Toast.LENGTH_SHORT)
+                .show()
         }
 
         when (sample) {
@@ -81,6 +84,14 @@ class TimelineSampleFragment : Fragment() {
                 )
             }
         }
+    }
+
+    private fun resolveProgressStepIndex(steps: List<TimelineStepData>): Int {
+        return steps.indexOfFirst { it.progress in 1..99 }
+            .takeIf { it >= 0 }
+            ?: steps.indexOfLast { it.progress == 100 }
+                .takeIf { it >= 0 }
+            ?: 0
     }
 
     private fun registerCustomStrategies(registry: TimelineStrategyRegistryContract) {
