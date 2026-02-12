@@ -89,7 +89,14 @@ interface TimelineUiRenderer {
      * @param y Y-координата текста
      * @param align выравнивание текста
      */
-    fun drawDescription(canvas: Canvas, description: CharSequence, x: Float, y: Float, align: Paint.Align)
+    fun drawDescription(
+        canvas: Canvas,
+        description: CharSequence,
+        x: Float,
+        y: Float,
+        align: Paint.Align,
+        maxWidth: Int
+    )
 
     /**
      * Рисует иконку шага.

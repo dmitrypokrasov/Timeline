@@ -41,5 +41,22 @@
 
         <attr name="timeline_image_lvl_size" format="dimension" />
         <attr name="timeline_icon_progress_size" format="dimension" />
+
+        <attr name="timeline_description_mode" format="enum">
+            <enum name="SINGLE_LINE" value="0" />
+            <enum name="MULTI_LINE" value="1" />
+            <enum name="ELLIPSIZE_END" value="2" />
+        </attr>
+        <attr name="timeline_title_mode" format="enum">
+            <enum name="SINGLE_LINE" value="0" />
+            <enum name="MULTI_LINE" value="1" />
+            <enum name="ELLIPSIZE_END" value="2" />
+        </attr>
+        <attr name="timeline_max_lines_description" format="integer" />
+        <attr name="timeline_text_max_width_mode" format="enum">
+            <enum name="AUTO_FROM_LAYOUT" value="0" />
+            <enum name="FIXED" value="1" />
+        </attr>
+        <attr name="timeline_text_max_width" format="dimension" />
     </declare-styleable>
 </resources>

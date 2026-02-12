@@ -8,6 +8,7 @@ import android.graphics.CornerPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Typeface
+import android.text.TextPaint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import androidx.core.content.ContextCompat
@@ -16,6 +17,7 @@ import androidx.core.graphics.scale
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
+import com.dmitrypokrasov.timelineview.ui.TimelineTextLayoutHelper
 
 /**
  * Base implementation for timeline UI renderers with shared drawing logic.
@@ -48,7 +50,8 @@ open class BaseTimelineUi(
     private val linePaint = Paint()
 
     /** Paint for text. */
-    private val textPaint = Paint()
+    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+    private val textLayoutHelper = TimelineTextLayoutHelper()
 
     /** Paint for icons. */
     private val iconPaint = Paint()
@@ -142,7 +145,8 @@ open class BaseTimelineUi(
         description: CharSequence,
         x: Float,
         y: Float,
-        align: Paint.Align
+        align: Paint.Align,
+        maxWidth: Int
     ) {
         val descriptionText = description.toString()
         if (descriptionText.isBlank()) return
@@ -154,7 +158,15 @@ open class BaseTimelineUi(
             color = uiConfig.colors.colorDescription
         }
 
-        canvas.drawText(descriptionText, x, y, textPaint)
+        textLayoutHelper.drawDescription(
+            canvas = canvas,
+            text = descriptionText,
+            paint = textPaint,
+            x = x,
+            y = y,
+            maxWidth = resolveTextMaxWidth(maxWidth),
+            uiConfig = uiConfig
+        )
     }
 
     override fun drawStepIcon(
@@ -184,6 +196,15 @@ open class BaseTimelineUi(
     override fun getConfig(): TimelineUiConfig = uiConfig
 
     override fun getTextAlignment(): Paint.Align = textPaint.textAlign
+
+
+    private fun resolveTextMaxWidth(layoutWidth: Int): Int {
+        return when (uiConfig.textLayout.textMaxWidthMode) {
+            TimelineUiConfig.TextMaxWidthMode.AUTO_FROM_LAYOUT -> layoutWidth
+            TimelineUiConfig.TextMaxWidthMode.FIXED ->
+                (uiConfig.textLayout.fixedTextMaxWidth ?: layoutWidth.toFloat()).toInt()
+        }.coerceAtLeast(1)
+    }
 
     private fun getStepIconBitmap(drawableId: Int, context: Context): Bitmap? {
         if (drawableId == 0) return null

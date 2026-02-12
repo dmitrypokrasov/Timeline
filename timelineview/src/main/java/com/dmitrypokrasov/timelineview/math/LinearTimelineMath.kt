@@ -189,6 +189,17 @@ class LinearTimelineMath(
     private fun calculateTitleYCoordinates(i: Int): Float =
         getStepPosition(i) - mathConfig.spacing.stepYFirst + mathConfig.spacing.marginTopTitle
 
+
+    private fun calculateTextMaxWidth(align: Paint.Align, relativeX: Float): Int {
+        val absoluteX = startPositionX + relativeX
+        val width = when (align) {
+            Paint.Align.LEFT -> measuredWidth - absoluteX
+            Paint.Align.RIGHT -> absoluteX
+            Paint.Align.CENTER -> minOf(absoluteX, measuredWidth - absoluteX) * 2f
+        }
+        return width.toInt().coerceAtLeast(1)
+    }
+
     private fun getSegmentLength(index: Int): Float {
         return if (index == 0) mathConfig.spacing.stepYFirst else mathConfig.spacing.stepY
     }
@@ -224,7 +235,8 @@ class LinearTimelineMath(
                             mathConfig.spacing.marginTopDescription,
                     iconX = positionX - mathConfig.sizes.sizeImageLvl / 2f,
                     iconY = baseline - mathConfig.sizes.sizeImageLvl / 2f,
-                    textAlign = Paint.Align.CENTER
+                    textAlign = Paint.Align.CENTER,
+                    descriptionMaxWidth = calculateTextMaxWidth(Paint.Align.CENTER, positionX)
                 )
             }
         } else {
@@ -242,7 +254,8 @@ class LinearTimelineMath(
                     descriptionY = getDescriptionYCoordinates(index),
                     iconX = getIconXCoordinates(align),
                     iconY = getIconYCoordinates(index),
-                    textAlign = align
+                    textAlign = align,
+                    descriptionMaxWidth = calculateTextMaxWidth(align, getTitleXCoordinates(align))
                 )
             }
         }

@@ -115,6 +115,47 @@ class TimelineConfigParser(private val context: Context) {
                     R.styleable.TimelineView_timeline_stroke_size,
                     TimelineConstants.DEFAULT_STROKE_SIZE
                 )
+            ),
+            textLayout = TimelineUiConfig.TextLayout(
+                descriptionMode = TimelineUiConfig.TextMode.entries[
+                    typedArray.getInt(
+                        R.styleable.TimelineView_timeline_description_mode,
+                        TimelineUiConfig.TextMode.SINGLE_LINE.ordinal
+                    )
+                ],
+                titleMode = if (typedArray.hasValue(R.styleable.TimelineView_timeline_title_mode)) {
+                    TimelineUiConfig.TextMode.entries[
+                        typedArray.getInt(
+                            R.styleable.TimelineView_timeline_title_mode,
+                            TimelineUiConfig.TextMode.SINGLE_LINE.ordinal
+                        )
+                    ]
+                } else {
+                    null
+                },
+                maxLinesDescription = if (
+                    typedArray.hasValue(R.styleable.TimelineView_timeline_max_lines_description)
+                ) {
+                    typedArray.getInt(R.styleable.TimelineView_timeline_max_lines_description, 1)
+                } else {
+                    null
+                },
+                textMaxWidthMode = TimelineUiConfig.TextMaxWidthMode.entries[
+                    typedArray.getInt(
+                        R.styleable.TimelineView_timeline_text_max_width_mode,
+                        TimelineUiConfig.TextMaxWidthMode.AUTO_FROM_LAYOUT.ordinal
+                    )
+                ],
+                fixedTextMaxWidth = if (
+                    typedArray.hasValue(R.styleable.TimelineView_timeline_text_max_width)
+                ) {
+                    typedArray.getDimension(
+                        R.styleable.TimelineView_timeline_text_max_width,
+                        TimelineConstants.DEFAULT_DESCRIPTION_MAX_TEXT_WIDTH
+                    )
+                } else {
+                    null
+                }
             )
         )
 
