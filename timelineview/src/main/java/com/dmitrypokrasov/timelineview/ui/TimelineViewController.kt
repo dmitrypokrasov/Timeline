@@ -11,6 +11,7 @@ import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
+import com.dmitrypokrasov.timelineview.math.data.TimelineProgressIcon
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
@@ -33,6 +34,8 @@ class TimelineViewController(
     private var layout: TimelineLayout? = null
     private var strategyController = TimelineViewStrategyController(registry)
     private val heightCalculator = TimelineHeightCalculator()
+    private var onStepClickListener: ((index: Int, step: TimelineStepData) -> Unit)? = null
+    private var onProgressIconClickListener: (() -> Unit)? = null
 
     init {
         val resolved = strategyController.resolve(config)
@@ -104,6 +107,61 @@ class TimelineViewController(
         setStrategyRegistry(registry)
     }
 
+    fun setOnStepClickListener(listener: ((index: Int, step: TimelineStepData) -> Unit)?) {
+        onStepClickListener = listener
+    }
+
+    fun setOnProgressIconClickListener(listener: (() -> Unit)?) {
+        onProgressIconClickListener = listener
+    }
+
+    fun handleClick(x: Float, y: Float): Boolean {
+        val sizes = timelineMath.getConfig().sizes
+        return when (
+            val hit = TimelineHitTestHelper.findHit(
+                layout = layout,
+                stepIconSize = sizes.sizeImageLvl,
+                progressIconSize = sizes.sizeIconProgress,
+                x = x,
+                y = y
+            )
+        ) {
+            is TimelineHitTestHelper.HitResult.Step -> {
+                onStepClickListener?.invoke(hit.index, hit.step)
+                onStepClickListener != null
+            }
+
+            TimelineHitTestHelper.HitResult.ProgressIcon -> {
+                onProgressIconClickListener?.invoke()
+                onProgressIconClickListener != null
+            }
+
+            null -> false
+        }
+    }
+
+    fun getAccessibilityDescription(): String? {
+        val parts = mutableListOf<String>()
+        if (onStepClickListener != null) {
+            val steps = timelineMath.getSteps()
+            if (steps.isNotEmpty()) {
+                val titles = steps.mapIndexed { index, step ->
+                    val title = step.title?.toString()?.takeIf { it.isNotBlank() } ?: "step ${index + 1}"
+                    "${index + 1}. $title"
+                }
+                parts += "Clickable timeline steps: ${titles.joinToString(", ")}"
+            }
+        }
+
+        if (onProgressIconClickListener != null && hasProgressIcon(layout?.progressIcon)) {
+            parts += "Progress icon is clickable"
+        }
+
+        return parts.takeIf { it.isNotEmpty() }?.joinToString(separator = ". ")
+    }
+
+    private fun hasProgressIcon(progressIcon: TimelineProgressIcon?): Boolean = progressIcon != null
+
     fun measure(width: Int): Int {
         timelineMath.setMeasuredWidth(width)
         timelineMath.buildPath(timelineUi.getCompletedPath(), timelineUi.getRemainingPath())
@@ -125,7 +183,7 @@ class TimelineViewController(
             timelineUi.drawProgressIcon(canvas, progress.left, progress.top)
         }
 
-        layout?.steps?.forEachIndexed { index, stepLayout ->
+        layout?.steps?.forEach { stepLayout ->
             timelineUi.drawTitle(
                 canvas,
                 stepLayout.step.title ?: "",
