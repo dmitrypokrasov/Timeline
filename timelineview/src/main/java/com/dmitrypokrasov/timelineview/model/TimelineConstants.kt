@@ -25,4 +25,5 @@ internal object TimelineConstants {
     const val DEFAULT_STROKE_SIZE = 10f
     const val DEFAULT_IMAGE_LVL_SIZE = 20f
     const val DEFAULT_ICON_PROGRESS_SIZE = 20f
+    const val DEFAULT_DESCRIPTION_MAX_TEXT_WIDTH = 300f
 }

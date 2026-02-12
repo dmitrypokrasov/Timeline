@@ -14,5 +14,6 @@ data class TimelineLayoutStep(
     val descriptionY: Float,
     val iconX: Float,
     val iconY: Float,
-    val textAlign: Paint.Align
+    val textAlign: Paint.Align,
+    val descriptionMaxWidth: Int
 )

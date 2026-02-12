@@ -19,8 +19,37 @@ data class TimelineUiConfig(
     var icons: Icons = Icons(),
     var colors: Colors = Colors(),
     var textSizes: TextSizes = TextSizes(),
-    var stroke: Stroke = Stroke()
+    var stroke: Stroke = Stroke(),
+    var textLayout: TextLayout = TextLayout()
 ) {
+    data class TextLayout(
+        var descriptionMode: TextMode = TextMode.SINGLE_LINE,
+        var titleMode: TextMode? = null,
+        var maxLinesDescription: Int? = null,
+        var textMaxWidthMode: TextMaxWidthMode = TextMaxWidthMode.AUTO_FROM_LAYOUT,
+        var fixedTextMaxWidth: Float? = null
+    ) {
+        init {
+            maxLinesDescription = maxLinesDescription?.takeIf { it > 0 }
+            fixedTextMaxWidth = fixedTextMaxWidth?.takeIf { it > 0f }
+            if (textMaxWidthMode == TextMaxWidthMode.FIXED) {
+                fixedTextMaxWidth = (fixedTextMaxWidth ?: 0f).takeIf { it > 0f }
+                    ?: TimelineConstants.DEFAULT_DESCRIPTION_MAX_TEXT_WIDTH
+            }
+        }
+    }
+
+    enum class TextMode {
+        SINGLE_LINE,
+        MULTI_LINE,
+        ELLIPSIZE_END
+    }
+
+    enum class TextMaxWidthMode {
+        AUTO_FROM_LAYOUT,
+        FIXED
+    }
+
     data class Icons(
         @DrawableRes var iconDisableLvl: Int = 0,
         @DrawableRes var iconProgress: Int = 0

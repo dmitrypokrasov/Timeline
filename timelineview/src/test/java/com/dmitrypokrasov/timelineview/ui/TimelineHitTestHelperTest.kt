@@ -125,6 +125,7 @@ class TimelineHitTestHelperTest {
         descriptionY = 0f,
         iconX = iconX,
         iconY = iconY,
-        textAlign = Paint.Align.LEFT
+        textAlign = Paint.Align.LEFT,
+        descriptionMaxWidth = 100
     )
 }

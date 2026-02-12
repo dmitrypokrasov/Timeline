@@ -186,6 +186,17 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         else startPositionDisableStrokeX - startPositionX + mathConfig.spacing.marginHorizontalStroke
     }
 
+
+    private fun calculateTextMaxWidth(align: Paint.Align, relativeX: Float): Int {
+        val absoluteX = startPositionX + relativeX
+        val width = when (align) {
+            Paint.Align.LEFT -> measuredWidth - absoluteX
+            Paint.Align.RIGHT -> absoluteX
+            Paint.Align.CENTER -> minOf(absoluteX, measuredWidth - absoluteX) * 2f
+        }
+        return width.toInt().coerceAtLeast(1)
+    }
+
     override fun buildLayout(): TimelineLayout {
         val steps = mathConfig.steps
         val layoutSteps = steps.mapIndexed { index, step ->
@@ -198,7 +209,8 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
                 descriptionY = getDescriptionYCoordinates(index),
                 iconX = getIconXCoordinates(align),
                 iconY = getIconYCoordinates(index),
-                textAlign = align
+                textAlign = align,
+                descriptionMaxWidth = calculateTextMaxWidth(align, getTitleXCoordinates(align))
             )
         }
 

@@ -170,7 +170,7 @@ class TimelineViewController(
         timelineMath.setMeasuredWidth(width)
         timelineMath.buildPath(timelineUi.getCompletedPath(), timelineUi.getRemainingPath())
         layout = timelineMath.buildLayout()
-        return heightCalculator.calculateHeight(timelineMath, timelineUi.getConfig())
+        return heightCalculator.calculateHeight(timelineMath, timelineUi.getConfig(), layout)
     }
 
     fun draw(canvas: Canvas) {
@@ -200,7 +200,8 @@ class TimelineViewController(
                 stepLayout.step.description ?: "",
                 stepLayout.descriptionX,
                 stepLayout.descriptionY,
-                stepLayout.textAlign
+                stepLayout.textAlign,
+                stepLayout.descriptionMaxWidth
             )
             timelineUi.drawStepIcon(
                 stepLayout.step,
