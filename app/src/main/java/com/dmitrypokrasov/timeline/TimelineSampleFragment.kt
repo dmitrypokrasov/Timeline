@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import android.widget.Toast
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
@@ -31,6 +32,15 @@ class TimelineSampleFragment : Fragment() {
         val steps = TimelineSampleData.buildSteps(requireContext())
         val mathConfig = TimelineSampleData.buildMathConfig(requireContext(), steps)
         val uiConfig = TimelineSampleData.buildUiConfig(requireContext())
+
+        timelineView.replaceSteps(steps)
+
+        timelineView.setOnStepClickListener { index, _ ->
+            Toast.makeText(requireContext(), "Step index: $index", Toast.LENGTH_SHORT).show()
+        }
+        timelineView.setOnProgressIconClickListener { index, _ ->
+            Toast.makeText(requireContext(), "Progress index: $index", Toast.LENGTH_SHORT).show()
+        }
 
         when (sample) {
             TimelineSample.SNAKE -> {
