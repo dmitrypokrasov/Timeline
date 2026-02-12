@@ -68,6 +68,38 @@ class TimelineHitTestHelperTest {
     }
 
     @Test
+    fun `uses minimum touch size for step and progress icon`() {
+        val step = TimelineStepData(title = "Step 1", progress = 0)
+        val layout = TimelineLayout(
+            steps = listOf(stepLayout(step = step, iconX = 100f, iconY = 100f)),
+            progressIcon = TimelineProgressIcon(left = 200f, top = 200f)
+        )
+
+        val stepResult = TimelineHitTestHelper.findHit(
+            layout = layout,
+            stepIconSize = 20f,
+            progressIconSize = 20f,
+            x = 86f,
+            y = 110f,
+            minStepTouchSize = 48f,
+            minProgressTouchSize = 48f
+        )
+
+        val progressResult = TimelineHitTestHelper.findHit(
+            layout = layout,
+            stepIconSize = 20f,
+            progressIconSize = 20f,
+            x = 186f,
+            y = 210f,
+            minStepTouchSize = 48f,
+            minProgressTouchSize = 48f
+        )
+
+        assertEquals(TimelineHitTestHelper.HitResult.Step(index = 0, step = step), stepResult)
+        assertEquals(TimelineHitTestHelper.HitResult.ProgressIcon, progressResult)
+    }
+
+    @Test
     fun `returns null when touch outside all hit areas`() {
         val layout = TimelineLayout(
             steps = listOf(stepLayout(step = TimelineStepData(progress = 0), iconX = 10f, iconY = 10f)),

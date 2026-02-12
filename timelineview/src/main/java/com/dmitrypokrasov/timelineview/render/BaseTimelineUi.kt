@@ -167,6 +167,8 @@ open class BaseTimelineUi(
     ) {
         val bm: Bitmap? = when {
             step.progress == 100 && step.iconRes != null -> getStepIconBitmap(step.iconRes, context)
+            step.progress != 100 && step.iconDisabledRes != null ->
+                getStepIconBitmap(step.iconDisabledRes, context)
             else -> iconDisableStep
         }
         bm?.let {

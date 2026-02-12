@@ -7,13 +7,15 @@ import androidx.annotation.DrawableRes
  *
  * @property title Заголовок шага.
  * @property description Описание шага.
- * @property iconRes Ресурс иконки шага (опционально).
+ * @property iconRes Ресурс иконки активного шага (опционально).
+ * @property iconDisabledRes Ресурс иконки неактивного шага (опционально).
  * @property progress Прогресс шага в процентах (0..100).
  */
 data class TimelineStepData(
     val title: CharSequence? = null,
     val description: CharSequence? = null,
     @DrawableRes val iconRes: Int? = null,
+    @DrawableRes val iconDisabledRes: Int? = null,
     val progress: Int
 ) {
     init {

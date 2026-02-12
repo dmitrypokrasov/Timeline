@@ -117,13 +117,17 @@ class TimelineViewController(
 
     fun handleClick(x: Float, y: Float): Boolean {
         val sizes = timelineMath.getConfig().sizes
+        val minimumTouchTargetPx = 48f * context.resources.displayMetrics.density
+        val translatedX = x - timelineMath.getStartPosition()
         return when (
             val hit = TimelineHitTestHelper.findHit(
                 layout = layout,
                 stepIconSize = sizes.sizeImageLvl,
                 progressIconSize = sizes.sizeIconProgress,
-                x = x,
-                y = y
+                x = translatedX,
+                y = y,
+                minStepTouchSize = minimumTouchTargetPx,
+                minProgressTouchSize = minimumTouchTargetPx
             )
         ) {
             is TimelineHitTestHelper.HitResult.Step -> {

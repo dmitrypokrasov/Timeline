@@ -15,19 +15,21 @@ internal object TimelineHitTestHelper {
         stepIconSize: Float,
         progressIconSize: Float,
         x: Float,
-        y: Float
+        y: Float,
+        minStepTouchSize: Float = 0f,
+        minProgressTouchSize: Float = 0f
     ): HitResult? {
         if (layout == null) return null
 
         layout.steps.forEachIndexed { index, stepLayout ->
-            if (contains(x, y, stepLayout.iconX, stepLayout.iconY, stepIconSize)) {
+            if (contains(x, y, stepLayout.iconX, stepLayout.iconY, stepIconSize, minStepTouchSize)) {
                 return HitResult.Step(index, stepLayout.step)
             }
         }
 
         val progressIcon = layout.progressIcon
         if (progressIcon != null &&
-            contains(x, y, progressIcon.left, progressIcon.top, progressIconSize)
+            contains(x, y, progressIcon.left, progressIcon.top, progressIconSize, minProgressTouchSize)
         ) {
             return HitResult.ProgressIcon
         }
@@ -40,10 +42,15 @@ internal object TimelineHitTestHelper {
         y: Float,
         left: Float,
         top: Float,
-        size: Float
+        size: Float,
+        minTouchSize: Float
     ): Boolean {
-        val right = left + size
-        val bottom = top + size
-        return x in left..right && y in top..bottom
+        val hitSize = maxOf(size, minTouchSize)
+        val extra = (hitSize - size) / 2f
+        val hitLeft = left - extra
+        val hitTop = top - extra
+        val right = hitLeft + hitSize
+        val bottom = hitTop + hitSize
+        return x in hitLeft..right && y in hitTop..bottom
     }
 }
