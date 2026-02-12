@@ -21,30 +21,35 @@ object TimelineSampleData {
                 title = context.getString(R.string.title_1_lvl),
                 description = context.getString(R.string.description_1_9_steps),
                 iconRes = R.drawable.ic_active,
+                iconDisabledRes = R.drawable.ic_unactive,
                 progress = progress(5, 9)
             ),
             TimelineStepData(
                 title = context.getString(R.string.title_2_lvl),
                 description = context.getString(R.string.description_10_99_steps),
                 iconRes = R.drawable.ic_active,
+                iconDisabledRes = R.drawable.ic_unactive,
                 progress = progress(0, 99)
             ),
             TimelineStepData(
                 title = context.getString(R.string.title_3_lvl),
                 description = context.getString(R.string.description_100_999_steps),
                 iconRes = R.drawable.ic_active,
+                iconDisabledRes = R.drawable.ic_unactive,
                 progress = progress(0, 999)
             ),
             TimelineStepData(
                 title = context.getString(R.string.title_4_lvl),
                 description = context.getString(R.string.description_1000_9999_steps),
                 iconRes = R.drawable.ic_active,
+                iconDisabledRes = R.drawable.ic_unactive,
                 progress = progress(0, 9999)
             ),
             TimelineStepData(
                 title = context.getString(R.string.title_5_lvl),
                 description = context.getString(R.string.description_10000_99999_steps),
                 iconRes = R.drawable.ic_unactive,
+                iconDisabledRes = R.drawable.ic_unactive,
                 progress = progress(0, 99999)
             )
         )

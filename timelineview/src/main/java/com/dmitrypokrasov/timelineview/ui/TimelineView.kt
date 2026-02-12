@@ -3,6 +3,7 @@ package com.dmitrypokrasov.timelineview.ui
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
@@ -49,6 +50,7 @@ class TimelineView @JvmOverloads constructor(
      */
     fun replaceSteps(steps: List<TimelineStepData>) {
         controller.replaceSteps(steps)
+        updateAccessibilityDescription()
         requestLayout()
         invalidate()
     }
@@ -125,14 +127,60 @@ class TimelineView @JvmOverloads constructor(
         setStrategyRegistry(registry)
     }
 
+    /**
+     * Устанавливает callback на клик по иконке шага.
+     */
+    fun setOnStepClickListener(listener: (index: Int, step: TimelineStepData) -> Unit) {
+        controller.setOnStepClickListener(listener)
+        isClickable = true
+        updateAccessibilityDescription()
+    }
+
+    /**
+     * Устанавливает callback на клик по progress-иконке.
+     */
+    fun setOnProgressIconClickListener(listener: () -> Unit) {
+        controller.setOnProgressIconClickListener(listener)
+        isClickable = true
+        updateAccessibilityDescription()
+    }
+
+    
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         val measuredHeight = controller.measure(measuredWidth)
+        updateAccessibilityDescription()
         setMeasuredDimension(measuredWidth, measuredHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
         controller.draw(canvas)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> true
+            MotionEvent.ACTION_UP -> {
+                val handled = controller.handleClick(event.x, event.y)
+                if (handled) {
+                    performClick()
+                    true
+                } else {
+                    super.onTouchEvent(event)
+                }
+            }
+
+            else -> super.onTouchEvent(event)
+        }
+    }
+
+    override fun performClick(): Boolean {
+        super.performClick()
+        return true
+    }
+
+    private fun updateAccessibilityDescription() {
+        contentDescription = controller.getAccessibilityDescription()
     }
 
 }
