@@ -145,6 +145,15 @@ class TimelineView @JvmOverloads constructor(
         updateAccessibilityDescription()
     }
 
+    /**
+     * Устанавливает callback на клик по progress-иконке с данными ближайшего шага.
+     */
+    fun setOnProgressIconClickListener(listener: (step: TimelineStepData?) -> Unit) {
+        controller.setOnProgressIconClickListenerWithStep(listener)
+        isClickable = true
+        updateAccessibilityDescription()
+    }
+
     
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
@@ -175,8 +184,7 @@ class TimelineView @JvmOverloads constructor(
     }
 
     override fun performClick(): Boolean {
-        super.performClick()
-        return true
+        return super.performClick()
     }
 
     private fun updateAccessibilityDescription() {

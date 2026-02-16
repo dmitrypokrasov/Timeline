@@ -99,6 +99,35 @@ class TimelineHitTestHelperTest {
         assertEquals(TimelineHitTestHelper.HitResult.ProgressIcon, progressResult)
     }
 
+
+    @Test
+    fun `uses top-left coordinates for step and progress hit bounds`() {
+        val step = TimelineStepData(title = "Step 1", progress = 10)
+        val layout = TimelineLayout(
+            steps = listOf(stepLayout(step = step, iconX = 40f, iconY = 60f)),
+            progressIcon = TimelineProgressIcon(left = 120f, top = 160f)
+        )
+
+        val stepResult = TimelineHitTestHelper.findHit(
+            layout = layout,
+            stepIconSize = 24f,
+            progressIconSize = 20f,
+            x = 63f,
+            y = 83f
+        )
+
+        val progressResult = TimelineHitTestHelper.findHit(
+            layout = layout,
+            stepIconSize = 24f,
+            progressIconSize = 20f,
+            x = 139f,
+            y = 179f
+        )
+
+        assertEquals(TimelineHitTestHelper.HitResult.Step(index = 0, step = step), stepResult)
+        assertEquals(TimelineHitTestHelper.HitResult.ProgressIcon, progressResult)
+    }
+
     @Test
     fun `returns null when touch outside all hit areas`() {
         val layout = TimelineLayout(
