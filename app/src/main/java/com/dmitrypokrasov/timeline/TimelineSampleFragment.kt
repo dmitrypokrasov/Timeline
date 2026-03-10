@@ -31,14 +31,30 @@ class TimelineSampleFragment : Fragment() {
         val timelineView = view.findViewById<TimelineView>(R.id.timeline)
         val sample = requireSample()
 
-        val steps = TimelineSampleData.buildSteps(requireContext())
+        var steps = TimelineSampleData.buildSteps(requireContext())
         val mathConfig = TimelineSampleData.buildMathConfig(requireContext(), steps)
         val uiConfig = TimelineSampleData.buildUiConfig(requireContext())
 
         timelineView.replaceSteps(steps)
 
         timelineView.setOnStepClickListener { index, _ ->
-            Toast.makeText(requireContext(), "Step index: $index", Toast.LENGTH_SHORT).show()
+            steps = steps.mapIndexed { stepIndex, step ->
+                if (stepIndex != index) {
+                    step
+                } else {
+                    val updatedProgress = (step.progress + 10).coerceAtMost(100)
+                    val justCompleted = step.progress < 100 && updatedProgress == 100
+                    step.copy(
+                        progress = updatedProgress,
+                        badgeAnimation = if (justCompleted) {
+                            TimelineSampleData.buildCompletionBadgeAnimation()
+                        } else {
+                            step.badgeAnimation
+                        }
+                    )
+                }
+            }
+            timelineView.replaceSteps(steps)
         }
         timelineView.setOnProgressIconClickListener {
             val progressIndex = resolveProgressStepIndex(steps)

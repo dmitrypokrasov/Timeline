@@ -2,6 +2,7 @@ package com.dmitrypokrasov.timelineview.ui
 
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
+import com.dmitrypokrasov.timelineview.math.SnakeTimelineMath
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
@@ -24,10 +25,20 @@ internal object TimelineTextBlockResolver {
 
         val isLinearVertical = mathEngine is LinearTimelineMath &&
             mathEngine.orientation == LinearTimelineMath.Orientation.VERTICAL
+        val isSnake = mathEngine is SnakeTimelineMath
         val minGapBetweenTitleAndDescription = 4f
         val minGapBetweenSteps = 4f
         val linearVerticalLift = if (isLinearVertical) {
-            (mathConfig.spacing.stepYFirst / 2f + mathConfig.spacing.stepYFirst / 10f + mathConfig.spacing.stepYFirst / 20f).coerceAtLeast(6f)
+            (
+                    mathConfig.spacing.stepYFirst / 2f +
+                            mathConfig.spacing.stepYFirst / 10f +
+                            mathConfig.spacing.stepYFirst / 20f
+                    ).coerceAtLeast(6f) + 4f
+        } else {
+            0f
+        }
+        val snakeTextDrop = if (isSnake) {
+            mathConfig.spacing.marginTopDescription.coerceIn(4f, 8f)
         } else {
             0f
         }
@@ -45,9 +56,10 @@ internal object TimelineTextBlockResolver {
                 stepLayout.textAlign
             )
 
-            var titleTop = stepLayout.titleY - uiRenderer.getTitleBaselineOffset() - linearVerticalLift
+            var titleTop = stepLayout.titleY - uiRenderer.getTitleBaselineOffset() -
+                    linearVerticalLift + snakeTextDrop
             var descriptionTop = stepLayout.descriptionY - uiRenderer.getDescriptionBaselineOffset() -
-                linearVerticalLift
+                    linearVerticalLift + snakeTextDrop
             descriptionTop = maxOf(descriptionTop, titleTop + titleHeight + minGapBetweenTitleAndDescription)
 
             if (isLinearVertical) {
@@ -69,5 +81,3 @@ internal object TimelineTextBlockResolver {
         }
     }
 }
-
-

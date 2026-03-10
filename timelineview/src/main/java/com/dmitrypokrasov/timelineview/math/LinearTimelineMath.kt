@@ -21,7 +21,6 @@ class LinearTimelineMath(
         val end: Float,
     ) {
         val length: Float get() = end - start
-        val anchor: Float get() = end
     }
 
     enum class Orientation { VERTICAL, HORIZONTAL }
@@ -47,18 +46,20 @@ class LinearTimelineMath(
         pathEnable.reset()
         pathDisable.reset()
 
+        val segments = getSegments()
         val crossAxis = if (orientation == Orientation.VERTICAL) 0f else getHorizontalBaseline()
+        val pathStart = segments.firstOrNull()?.start ?: 0f
         pathEnable.moveTo(
-            if (orientation == Orientation.VERTICAL) 0f else 0f,
-            if (orientation == Orientation.VERTICAL) 0f else crossAxis
+            if (orientation == Orientation.VERTICAL) 0f else pathStart,
+            if (orientation == Orientation.VERTICAL) pathStart else crossAxis
         )
         pathDisable.moveTo(
-            if (orientation == Orientation.VERTICAL) 0f else 0f,
-            if (orientation == Orientation.VERTICAL) 0f else crossAxis
+            if (orientation == Orientation.VERTICAL) 0f else pathStart,
+            if (orientation == Orientation.VERTICAL) pathStart else crossAxis
         )
 
         var drawEnable = true
-        getSegments().forEachIndexed { index, segment ->
+        segments.forEachIndexed { index, segment ->
             val progressPosition = segment.start + segment.length * mathConfig.steps[index].progress / 100f
             if (drawEnable) {
                 lineTo(pathEnable, progressPosition, crossAxis)
@@ -92,6 +93,7 @@ class LinearTimelineMath(
                     measuredWidth.toFloat() - totalLength - mathConfig.spacing.marginHorizontalStroke
             }
         }
+        segmentsValid = false
     }
 
     override fun getHorizontalIconOffset(i: Int): Float {
@@ -181,7 +183,7 @@ class LinearTimelineMath(
     private fun getVerticalContentInset(): Float =
         maxOf(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress) / 2f
 
-    private fun getAnchorPosition(index: Int): Float {
+    private fun getBadgeCenterPosition(index: Int): Float {
         return if (orientation == Orientation.VERTICAL) {
             getVerticalContentInset() + mathConfig.spacing.stepYFirst + mathConfig.spacing.stepY * index
         } else {
@@ -190,7 +192,7 @@ class LinearTimelineMath(
     }
 
     private fun getTotalLength(): Float =
-        if (mathConfig.steps.isEmpty()) 0f else getAnchorPosition(mathConfig.steps.lastIndex)
+        if (mathConfig.steps.isEmpty()) 0f else getBadgeCenterPosition(mathConfig.steps.lastIndex)
 
     private fun getHorizontalProgressTop(): Float =
         getHorizontalBaseline() - mathConfig.sizes.sizeIconProgress / 2f
@@ -201,7 +203,7 @@ class LinearTimelineMath(
     override fun buildLayout(): TimelineLayout {
         val layoutSteps = if (orientation == Orientation.HORIZONTAL) {
             mathConfig.steps.mapIndexed { index, step ->
-                val positionX = getStepPosition(index)
+                val positionX = getBadgeCenterPosition(index)
                 val baseline = getHorizontalBaseline()
                 val titleWidth = TimelineTextWidthResolver.resolve(
                     measuredWidth = measuredWidth,
@@ -279,9 +281,9 @@ class LinearTimelineMath(
     }
 
     private fun buildSegments(): List<SegmentInfo> {
-        var previous = 0f
+        var previous = getPathStart()
         return mathConfig.steps.indices.map { index ->
-            val anchor = getAnchorPosition(index)
+            val anchor = getSegmentEndPosition(index)
             SegmentInfo(start = previous, end = anchor).also {
                 previous = anchor
             }
@@ -297,7 +299,8 @@ class LinearTimelineMath(
     }
 
     private fun getStepPosition(index: Int): Float =
-        getSegments().getOrNull(index)?.anchor ?: if (orientation == Orientation.VERTICAL) {
+        mathConfig.steps.getOrNull(index)?.let { getBadgeCenterPosition(index) }
+            ?: if (orientation == Orientation.VERTICAL) {
             getVerticalContentInset()
         } else {
             0f
@@ -308,6 +311,26 @@ class LinearTimelineMath(
         val progress = segment.length * mathConfig.steps[index].progress / 100f
         return segment.start + progress
     }
+
+    private fun getPathStart(): Float =
+        if (orientation == Orientation.VERTICAL) 0f else -getHorizontalLeadIn()
+
+    private fun getSegmentEndPosition(index: Int): Float {
+        val badgeCenter = getBadgeCenterPosition(index)
+        return if (orientation == Orientation.HORIZONTAL && index == mathConfig.steps.lastIndex) {
+            badgeCenter - getHorizontalTerminalInset()
+        } else {
+            badgeCenter
+        }
+    }
+
+    private fun getHorizontalLeadIn(): Float =
+        (startPositionX + mathConfig.sizes.sizeImageLvl / 2f).coerceAtLeast(
+            mathConfig.sizes.sizeImageLvl / 2f
+        )
+
+    private fun getHorizontalTerminalInset(): Float =
+        (mathConfig.sizes.sizeImageLvl / 2f - 2f).coerceAtLeast(0f)
 
     private fun moveTo(path: Path, value: Float, crossAxis: Float) {
         if (orientation == Orientation.VERTICAL) {
@@ -325,4 +348,3 @@ class LinearTimelineMath(
         }
     }
 }
-
