@@ -40,18 +40,19 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedLeft = -config.sizes.sizeIconProgress / 2f
+        val expectedLeft = -(config.sizes.sizeImageLvl / 2f) - config.sizes.sizeIconProgress / 2f
         assertEquals(expectedLeft, requireNotNull(layout.progressIcon).left, 0.01f)
     }
 
     @Test
-    fun `horizontal last segment ends at last badge anchor`() {
+    fun `horizontal last segment ends inside last badge`() {
         val config = progressConfig(progresses = listOf(100, 100, 100))
         val math = LinearTimelineMath(config, LinearTimelineMath.Orientation.HORIZONTAL)
 
         val lastIndex = config.steps.lastIndex
         val lastAnchor = math.getHorizontalIconOffset(lastIndex) + config.sizes.sizeIconProgress / 2f
-        val expectedAnchor = config.spacing.stepYFirst + config.spacing.stepY * lastIndex
+        val expectedAnchor = config.spacing.stepYFirst + config.spacing.stepY * lastIndex -
+                (config.sizes.sizeImageLvl / 2f - 2f)
 
         assertEquals(expectedAnchor, lastAnchor, 0.01f)
     }

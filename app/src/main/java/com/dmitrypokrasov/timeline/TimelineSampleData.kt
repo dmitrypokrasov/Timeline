@@ -8,6 +8,13 @@ import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 object TimelineSampleData {
+    fun buildCompletionBadgeAnimation(): TimelineLottieSpec =
+        TimelineLottieSpec(
+            rawRes = R.raw.timeline_badge_pulse,
+            repeat = false,
+            scale = 1.2f
+        )
+
     fun buildSteps(context: Context): List<TimelineStepData> {
         fun progress(count: Int, maxCount: Int): Int {
             return if (maxCount <= 0) {
@@ -50,7 +57,7 @@ object TimelineSampleData {
             TimelineStepData(
                 title = context.getString(R.string.title_5_lvl),
                 description = context.getString(R.string.description_500_699_steps),
-                iconRes = R.drawable.ic_unactive,
+                iconRes = R.drawable.ic_active,
                 iconDisabledRes = R.drawable.ic_unactive,
                 progress = progress(0, 49)
             )

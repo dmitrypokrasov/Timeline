@@ -6,12 +6,18 @@ import android.view.View
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
+import java.util.IdentityHashMap
 import kotlin.math.roundToInt
 
 internal class TimelineLottieOverlayManager(
     private val ownerView: View
 ) {
-    private val drawableCache = mutableMapOf<TimelineLottieSpec, LottieDrawable>()
+    private data class OverlayEntry(
+        val drawable: LottieDrawable,
+        var autoPlayConsumed: Boolean = false
+    )
+
+    private val drawableCache = IdentityHashMap<TimelineLottieSpec, OverlayEntry>()
 
     fun draw(
         canvas: Canvas,
@@ -23,9 +29,10 @@ internal class TimelineLottieOverlayManager(
     ) {
         if (spec == null) return
 
-        val drawable = drawableCache.getOrPut(spec) {
-            createDrawable(context, spec)
+        val entry = drawableCache.getOrPut(spec) {
+            OverlayEntry(createDrawable(context, spec))
         }
+        val drawable = entry.drawable
 
         val scaledSize = size * spec.scale
         val inset = (size - scaledSize) / 2f
@@ -38,10 +45,21 @@ internal class TimelineLottieOverlayManager(
             (drawTop + scaledSize).roundToInt()
         )
 
-        if (spec.autoPlay && !drawable.isAnimating) {
-            drawable.playAnimation()
-        }
-        if (!spec.autoPlay && drawable.isAnimating) {
+        if (spec.autoPlay) {
+            if (spec.repeat) {
+                if (!drawable.isAnimating) {
+                    drawable.playAnimation()
+                }
+            } else {
+                if (!entry.autoPlayConsumed) {
+                    drawable.progress = 0f
+                    drawable.playAnimation()
+                    entry.autoPlayConsumed = true
+                } else if (!drawable.isAnimating && drawable.progress >= 1f) {
+                    return
+                }
+            }
+        } else if (drawable.isAnimating) {
             drawable.pauseAnimation()
         }
 
@@ -49,9 +67,9 @@ internal class TimelineLottieOverlayManager(
     }
 
     fun clear() {
-        drawableCache.values.forEach { drawable ->
-            drawable.cancelAnimation()
-            drawable.callback = null
+        drawableCache.values.forEach { entry ->
+            entry.drawable.cancelAnimation()
+            entry.drawable.callback = null
         }
         drawableCache.clear()
     }
