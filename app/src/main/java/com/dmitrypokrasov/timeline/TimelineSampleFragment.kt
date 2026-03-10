@@ -1,11 +1,12 @@
 package com.dmitrypokrasov.timeline
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
@@ -28,7 +29,7 @@ class TimelineSampleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val timelineView = view.findViewById<TimelineView>(R.id.timeline)
-        val sample = requireArguments().getSerializable(ARG_SAMPLE) as TimelineSample
+        val sample = requireSample()
 
         val steps = TimelineSampleData.buildSteps(requireContext())
         val mathConfig = TimelineSampleData.buildMathConfig(requireContext(), steps)
@@ -103,6 +104,15 @@ class TimelineSampleFragment : Fragment() {
             override val key: StrategyKey = StrategyKey(CUSTOM_UI_ID)
             override fun create(config: TimelineUiConfig) = LinearTimelineUi(config)
         })
+    }
+
+    @Suppress("DEPRECATION")
+    private fun requireSample(): TimelineSample {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requireNotNull(requireArguments().getSerializable(ARG_SAMPLE, TimelineSample::class.java))
+        } else {
+            requireNotNull(requireArguments().getSerializable(ARG_SAMPLE) as? TimelineSample)
+        }
     }
 
     companion object {

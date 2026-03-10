@@ -1,70 +1,40 @@
 package com.dmitrypokrasov.timelineview.ui
 
-import android.graphics.Paint
-import android.graphics.Typeface
-import android.text.TextPaint
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
-import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
+import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import kotlin.math.ceil
 import kotlin.math.max
 
 class TimelineHeightCalculator {
 
-    private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+    fun calculateHeight(
+        layout: TimelineLayout?,
+        mathEngine: TimelineMathEngine,
+        uiRenderer: TimelineUiRenderer
+    ): Int {
+        if (layout == null) return 0
 
-    fun calculateHeight(mathEngine: TimelineMathEngine, uiConfig: TimelineUiConfig): Int {
         val mathConfig = mathEngine.getConfig()
-        val stepsCount = mathConfig.steps.size
-        val horizontal = mathEngine is LinearTimelineMath &&
-            mathEngine.orientation == LinearTimelineMath.Orientation.HORIZONTAL
-        val verticalStartY = getVerticalLineStartY(mathEngine)
-        val baseHeight = if (horizontal) {
-            max(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress)
-        } else {
-            verticalStartY + (mathConfig.spacing.stepY * stepsCount) + mathConfig.spacing.stepYFirst +
-                mathConfig.sizes.sizeIconProgress / 2f
-        }
-        val textHeight = if (stepsCount == 0) {
-            0f
-        } else {
-            val textBlockHeight = getTextBlockHeight(mathConfig, uiConfig)
-            if (horizontal) {
-                max(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress) / 2f +
-                    textBlockHeight
-            } else {
-                verticalStartY + (mathConfig.spacing.stepY * (stepsCount - 1)) + textBlockHeight
-            }
+        val resolvedTextBlocks = TimelineTextBlockResolver.resolve(
+            layout = layout,
+            mathEngine = mathEngine,
+            mathConfig = mathConfig,
+            uiRenderer = uiRenderer
+        )
+        var maxBottom = 0f
+
+        layout.steps.forEachIndexed { index, stepLayout ->
+            val textBlock = resolvedTextBlocks.getOrNull(index) ?: return@forEachIndexed
+            maxBottom = max(maxBottom, stepLayout.iconY + mathConfig.sizes.sizeImageLvl)
+            maxBottom = max(maxBottom, textBlock.titleTop + textBlock.titleHeight)
+            maxBottom = max(maxBottom, textBlock.descriptionTop + textBlock.descriptionHeight)
         }
 
-        return max(baseHeight, textHeight).toInt()
-    }
-
-
-    private fun getVerticalLineStartY(mathEngine: TimelineMathEngine): Float {
-        return if (mathEngine is LinearTimelineMath &&
-            mathEngine.orientation == LinearTimelineMath.Orientation.VERTICAL
-        ) {
-            max(mathEngine.getConfig().sizes.sizeImageLvl, mathEngine.getConfig().sizes.sizeIconProgress) / 2f
-        } else {
-            0f
+        layout.progressIcon?.let { progressIcon ->
+            maxBottom = max(maxBottom, progressIcon.top + mathConfig.sizes.sizeIconProgress)
         }
-    }
 
-    private fun getTextBlockHeight(
-        mathConfig: TimelineMathConfig,
-        uiConfig: TimelineUiConfig
-    ): Float {
-        val titleHeight = measureTextHeight(uiConfig.textSizes.sizeTitle, Typeface.DEFAULT_BOLD)
-        val descriptionHeight = measureTextHeight(uiConfig.textSizes.sizeDescription, Typeface.DEFAULT)
-        return mathConfig.spacing.marginTopTitle + titleHeight +
-            mathConfig.spacing.marginTopDescription + descriptionHeight
-    }
-
-    private fun measureTextHeight(textSize: Float, typeface: Typeface): Float {
-        textPaint.textSize = textSize
-        textPaint.typeface = typeface
-        val metrics = textPaint.fontMetrics
-        return metrics.descent - metrics.ascent
+        return ceil(maxBottom).toInt().coerceAtLeast(0)
     }
 }

@@ -3,19 +3,15 @@ package com.dmitrypokrasov.timelineview.model
 import androidx.annotation.DrawableRes
 
 /**
- * Представляет данные шага таймлайна, готовые к отображению.
- *
- * @property title Заголовок шага.
- * @property description Описание шага.
- * @property iconRes Ресурс иконки активного шага (опционально).
- * @property iconDisabledRes Ресурс иконки неактивного шага (опционально).
- * @property progress Прогресс шага в процентах (0..100).
+ * Represents timeline step data ready for rendering.
  */
 data class TimelineStepData(
     val title: CharSequence? = null,
     val description: CharSequence? = null,
     @DrawableRes val iconRes: Int? = null,
     @DrawableRes val iconDisabledRes: Int? = null,
+    val badgeAnimation: TimelineLottieSpec? = null,
+    val progressAnimation: TimelineLottieSpec? = null,
     val progress: Int
 ) {
     init {

@@ -7,11 +7,11 @@
     <string name="title_4_lvl">4 lvl</string>
     <string name="title_5_lvl">5 lvl</string>
 
-    <string name="description_1_9_steps">1-9 steps</string>
-    <string name="description_10_99_steps">10-99 steps</string>
-    <string name="description_100_999_steps">100-999 steps</string>
-    <string name="description_1000_9999_steps">1000-9999 steps</string>
-    <string name="description_10000_99999_steps">10000-99999 steps</string>
+    <string name="description_1_9_steps">1-9 steps with a short badge animation.</string>
+    <string name="description_10_99_steps">10-99 steps with a deliberately long description that should wrap inside the TimelineView width instead of running outside the screen bounds.</string>
+    <string name="description_100_299_steps">100-299 steps and a progress overlay animation on the current step.</string>
+    <string name="description_300_499_steps">300-499 steps</string>
+    <string name="description_500_699_steps">500-699 steps</string>
 
     <string name="tab_snake">Snake</string>
     <string name="tab_linear_vertical">Linear Vertical</string>

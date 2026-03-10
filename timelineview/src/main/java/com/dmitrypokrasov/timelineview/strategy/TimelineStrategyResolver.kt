@@ -27,6 +27,14 @@ class TimelineStrategyResolver(
         return resolveUi(config.uiStrategyKey, config.uiStrategy, config.ui)
     }
 
+    fun resolveMath(strategy: TimelineMathStrategy, config: TimelineMathConfig): TimelineMathEngine {
+        return resolveMath(strategy.key, strategy, config)
+    }
+
+    fun resolveUi(strategy: TimelineUiStrategy, config: TimelineUiConfig): TimelineUiRenderer {
+        return resolveUi(strategy.key, strategy, config)
+    }
+
     fun resolveMath(
         strategyKey: StrategyKey?,
         fallbackStrategy: TimelineMathStrategy,

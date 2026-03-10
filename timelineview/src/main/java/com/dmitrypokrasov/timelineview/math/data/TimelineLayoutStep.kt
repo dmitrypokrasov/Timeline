@@ -10,8 +10,10 @@ data class TimelineLayoutStep(
     val step: TimelineStepData,
     val titleX: Float,
     val titleY: Float,
+    val titleWidth: Int,
     val descriptionX: Float,
     val descriptionY: Float,
+    val descriptionWidth: Int,
     val iconX: Float,
     val iconY: Float,
     val textAlign: Paint.Align

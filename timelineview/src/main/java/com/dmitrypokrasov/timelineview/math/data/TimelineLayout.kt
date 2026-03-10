@@ -5,5 +5,6 @@ package com.dmitrypokrasov.timelineview.math.data
  */
 data class TimelineLayout(
     val steps: List<TimelineLayoutStep>,
-    val progressIcon: TimelineProgressIcon?
+    val progressIcon: TimelineProgressIcon?,
+    val progressStepIndex: Int?
 )

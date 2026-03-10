@@ -1,46 +1,8 @@
 # Timeline
 
-## Quick Setup
+Android timeline widget with pluggable math/UI strategies, multiline text rendering, click handling, and optional Lottie overlays for step badges and the active progress icon.
 
-### 1. Include library
-
-**Using Gradle**
-
-```gradle
-dependencies {
-    implementation "com.github.dmitrypokrasov:timelineview:x.x.x"
-}
-```
-
-### Publishing to GitHub Packages
-
-This module can be published to GitHub Packages via `maven-publish`.
-
-1. Create a GitHub personal access token with `write:packages` (and `repo` if the repository is private).
-2. Add credentials to `~/.gradle/gradle.properties`:
-
-```
-gpr.user=YOUR_GITHUB_USERNAME
-gpr.key=YOUR_GITHUB_TOKEN
-```
-
-You can also create the file with a simple shell snippet:
-
-```bash
-mkdir -p ~/.gradle
-cat <<'EOF' > ~/.gradle/gradle.properties
-gpr.user=YOUR_GITHUB_USERNAME
-gpr.key=YOUR_GITHUB_TOKEN
-EOF
-```
-
-3. Publish the release artifact:
-
-```bash
-./gradlew :timelineview:publishReleasePublicationToGitHubPackagesRepository
-```
-
-4. In the consuming project, add the repository and dependency:
+## Installation
 
 ```gradle
 repositories {
@@ -52,145 +14,112 @@ dependencies {
 }
 ```
 
-### 2. Usage
-
-#### In XML layout
+## XML usage
 
 ```xml
 <com.dmitrypokrasov.timelineview.ui.TimelineView
     android:id="@+id/timeline"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    style="@style/Widget.TimelineView"
-    app:timeline_start_position="CENTER"
-    app:timeline_progress_icon="@drawable/ic_progress_time_line"
-    app:timeline_disable_icon="@drawable/ic_tobacco_unactive" />
+    app:timeline_start_position="START"
+    app:timeline_math_strategy="LINEAR_VERTICAL"
+    app:timeline_ui_strategy="LINEAR"
+    app:timeline_progress_icon="@drawable/ic_progress_timeline"
+    app:timeline_disable_icon="@drawable/ic_unactive" />
 ```
 
-#### XML attributes
-
-**Strategies**
-
-| Attribute | Description |
-|----------|-------------|
-| `app:timeline_start_position` | Start position of the timeline (`START`, `CENTER`, `END`). |
-| `app:timeline_math_strategy` | Math strategy for positioning (`SNAKE`, `LINEAR_VERTICAL`, `LINEAR_HORIZONTAL`). |
-| `app:timeline_math_strategy_id` | Custom math strategy ID (overrides `timeline_math_strategy` if provided). |
-| `app:timeline_ui_strategy` | UI rendering strategy (`SNAKE`, `LINEAR`). |
-| `app:timeline_ui_strategy_id` | Custom UI strategy ID (overrides `timeline_ui_strategy` if provided). |
-
-**Colors & icons**
-
-| Attribute | Description |
-|----------|-------------|
-| `app:timeline_progress_color` | Color of completed part of the stroke. |
-| `app:timeline_stroke_color` | Color of the remaining part of the stroke. |
-| `app:timeline_title_color` | Color of step titles. |
-| `app:timeline_description_color` | Color of step descriptions. |
-| `app:timeline_progress_icon` | Drawable for the current progress icon. |
-| `app:timeline_disable_icon` | Drawable for inactive step icons. |
-
-**Sizes**
-
-| Attribute | Description |
-|----------|-------------|
-| `app:timeline_stroke_size` | Thickness of the stroke. |
-| `app:timeline_title_size` | Text size of step titles. |
-| `app:timeline_description_size` | Text size of step descriptions. |
-| `app:timeline_radius_size` | Corner radius of the stroke path. |
-| `app:timeline_image_lvl_size` | Size of step icons. |
-| `app:timeline_icon_progress_size` | Size of the progress icon. |
-
-**Spacing**
-
-| Attribute | Description |
-|----------|-------------|
-| `app:timeline_step_y_size` | Vertical distance between steps. |
-| `app:timeline_step_y_first_size` | Top offset before the first step. |
-| `app:timeline_margin_top_title` | Top margin for titles. |
-| `app:timeline_margin_top_description` | Top margin for descriptions. |
-| `app:timeline_margin_top_progress_icon` | Top margin for progress icon. |
-| `app:timeline_margin_horizontal_image` | Horizontal margin for step icons. |
-| `app:timeline_margin_horizontal_text` | Horizontal margin for text. |
-| `app:timeline_margin_horizontal_stroke` | Horizontal margin for the vertical stroke. |
-
-#### Simplified setup via style/theme
-Prefer styles/themes for common defaults and override only what differs.
-
-```xml
-<style name="Widget.TimelineView">
-    <item name="timeline_start_position">CENTER</item>
-    <item name="timeline_progress_color">@color/purple_700</item>
-    <item name="timeline_stroke_color">@color/purple_200</item>
-    <item name="timeline_progress_icon">@drawable/ic_progress_time_line</item>
-    <item name="timeline_disable_icon">@drawable/ic_tobacco_unactive</item>
-</style>
-```
-
-#### In code
-You can also provide custom math and UI engines. The example below shows a linear timeline in vertical orientation.
+## Kotlin usage
 
 ```kotlin
-import androidx.core.content.ContextCompat
-import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
-import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
-import com.dmitrypokrasov.timelineview.ui.TimelineView
-
-val timelineView = findViewById<TimelineView>(R.id.timeline)
-
 val steps = listOf(
-    TimelineStep(
-        title = R.string.title_1_lvl,
-        description = R.string.description_1_9_steps,
-        icon = R.drawable.ic_tobacco_active,
-        count = 9,
-        maxCount = 9
+    TimelineStepData(
+        title = "Step 1",
+        description = "A long description will wrap inside the view width automatically.",
+        iconRes = R.drawable.ic_active,
+        iconDisabledRes = R.drawable.ic_unactive,
+        badgeAnimation = TimelineLottieSpec(R.raw.timeline_badge_pulse, scale = 1.2f),
+        progress = 100
     ),
-    TimelineStep(
-        title = R.string.title_2_lvl,
-        description = R.string.description_10_99_steps,
-        icon = R.drawable.ic_tobacco_active,
-        count = 50,
-        maxCount = 99
+    TimelineStepData(
+        title = "Step 2",
+        description = "The active step can also provide a Lottie overlay for the progress icon.",
+        iconRes = R.drawable.ic_active,
+        iconDisabledRes = R.drawable.ic_unactive,
+        progressAnimation = TimelineLottieSpec(R.raw.timeline_progress_orbit, scale = 1.25f),
+        progress = 45
     )
 )
 
-// build configs first
 val mathConfig = TimelineMathConfig(
     steps = steps,
-    startPosition = TimelineMathConfig.StartPosition.CENTER,
-    spacing = TimelineMathConfig.Spacing(stepY = 80f)
+    startPosition = TimelineMathConfig.StartPosition.START,
+    spacing = TimelineMathConfig.Spacing(
+        stepY = 80f,
+        stepYFirst = 20f,
+        marginTopTitle = 52f,
+        marginTopDescription = 16f,
+        marginTopProgressIcon = 6f,
+        marginHorizontalImage = 16f,
+        marginHorizontalText = 80f,
+        marginHorizontalStroke = 40f
+    ),
+    sizes = TimelineMathConfig.Sizes(
+        sizeImageLvl = 48f,
+        sizeIconProgress = 28f
+    )
 )
 
 val uiConfig = TimelineUiConfig(
     icons = TimelineUiConfig.Icons(
-        iconProgress = R.drawable.ic_progress_time_line,
-        iconDisableLvl = R.drawable.ic_tobacco_unactive
+        iconProgress = R.drawable.ic_progress_timeline,
+        iconDisableLvl = R.drawable.ic_unactive
     ),
     colors = TimelineUiConfig.Colors(
-        colorProgress = ContextCompat.getColor(this, R.color.purple_700),
-        colorStroke = ContextCompat.getColor(this, R.color.purple_200)
+        colorTitle = Color.BLACK,
+        colorDescription = Color.DKGRAY,
+        colorStroke = Color.GRAY,
+        colorProgress = Color.GREEN
+    ),
+    textSizes = TimelineUiConfig.TextSizes(
+        sizeTitle = 12f,
+        sizeDescription = 12f
+    ),
+    stroke = TimelineUiConfig.Stroke(
+        sizeStroke = 6f,
+        radius = 48f
     )
 )
 
-// configure custom linear engines in vertical orientation
-val mathEngine = LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL)
-val uiRenderer = LinearTimelineUi(uiConfig)
-
-timelineView.setMathEngine(mathEngine)
-timelineView.setUiRenderer(uiRenderer)
+timelineView.replaceSteps(steps)
+timelineView.setMathEngine(LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL))
+timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
 ```
 
-#### Switching strategies in code
-Use a composite strategy to swap both math and UI renderers together.
+## Lottie overlays
+
+`TimelineStepData` supports two optional overlays:
+
+- `badgeAnimation`: drawn above the step badge icon.
+- `progressAnimation`: drawn above the active progress icon for the first step with `progress != 100`.
+
+Version 1 supports only local `@RawRes` animations.
+
+## Strategies
+
+Built-in math strategies:
+
+- `TimelineMathStrategy.Snake`
+- `TimelineMathStrategy.LinearVertical`
+- `TimelineMathStrategy.LinearHorizontal`
+
+Built-in UI strategies:
+
+- `TimelineUiStrategy.Snake`
+- `TimelineUiStrategy.Linear`
+
+Switch both together:
 
 ```kotlin
-import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
-import com.dmitrypokrasov.timelineview.config.TimelineStrategy
-import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
-
 timelineView.setStrategy(
     TimelineStrategy(
         math = TimelineMathStrategy.LinearHorizontal,
@@ -199,73 +128,30 @@ timelineView.setStrategy(
 )
 ```
 
-#### Registering custom strategies
-You can register your own math/UI implementations and reference them by key.
-Built-in keys are `snake`, `linear_vertical`, `linear_horizontal`, and `linear`.
+## Custom registries
 
 ```kotlin
-import com.dmitrypokrasov.timelineview.config.StrategyKey
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
-import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
-import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
-import com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider
-import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
-import com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider
+val registry = TimelineStrategyRegistry.createLocalRegistry()
 
-TimelineStrategyRegistry.registerMath(object : TimelineMathProvider {
-    override val key: StrategyKey = StrategyKey("custom_math")
-    override fun create(config: TimelineMathConfig): TimelineMathEngine {
-        return MyCustomMath(config)
-    }
+registry.registerMath(object : TimelineMathProvider {
+    override val key = StrategyKey("custom_math")
+    override fun create(config: TimelineMathConfig): TimelineMathEngine = MyMathEngine(config)
 })
 
-TimelineStrategyRegistry.registerUi(object : TimelineUiProvider {
-    override val key: StrategyKey = StrategyKey("custom_ui")
-    override fun create(config: TimelineUiConfig): TimelineUiRenderer {
-        return MyCustomUi(config)
-    }
+registry.registerUi(object : TimelineUiProvider {
+    override val key = StrategyKey("custom_ui")
+    override fun create(config: TimelineUiConfig): TimelineUiRenderer = MyUiRenderer(config)
 })
 
+timelineView.setStrategyRegistry(registry)
 timelineView.setStrategy(
     mathStrategyKey = StrategyKey("custom_math"),
     uiStrategyKey = StrategyKey("custom_ui")
 )
 ```
 
-#### Local registry per TimelineView
-If you want different strategy sets for different views, create a local registry and pass it to a single
-`TimelineView` instance (or use the builder).
+## Notes
 
-```kotlin
-import com.dmitrypokrasov.timelineview.config.StrategyKey
-import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
-import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
-import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
-import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
-import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
-import com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider
-import com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider
-
-val localRegistry = TimelineStrategyRegistry.createLocalRegistry()
-
-localRegistry.registerMath(object : TimelineMathProvider {
-    override val key: StrategyKey = StrategyKey("local_math")
-    override fun create(config: TimelineMathConfig): TimelineMathEngine {
-        return MyCustomMath(config)
-    }
-})
-
-localRegistry.registerUi(object : TimelineUiProvider {
-    override val key: StrategyKey = StrategyKey("local_ui")
-    override fun create(config: TimelineUiConfig): TimelineUiRenderer {
-        return MyCustomUi(config)
-    }
-})
-
-timelineView.setStrategyRegistry(localRegistry)
-timelineView.setStrategy(
-    mathStrategyKey = StrategyKey("local_math"),
-    uiStrategyKey = StrategyKey("local_ui")
-)
-```
+- Linear timelines now start before the first badge and stop at the last badge anchor instead of drawing a trailing tail.
+- Long titles and descriptions are rendered with multiline `StaticLayout` and contribute to measured height.
+- Click handling stays attached to the badge/progress icon bounds even when Lottie overlays are enabled.

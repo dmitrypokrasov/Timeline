@@ -16,7 +16,8 @@ class TimelineHitTestHelperTest {
         val step = TimelineStepData(title = "Step 1", progress = 10)
         val layout = TimelineLayout(
             steps = listOf(stepLayout(step = step, iconX = 20f, iconY = 40f)),
-            progressIcon = null
+            progressIcon = null,
+            progressStepIndex = null
         )
 
         val result = TimelineHitTestHelper.findHit(
@@ -34,7 +35,8 @@ class TimelineHitTestHelperTest {
     fun `returns progress icon hit when touch inside progress icon bounds`() {
         val layout = TimelineLayout(
             steps = emptyList(),
-            progressIcon = TimelineProgressIcon(left = 100f, top = 200f)
+            progressIcon = TimelineProgressIcon(left = 100f, top = 200f),
+            progressStepIndex = 0
         )
 
         val result = TimelineHitTestHelper.findHit(
@@ -53,7 +55,8 @@ class TimelineHitTestHelperTest {
         val step = TimelineStepData(title = "Step 1", progress = 50)
         val layout = TimelineLayout(
             steps = listOf(stepLayout(step = step, iconX = 10f, iconY = 10f)),
-            progressIcon = TimelineProgressIcon(left = 10f, top = 10f)
+            progressIcon = TimelineProgressIcon(left = 10f, top = 10f),
+            progressStepIndex = 0
         )
 
         val result = TimelineHitTestHelper.findHit(
@@ -72,7 +75,8 @@ class TimelineHitTestHelperTest {
         val step = TimelineStepData(title = "Step 1", progress = 0)
         val layout = TimelineLayout(
             steps = listOf(stepLayout(step = step, iconX = 100f, iconY = 100f)),
-            progressIcon = TimelineProgressIcon(left = 200f, top = 200f)
+            progressIcon = TimelineProgressIcon(left = 200f, top = 200f),
+            progressStepIndex = 0
         )
 
         val stepResult = TimelineHitTestHelper.findHit(
@@ -103,7 +107,8 @@ class TimelineHitTestHelperTest {
     fun `returns null when touch outside all hit areas`() {
         val layout = TimelineLayout(
             steps = listOf(stepLayout(step = TimelineStepData(progress = 0), iconX = 10f, iconY = 10f)),
-            progressIcon = TimelineProgressIcon(left = 100f, top = 100f)
+            progressIcon = TimelineProgressIcon(left = 100f, top = 100f),
+            progressStepIndex = 0
         )
 
         val result = TimelineHitTestHelper.findHit(
@@ -121,8 +126,10 @@ class TimelineHitTestHelperTest {
         step = step,
         titleX = 0f,
         titleY = 0f,
+        titleWidth = 100,
         descriptionX = 0f,
         descriptionY = 0f,
+        descriptionWidth = 100,
         iconX = iconX,
         iconY = iconY,
         textAlign = Paint.Align.LEFT
