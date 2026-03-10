@@ -6,13 +6,15 @@ Android timeline widget with pluggable math/UI strategies, multiline text render
 
 ```gradle
 repositories {
-    maven { url "https://maven.pkg.github.com/dmitrypokrasov/Timeline" }
+    maven { url "https://dmitrypokrasov.github.io/Timeline/maven" }
 }
 
 dependencies {
-    implementation "com.github.dmitrypokrasov:timelineview:1.0.0"
+    implementation "com.github.dmitrypokrasov:timelineview:1.1.0"
 }
 ```
+
+GitHub Packages publication is still available for private/authenticated installs, but the public distribution endpoint is GitHub Pages.
 
 ## XML usage
 

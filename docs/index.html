@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline 1.1.0</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f7f2ea;
+            --panel: #fffaf4;
+            --ink: #1f2a37;
+            --muted: #5b6470;
+            --accent: #c96b3b;
+            --accent-dark: #8b3f1d;
+            --border: #e8d8c6;
+            --code: #2b2118;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            background:
+                radial-gradient(circle at top left, rgba(201, 107, 59, 0.18), transparent 30%),
+                linear-gradient(180deg, var(--bg), #efe6db);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 56px 24px 72px;
+        }
+
+        .hero,
+        .panel {
+            background: rgba(255, 250, 244, 0.92);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: 0 18px 50px rgba(74, 48, 28, 0.08);
+        }
+
+        .hero {
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .eyebrow {
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent-dark);
+            font-size: 12px;
+            margin: 0 0 12px;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: clamp(2.4rem, 5vw, 4rem);
+            line-height: 1;
+        }
+
+        p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .panel {
+            padding: 28px 32px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+        }
+
+        pre {
+            margin: 16px 0 0;
+            padding: 18px 20px;
+            overflow-x: auto;
+            border-radius: 18px;
+            background: #2d241d;
+            color: #f8efe5;
+            font-size: 0.96rem;
+        }
+
+        code {
+            font-family: "Cascadia Code", Consolas, monospace;
+            color: var(--code);
+        }
+
+        pre code {
+            color: inherit;
+        }
+
+        a {
+            color: var(--accent-dark);
+        }
+    </style>
+</head>
+<body>
+<main>
+    <section class="hero">
+        <p class="eyebrow">Android Library</p>
+        <h1>Timeline 1.1.0</h1>
+        <p>Public Maven repository for the Timeline widget. Add the repository below to your Gradle configuration and consume version 1.1.0 directly from GitHub Pages.</p>
+    </section>
+
+    <section class="panel">
+        <h2>Repository</h2>
+        <pre><code>maven { url = uri("https://dmitrypokrasov.github.io/Timeline/maven") }</code></pre>
+    </section>
+
+    <section class="panel">
+        <h2>Dependency</h2>
+        <pre><code>implementation("com.github.dmitrypokrasov:timelineview:1.1.0")</code></pre>
+    </section>
+
+    <section class="panel">
+        <h2>Source</h2>
+        <p>The project repository is available at <a href="https://github.com/dmitrypokrasov/Timeline">github.com/dmitrypokrasov/Timeline</a>.</p>
+    </section>
+</main>
+</body>
+</html>

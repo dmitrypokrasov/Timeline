@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.dmitrypokrasov"
-version = "1.0.0"
+version = "1.1.0"
 
 android {
     namespace = "com.dmitrypokrasov.timelineview"
@@ -45,6 +45,10 @@ publishing {
         }
     }
     repositories {
+        maven {
+            name = "GitHubPages"
+            url = uri(rootProject.layout.projectDirectory.dir("docs/maven"))
+        }
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/dmitrypokrasov/Timeline")
