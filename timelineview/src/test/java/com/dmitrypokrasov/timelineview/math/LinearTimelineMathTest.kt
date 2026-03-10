@@ -4,7 +4,6 @@ import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.math.maxOf
 
 class LinearTimelineMathTest {
     @Test
@@ -37,8 +36,9 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedEnd = config.stepYFirst + config.stepY * 2
-        val lastStepPosition = layout.steps.last().titleY - config.marginTopTitle
+        val expectedEnd = config.stepY * 2
+        val topInset = maxOf(config.sizeImageLvl, config.sizeIconProgress) / 2f
+        val lastStepPosition = layout.steps.last().titleY - config.marginTopTitle + topInset / 2f
 
         assertEquals(expectedEnd, lastStepPosition, 0.01f)
     }
@@ -153,7 +153,7 @@ class LinearTimelineMathTest {
             config.marginTopProgressIcon - config.sizeIconProgress / 2f
 
         assertEquals(expectedFirstStepAnchorY, firstStepAnchorY, 0.01f)
-        assertEquals(config.stepYFirst + config.marginTopTitle, firstStep.titleY, 0.01f)
+        assertEquals(config.marginTopTitle - topInset / 2f, firstStep.titleY, 0.01f)
         assertEquals(firstStep.titleY + config.marginTopDescription, firstStep.descriptionY, 0.01f)
         assertEquals(expectedProgressTop, layout.progressIcon?.top, 0.01f)
         assertEquals(expectedProgressTop, math.getVerticalOffset(0), 0.01f)
