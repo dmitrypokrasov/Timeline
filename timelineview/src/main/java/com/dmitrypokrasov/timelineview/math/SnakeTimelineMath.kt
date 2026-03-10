@@ -10,8 +10,7 @@ import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import kotlin.math.abs
 
 /**
- * Публичная реализация [TimelineMathEngine], основанная на "змейке".
- * Вся вычислительная логика перемещена сюда из конфигурации.
+ * Snake-like [TimelineMathEngine] implementation.
  */
 class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMathEngine {
 
@@ -67,7 +66,6 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
 
                 enable -> {
                     val startPosDisable = calculateStartPositionDisableStrokeX(step, i)
-
                     horizontalStep = if (i % 2 == 0) -getStepX() else getStepX()
                     val finishPositionLineXEnable =
                         horizontalStep / abs(horizontalStep) * startPosDisable
@@ -105,7 +103,8 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         startPositionX = when (mathConfig.startPosition) {
             TimelineMathConfig.StartPosition.START -> mathConfig.spacing.marginHorizontalStroke
             TimelineMathConfig.StartPosition.CENTER -> measuredWidth / 2f
-            TimelineMathConfig.StartPosition.END -> measuredWidth.toFloat() - mathConfig.spacing.marginHorizontalStroke
+            TimelineMathConfig.StartPosition.END ->
+                measuredWidth.toFloat() - mathConfig.spacing.marginHorizontalStroke
         }
     }
 
@@ -113,7 +112,7 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         calculateHorizontalOffset(i) - mathConfig.sizes.sizeIconProgress / 2f
 
     override fun getVerticalOffset(i: Int): Float =
-        (mathConfig.spacing.stepY * i) + mathConfig.spacing.marginTopProgressIcon
+        mathConfig.spacing.stepY * i + mathConfig.spacing.marginTopProgressIcon
 
     override fun getSteps(): List<TimelineStepData> = mathConfig.steps
 
@@ -130,9 +129,11 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         return when (align) {
             Paint.Align.LEFT -> -(startPositionX - mathConfig.spacing.marginHorizontalImage)
             Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
+            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER) {
                 startPositionX - mathConfig.spacing.marginHorizontalImage - mathConfig.sizes.sizeImageLvl
-            else -startPositionX + stepX + mathConfig.spacing.marginHorizontalImage
+            } else {
+                -startPositionX + stepX + mathConfig.spacing.marginHorizontalImage
+            }
         }
     }
 
@@ -141,27 +142,29 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         return when (align) {
             Paint.Align.LEFT -> -(startPositionX - mathConfig.spacing.marginHorizontalText)
             Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER)
+            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER) {
                 startPositionX - mathConfig.spacing.marginHorizontalText
-            else -startPositionX + stepX
+            } else {
+                -startPositionX + stepX
+            }
         }
     }
 
     override fun getIconYCoordinates(i: Int): Float =
-        calculateTitleYCoordinates(i) - (mathConfig.spacing.stepY - mathConfig.sizes.sizeImageLvl) / 2
+        mathConfig.spacing.stepYFirst + mathConfig.spacing.stepY * i +
+            mathConfig.spacing.stepY / 2f - mathConfig.sizes.sizeImageLvl / 2f
 
     override fun getTitleYCoordinates(i: Int): Float = calculateTitleYCoordinates(i)
 
     override fun getDescriptionYCoordinates(i: Int): Float =
         calculateTitleYCoordinates(i) + mathConfig.spacing.marginTopDescription
 
-    // --- Private helpers ---
-
     private fun getStandardDyMove(i: Int): Float =
-        if (i == mathConfig.steps.size - 1) mathConfig.spacing.stepY / 2 else mathConfig.spacing.stepY
+        if (i == mathConfig.steps.lastIndex) mathConfig.spacing.stepY / 2 else mathConfig.spacing.stepY
 
     private fun calculateTitleYCoordinates(i: Int): Float =
-        (mathConfig.spacing.stepY * i) + mathConfig.spacing.marginTopTitle
+        mathConfig.spacing.stepY * i + mathConfig.spacing.marginTopTitle +
+            mathConfig.spacing.stepYFirst / 2f + mathConfig.spacing.stepYFirst / 10f + mathConfig.spacing.stepYFirst / 20f
 
     private fun calculateStartPositionDisableStrokeX(step: TimelineStepData, i: Int): Float {
         val startPosition =
@@ -170,56 +173,72 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         return startPosition
     }
 
-    private fun getStepX(): Float =
-        (measuredWidth - mathConfig.spacing.marginHorizontalStroke * 2)
+    private fun getStepX(): Float = measuredWidth - mathConfig.spacing.marginHorizontalStroke * 2
 
     private fun getStepXFirst(): Float = startPositionX - mathConfig.spacing.marginHorizontalStroke
 
     private fun calculateHorizontalOffset(i: Int): Float {
-        return if (i % 2 == 0)
+        return if (i % 2 == 0) {
             when (mathConfig.startPosition) {
                 TimelineMathConfig.StartPosition.START -> -startPositionDisableStrokeX + getStepX()
-                TimelineMathConfig.StartPosition.CENTER -> -startPositionDisableStrokeX + startPositionX -
-                    mathConfig.spacing.marginHorizontalStroke
+                TimelineMathConfig.StartPosition.CENTER ->
+                    -startPositionDisableStrokeX + startPositionX - mathConfig.spacing.marginHorizontalStroke
                 TimelineMathConfig.StartPosition.END -> -startPositionDisableStrokeX
             }
-        else startPositionDisableStrokeX - startPositionX + mathConfig.spacing.marginHorizontalStroke
+        } else {
+            startPositionDisableStrokeX - startPositionX + mathConfig.spacing.marginHorizontalStroke
+        }
     }
 
     override fun buildLayout(): TimelineLayout {
         val steps = mathConfig.steps
         val layoutSteps = steps.mapIndexed { index, step ->
             val align = if (index % 2 == 0) Paint.Align.LEFT else Paint.Align.RIGHT
+            val titleX = getTitleXCoordinates(align)
+            val descriptionX = getTitleXCoordinates(align)
             TimelineLayoutStep(
                 step = step,
-                titleX = getTitleXCoordinates(align),
+                titleX = titleX,
                 titleY = getTitleYCoordinates(index),
-                descriptionX = getTitleXCoordinates(align),
+                titleWidth = TimelineTextWidthResolver.resolve(measuredWidth, startPositionX, titleX, align),
+                descriptionX = descriptionX,
                 descriptionY = getDescriptionYCoordinates(index),
+                descriptionWidth = TimelineTextWidthResolver.resolve(
+                    measuredWidth,
+                    startPositionX,
+                    descriptionX,
+                    align
+                ),
                 iconX = getIconXCoordinates(align),
                 iconY = getIconYCoordinates(index),
                 textAlign = align
             )
         }
 
-        val progressIndex = steps.indexOfFirst { it.progress != 100 }
-        val progressIcon = if (progressIndex >= 0) {
-            val step = steps[progressIndex]
-            if (progressIndex == 0) {
+        val progressIndex = steps.indexOfFirst { it.progress != 100 }.takeIf { it >= 0 }
+        val progressIcon = progressIndex?.let { index ->
+            val step = steps[index]
+            if (index == 0) {
                 TimelineProgressIcon(
                     left = getLeftCoordinates(step),
                     top = getTopCoordinates(step)
                 )
             } else {
                 TimelineProgressIcon(
-                    left = getHorizontalIconOffset(progressIndex),
-                    top = getVerticalOffset(progressIndex)
+                    left = getHorizontalIconOffset(index),
+                    top = getVerticalOffset(index)
                 )
             }
-        } else {
-            null
         }
 
-        return TimelineLayout(layoutSteps, progressIcon)
+        return TimelineLayout(
+            steps = layoutSteps,
+            progressIcon = progressIcon,
+            progressStepIndex = progressIndex
+        )
     }
 }
+
+
+
+

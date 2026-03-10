@@ -111,7 +111,8 @@ private class FakeMathEngine(
 
     override fun buildLayout(): TimelineLayout = TimelineLayout(
         steps = emptyList<TimelineLayoutStep>(),
-        progressIcon = null
+        progressIcon = null,
+        progressStepIndex = null
     )
 }
 
@@ -146,15 +147,31 @@ private class FakeUiRenderer(
 
     override fun getRemainingPath(): Path = remainingPath
 
-    override fun drawTitle(canvas: Canvas, title: CharSequence, x: Float, y: Float, align: Paint.Align) = Unit
+    override fun drawTitle(
+        canvas: Canvas,
+        title: CharSequence,
+        x: Float,
+        y: Float,
+        align: Paint.Align,
+        maxWidth: Int
+    ) = Unit
 
     override fun drawDescription(
         canvas: Canvas,
         description: CharSequence,
         x: Float,
         y: Float,
-        align: Paint.Align
+        align: Paint.Align,
+        maxWidth: Int
     ) = Unit
+
+    override fun measureTitleHeight(title: CharSequence, maxWidth: Int, align: Paint.Align): Int = 0
+
+    override fun measureDescriptionHeight(description: CharSequence, maxWidth: Int, align: Paint.Align): Int = 0
+
+    override fun getTitleBaselineOffset(): Float = 0f
+
+    override fun getDescriptionBaselineOffset(): Float = 0f
 
     override fun drawStepIcon(
         step: TimelineStepData,

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.Log
+import android.view.View
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
@@ -19,6 +20,7 @@ import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
 import com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController
 
 class TimelineViewController(
+    private val ownerView: View,
     private val context: Context,
     attrs: AttributeSet?,
     registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry
@@ -28,17 +30,19 @@ class TimelineViewController(
         private const val TAG = "TimelineView"
     }
 
-    private val config = TimelineConfigParser(context).parse(attrs)
+    private val initialConfig = TimelineConfigParser(context).parse(attrs)
+    private var state = TimelineRuntimeState.from(initialConfig)
     private var timelineMath: TimelineMathEngine
     private var timelineUi: TimelineUiRenderer
     private var layout: TimelineLayout? = null
     private var strategyController = TimelineViewStrategyController(registry)
     private val heightCalculator = TimelineHeightCalculator()
+    private val lottieOverlayManager = TimelineLottieOverlayManager(ownerView)
     private var onStepClickListener: ((index: Int, step: TimelineStepData) -> Unit)? = null
     private var onProgressIconClickListener: (() -> Unit)? = null
 
     init {
-        val resolved = strategyController.resolve(config)
+        val resolved = state.resolve(strategyController)
         timelineMath = resolved.math
         timelineUi = resolved.ui
         initTools()
@@ -46,59 +50,46 @@ class TimelineViewController(
 
     fun replaceSteps(steps: List<TimelineStepData>) {
         timelineMath.replaceSteps(steps)
+        state = state.withSteps(steps).withMathEngine(timelineMath)
     }
 
     fun setMathEngine(engine: TimelineMathEngine) {
         timelineMath = engine
+        state = state.withMathEngine(engine)
         initTools()
     }
 
     fun setUiRenderer(renderer: TimelineUiRenderer) {
         timelineUi = renderer
+        state = state.withUiRenderer(renderer)
         initTools()
     }
 
     fun setStrategy(mathStrategy: TimelineMathStrategy, uiStrategy: TimelineUiStrategy) {
-        val mathConfig = timelineMath.getConfig()
-        val uiConfig = timelineUi.getConfig()
-        val resolved = strategyController.resolve(mathStrategy, uiStrategy, mathConfig, uiConfig)
-        timelineMath = resolved.math
-        timelineUi = resolved.ui
-        initTools()
+        state = state.withStrategy(TimelineStrategy(mathStrategy, uiStrategy))
+        applyResolvedState()
     }
 
     fun setStrategy(strategy: TimelineStrategy) {
-        setStrategy(strategy.math, strategy.ui)
+        state = state.withStrategy(strategy)
+        applyResolvedState()
     }
 
     fun setStrategy(mathStrategyKey: StrategyKey?, uiStrategyKey: StrategyKey?) {
-        val mathConfig = timelineMath.getConfig()
-        val uiConfig = timelineUi.getConfig()
-        val resolved = strategyController.resolve(
-            mathStrategyKey = mathStrategyKey,
-            uiStrategyKey = uiStrategyKey,
-            fallbackMath = TimelineMathStrategy.Snake,
-            fallbackUi = TimelineUiStrategy.Snake,
-            mathConfig = mathConfig,
-            uiConfig = uiConfig
-        )
-        timelineMath = resolved.math
-        timelineUi = resolved.ui
-        initTools()
+        state = state.withStrategyKeys(mathStrategyKey, uiStrategyKey)
+        applyResolvedState()
     }
 
     fun setStrategies(mathEngine: TimelineMathEngine, uiRenderer: TimelineUiRenderer) {
         timelineMath = mathEngine
         timelineUi = uiRenderer
+        state = state.withMathEngine(mathEngine).withUiRenderer(uiRenderer)
         initTools()
     }
 
     fun setStrategyRegistry(registry: TimelineStrategyRegistryContract) {
         strategyController = TimelineViewStrategyController(registry)
-        val resolved = strategyController.resolve(config)
-        timelineMath = resolved.math
-        timelineUi = resolved.ui
-        initTools()
+        applyResolvedState()
     }
 
     fun setStrategyRegistry(configure: TimelineStrategyRegistryContract.() -> Unit) {
@@ -164,18 +155,17 @@ class TimelineViewController(
         return parts.takeIf { it.isNotEmpty() }?.joinToString(separator = ". ")
     }
 
-    private fun hasProgressIcon(progressIcon: TimelineProgressIcon?): Boolean = progressIcon != null
-
     fun measure(width: Int): Int {
         timelineMath.setMeasuredWidth(width)
         timelineMath.buildPath(timelineUi.getCompletedPath(), timelineUi.getRemainingPath())
         layout = timelineMath.buildLayout()
-        return heightCalculator.calculateHeight(timelineMath, timelineUi.getConfig())
+        return heightCalculator.calculateHeight(layout, timelineMath, timelineUi)
     }
 
     fun draw(canvas: Canvas) {
         timelineUi.prepareStrokePaint()
 
+        canvas.save()
         canvas.translate(timelineMath.getStartPosition(), 0f)
         timelineUi.drawCompletedPath(canvas)
         timelineUi.drawRemainingPath(canvas)
@@ -183,24 +173,35 @@ class TimelineViewController(
         timelineUi.prepareTextPaint()
         timelineUi.prepareIconPaint()
 
-        layout?.progressIcon?.let { progress ->
-            timelineUi.drawProgressIcon(canvas, progress.left, progress.top)
-        }
+        drawProgressIcon(canvas, layout)
 
-        layout?.steps?.forEach { stepLayout ->
+        val resolvedTextBlocks = TimelineTextBlockResolver.resolve(
+            layout = layout,
+            mathEngine = timelineMath,
+            mathConfig = timelineMath.getConfig(),
+            uiRenderer = timelineUi
+        )
+
+        layout?.steps?.forEachIndexed { index, stepLayout ->
+            val textBlock = resolvedTextBlocks.getOrNull(index) ?: return@forEachIndexed
+            val title = stepLayout.step.title ?: ""
+            val description = stepLayout.step.description ?: ""
+
             timelineUi.drawTitle(
                 canvas,
-                stepLayout.step.title ?: "",
+                title,
                 stepLayout.titleX,
-                stepLayout.titleY,
-                stepLayout.textAlign
+                textBlock.titleTop,
+                stepLayout.textAlign,
+                stepLayout.titleWidth
             )
             timelineUi.drawDescription(
                 canvas,
-                stepLayout.step.description ?: "",
+                description,
                 stepLayout.descriptionX,
-                stepLayout.descriptionY,
-                stepLayout.textAlign
+                textBlock.descriptionTop,
+                stepLayout.textAlign,
+                stepLayout.descriptionWidth
             )
             timelineUi.drawStepIcon(
                 stepLayout.step,
@@ -210,15 +211,54 @@ class TimelineViewController(
                 stepLayout.iconX,
                 stepLayout.iconY
             )
+            lottieOverlayManager.draw(
+                canvas = canvas,
+                context = context,
+                spec = stepLayout.step.badgeAnimation,
+                left = stepLayout.iconX,
+                top = stepLayout.iconY,
+                size = timelineMath.getConfig().sizes.sizeImageLvl
+            )
         }
+
+        canvas.restore()
     }
+
+    fun release() {
+        lottieOverlayManager.clear()
+    }
+
+    private fun drawProgressIcon(canvas: Canvas, layout: TimelineLayout?) {
+        val progress = layout?.progressIcon ?: return
+        timelineUi.drawProgressIcon(canvas, progress.left, progress.top)
+        val progressStep = layout.progressStepIndex?.let { index ->
+            timelineMath.getSteps().getOrNull(index)
+        }
+        lottieOverlayManager.draw(
+            canvas = canvas,
+            context = context,
+            spec = progressStep?.progressAnimation,
+            left = progress.left,
+            top = progress.top,
+            size = timelineMath.getConfig().sizes.sizeIconProgress
+        )
+    }
+
+    private fun applyResolvedState() {
+        val resolved = state.resolve(strategyController)
+        timelineMath = resolved.math
+        timelineUi = resolved.ui
+        state = state.withMathEngine(timelineMath).withUiRenderer(timelineUi)
+        initTools()
+    }
+
+    private fun hasProgressIcon(progressIcon: TimelineProgressIcon?): Boolean = progressIcon != null
 
     private fun initTools() {
         Log.d(
             TAG,
             "initTools timelineMathConfig: ${timelineMath.getConfig()}, timelineUiConfig: ${timelineUi.getConfig()}"
         )
-
         timelineUi.initTools(timelineMath.getConfig(), context)
     }
 }

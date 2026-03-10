@@ -16,22 +16,7 @@ import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
 
 /**
- * Кастомное View для отображения вертикального таймлайна с уровнями прогресса.
- *
- * Поддерживает настройку через XML и код:
- * - визуальные параметры (цвета, размеры, иконки)
- * - математические параметры (отступы, шаги, смещения)
- * - автоматическую отрисовку линий прогресса и иконок
- *
- * Отрисовка включает:
- * - пройденные шаги (enable path)
- * - непройденные шаги (disable path)
- * - иконку текущего шага (progress icon)
- * - заголовки и описания
- *
- * Использует выбранный [TimelineMathEngine] как движок для вычислений и генерации координат.
- *
- * @constructor Создаёт [TimelineView], читая параметры из XML или по умолчанию.
+ * Custom View for rendering a timeline.
  */
 class TimelineView @JvmOverloads constructor(
     context: Context,
@@ -39,15 +24,8 @@ class TimelineView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val controller = TimelineViewController(context, attrs)
+    private val controller = TimelineViewController(this, context, attrs)
 
-    init {
-        // Intentionally empty. Initialization is delegated to the controller.
-    }
-
-    /**
-     * Обновляет список шагов и перерисовывает таймлайн.
-     */
     fun replaceSteps(steps: List<TimelineStepData>) {
         controller.replaceSteps(steps)
         updateAccessibilityDescription()
@@ -55,97 +33,66 @@ class TimelineView @JvmOverloads constructor(
         invalidate()
     }
 
-    /**
-     * Устанавливает пользовательский математический движок.
-     */
     fun setMathEngine(engine: TimelineMathEngine) {
         controller.setMathEngine(engine)
         requestLayout()
         invalidate()
     }
 
-    /**
-     * Устанавливает пользовательский рендерер интерфейса.
-     */
     fun setUiRenderer(renderer: TimelineUiRenderer) {
         controller.setUiRenderer(renderer)
         requestLayout()
         invalidate()
     }
 
-    /**
-     * Устанавливает стратегии расчётов и отрисовки.
-     */
     fun setStrategy(mathStrategy: TimelineMathStrategy, uiStrategy: TimelineUiStrategy) {
         controller.setStrategy(mathStrategy, uiStrategy)
         requestLayout()
         invalidate()
     }
 
-    /**
-     * Устанавливает стратегии расчётов и отрисовки через композитную модель.
-     */
     fun setStrategy(strategy: TimelineStrategy) {
         controller.setStrategy(strategy)
         requestLayout()
         invalidate()
     }
 
-    /**
-     * Устанавливает стратегии расчётов и отрисовки через зарегистрированные ключи.
-     */
     fun setStrategy(mathStrategyKey: StrategyKey?, uiStrategyKey: StrategyKey?) {
         controller.setStrategy(mathStrategyKey, uiStrategyKey)
         requestLayout()
         invalidate()
     }
 
-    /**
-     * Устанавливает одновременно математический движок и рендерер интерфейса.
-     */
     fun setStrategies(mathEngine: TimelineMathEngine, uiRenderer: TimelineUiRenderer) {
         controller.setStrategies(mathEngine, uiRenderer)
         requestLayout()
         invalidate()
     }
 
-    /**
-     * Устанавливает локальный реестр стратегий для этого экземпляра.
-     */
     fun setStrategyRegistry(registry: TimelineStrategyRegistryContract) {
         controller.setStrategyRegistry(registry)
         requestLayout()
         invalidate()
     }
 
-    /**
-     * Создаёт локальный реестр стратегий и применяет конфигурацию через builder.
-     */
     fun setStrategyRegistry(configure: TimelineStrategyRegistryContract.() -> Unit) {
         val registry = TimelineStrategyRegistry.createLocalRegistry()
         configure(registry)
         setStrategyRegistry(registry)
     }
 
-    /**
-     * Устанавливает callback на клик по иконке шага.
-     */
     fun setOnStepClickListener(listener: (index: Int, step: TimelineStepData) -> Unit) {
         controller.setOnStepClickListener(listener)
         isClickable = true
         updateAccessibilityDescription()
     }
 
-    /**
-     * Устанавливает callback на клик по progress-иконке.
-     */
     fun setOnProgressIconClickListener(listener: () -> Unit) {
         controller.setOnProgressIconClickListener(listener)
         isClickable = true
         updateAccessibilityDescription()
     }
 
-    
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val measuredWidth = MeasureSpec.getSize(widthMeasureSpec)
         val measuredHeight = controller.measure(measuredWidth)
@@ -179,8 +126,12 @@ class TimelineView @JvmOverloads constructor(
         return true
     }
 
+    override fun onDetachedFromWindow() {
+        controller.release()
+        super.onDetachedFromWindow()
+    }
+
     private fun updateAccessibilityDescription() {
         contentDescription = controller.getAccessibilityDescription()
     }
-
 }

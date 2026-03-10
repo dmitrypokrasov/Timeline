@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
+import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 object TimelineSampleData {
@@ -33,21 +34,22 @@ object TimelineSampleData {
             ),
             TimelineStepData(
                 title = context.getString(R.string.title_3_lvl),
-                description = context.getString(R.string.description_100_999_steps),
+                description = context.getString(R.string.description_100_299_steps),
                 iconRes = R.drawable.ic_active,
                 iconDisabledRes = R.drawable.ic_unactive,
+                progressAnimation = TimelineLottieSpec(R.raw.timeline_progress_orbit, scale = 1.25f),
                 progress = progress(0, 29)
             ),
             TimelineStepData(
                 title = context.getString(R.string.title_4_lvl),
-                description = context.getString(R.string.description_1000_9999_steps),
+                description = context.getString(R.string.description_300_499_steps),
                 iconRes = R.drawable.ic_active,
                 iconDisabledRes = R.drawable.ic_unactive,
                 progress = progress(0, 39)
             ),
             TimelineStepData(
                 title = context.getString(R.string.title_5_lvl),
-                description = context.getString(R.string.description_10000_99999_steps),
+                description = context.getString(R.string.description_500_699_steps),
                 iconRes = R.drawable.ic_unactive,
                 iconDisabledRes = R.drawable.ic_unactive,
                 progress = progress(0, 49)
@@ -64,8 +66,8 @@ object TimelineSampleData {
                 marginHorizontalStroke = context.resources.getDimension(R.dimen.dimen_40dp),
                 marginHorizontalText = context.resources.getDimension(R.dimen.dimen_80dp),
                 marginHorizontalImage = context.resources.getDimension(R.dimen.dimen_16dp),
-                marginTopTitle = context.resources.getDimension(R.dimen.dimen_52dp),
-                marginTopDescription = context.resources.getDimension(R.dimen.dimen_16dp),
+                marginTopTitle = context.resources.getDimension(R.dimen.dimen_36dp),
+                marginTopDescription = context.resources.getDimension(R.dimen.dimen_6dp),
                 marginTopProgressIcon = context.resources.getDimension(R.dimen.dimen_6dp),
                 stepYFirst = context.resources.getDimension(R.dimen.dimen_20dp)
             ),

@@ -6,8 +6,6 @@ import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
-import com.dmitrypokrasov.timelineview.math.TimelineMathFactory
-import com.dmitrypokrasov.timelineview.render.TimelineUiFactory
 
 /**
  * Composes math and UI engines for the [com.dmitrypokrasov.timelineview.ui.TimelineView].
@@ -16,6 +14,7 @@ class TimelineViewStrategyController(
     registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry
 ) {
     private val resolver = TimelineStrategyResolver(registry)
+
     fun resolve(config: TimelineConfig): TimelineViewStrategiesData {
         return TimelineViewStrategiesData(
             math = resolver.resolveMath(config),
@@ -30,8 +29,8 @@ class TimelineViewStrategyController(
         uiConfig: TimelineUiConfig
     ): TimelineViewStrategiesData {
         return TimelineViewStrategiesData(
-            math = TimelineMathFactory.create(mathStrategy, mathConfig),
-            ui = TimelineUiFactory.create(uiStrategy, uiConfig)
+            math = resolver.resolveMath(mathStrategy, mathConfig),
+            ui = resolver.resolveUi(uiStrategy, uiConfig)
         )
     }
 
@@ -49,4 +48,3 @@ class TimelineViewStrategyController(
         )
     }
 }
-

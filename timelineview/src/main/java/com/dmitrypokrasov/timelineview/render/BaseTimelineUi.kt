@@ -24,34 +24,18 @@ open class BaseTimelineUi(
     private var uiConfig: TimelineUiConfig,
 ) : TimelineUiRenderer {
 
-    /** Path for completed steps. */
+    private val textLayoutBuilder: TimelineTextLayoutBuilder = StaticTimelineTextLayoutBuilder()
     private val pathEnable = Path()
-
-    /** Path for remaining steps. */
     private val pathDisable = Path()
-
-    /** Bitmap for disabled steps. */
     private var iconDisableStep: Bitmap? = null
-
-    /** Corner rounding for path. */
     private var pathEffect: CornerPathEffect? = null
-
-    /** Bitmap for progress icon. */
     private var iconProgressBitmap: Bitmap? = null
-
-    /** Cache for step icon bitmaps. */
     private val stepIconCache = mutableMapOf<Int, Bitmap>()
-
     private var stepIconSize: Int = 0
-
-    /** Paint for lines. */
     private val linePaint = Paint()
-
-    /** Paint for text. */
-    private val textPaint = Paint()
-
-    /** Paint for icons. */
-    private val iconPaint = Paint()
+    private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val iconPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val baselineProbePaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) {
         pathEffect = CornerPathEffect(uiConfig.stroke.radius)
@@ -94,12 +78,7 @@ open class BaseTimelineUi(
 
     override fun drawProgressIcon(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) {
         iconProgressBitmap?.let {
-            canvas.drawBitmap(
-                it,
-                leftCoordinates,
-                topCoordinates,
-                iconPaint
-            )
+            canvas.drawBitmap(it, leftCoordinates, topCoordinates, iconPaint)
         }
     }
 
@@ -122,19 +101,20 @@ open class BaseTimelineUi(
         title: CharSequence,
         x: Float,
         y: Float,
-        align: Paint.Align
+        align: Paint.Align,
+        maxWidth: Int
     ) {
-        val titleText = title.toString()
-        if (titleText.isBlank()) return
-
-        textPaint.apply {
-            textAlign = align
-            textSize = uiConfig.textSizes.sizeTitle
-            typeface = Typeface.DEFAULT_BOLD
+        drawTextBlock(
+            canvas = canvas,
+            text = title,
+            x = x,
+            y = y,
+            align = align,
+            maxWidth = maxWidth,
+            textSize = uiConfig.textSizes.sizeTitle,
+            typeface = Typeface.DEFAULT_BOLD,
             color = uiConfig.colors.colorTitle
-        }
-
-        canvas.drawText(titleText, x, y, textPaint)
+        )
     }
 
     override fun drawDescription(
@@ -142,20 +122,53 @@ open class BaseTimelineUi(
         description: CharSequence,
         x: Float,
         y: Float,
-        align: Paint.Align
+        align: Paint.Align,
+        maxWidth: Int
     ) {
-        val descriptionText = description.toString()
-        if (descriptionText.isBlank()) return
-
-        textPaint.apply {
-            textAlign = align
-            textSize = uiConfig.textSizes.sizeDescription
-            typeface = Typeface.DEFAULT
+        drawTextBlock(
+            canvas = canvas,
+            text = description,
+            x = x,
+            y = y,
+            align = align,
+            maxWidth = maxWidth,
+            textSize = uiConfig.textSizes.sizeDescription,
+            typeface = Typeface.DEFAULT,
             color = uiConfig.colors.colorDescription
-        }
-
-        canvas.drawText(descriptionText, x, y, textPaint)
+        )
     }
+
+    override fun measureTitleHeight(title: CharSequence, maxWidth: Int, align: Paint.Align): Int {
+        return measureTextBlock(
+            text = title,
+            maxWidth = maxWidth,
+            textSize = uiConfig.textSizes.sizeTitle,
+            typeface = Typeface.DEFAULT_BOLD,
+            color = uiConfig.colors.colorTitle,
+            align = align
+        )
+    }
+
+    override fun measureDescriptionHeight(
+        description: CharSequence,
+        maxWidth: Int,
+        align: Paint.Align
+    ): Int {
+        return measureTextBlock(
+            text = description,
+            maxWidth = maxWidth,
+            textSize = uiConfig.textSizes.sizeDescription,
+            typeface = Typeface.DEFAULT,
+            color = uiConfig.colors.colorDescription,
+            align = align
+        )
+    }
+
+    override fun getTitleBaselineOffset(): Float =
+        getBaselineOffset(uiConfig.textSizes.sizeTitle, Typeface.DEFAULT_BOLD)
+
+    override fun getDescriptionBaselineOffset(): Float =
+        getBaselineOffset(uiConfig.textSizes.sizeDescription, Typeface.DEFAULT)
 
     override fun drawStepIcon(
         step: TimelineStepData,
@@ -165,13 +178,13 @@ open class BaseTimelineUi(
         x: Float,
         y: Float
     ) {
-        val bm: Bitmap? = when {
+        val bitmap = when {
             step.progress == 100 && step.iconRes != null -> getStepIconBitmap(step.iconRes, context)
             step.progress != 100 && step.iconDisabledRes != null ->
                 getStepIconBitmap(step.iconDisabledRes, context)
             else -> iconDisableStep
         }
-        bm?.let {
+        bitmap?.let {
             iconPaint.textAlign = align
             canvas.drawBitmap(it, x, y, iconPaint)
         }
@@ -184,6 +197,67 @@ open class BaseTimelineUi(
     override fun getConfig(): TimelineUiConfig = uiConfig
 
     override fun getTextAlignment(): Paint.Align = textPaint.textAlign
+
+    private fun drawTextBlock(
+        canvas: Canvas,
+        text: CharSequence,
+        x: Float,
+        y: Float,
+        align: Paint.Align,
+        maxWidth: Int,
+        textSize: Float,
+        typeface: Typeface,
+        color: Int
+    ) {
+        val value = text.toString()
+        if (value.isBlank()) return
+
+        val layout = textLayoutBuilder.build(
+            text = value,
+            textSize = textSize,
+            typeface = typeface,
+            color = color,
+            align = align,
+            width = maxWidth
+        )
+        val translateX = when (align) {
+            Paint.Align.LEFT -> x
+            Paint.Align.CENTER -> x - maxWidth / 2f
+            Paint.Align.RIGHT -> x - maxWidth
+        }
+
+        canvas.save()
+        canvas.translate(translateX, y)
+        layout.draw(canvas)
+        canvas.restore()
+    }
+
+    private fun measureTextBlock(
+        text: CharSequence,
+        maxWidth: Int,
+        textSize: Float,
+        typeface: Typeface,
+        color: Int,
+        align: Paint.Align
+    ): Int {
+        val value = text.toString()
+        if (value.isBlank()) return 0
+
+        return textLayoutBuilder.build(
+            text = value,
+            textSize = textSize,
+            typeface = typeface,
+            color = color,
+            align = align,
+            width = maxWidth
+        ).height
+    }
+
+    private fun getBaselineOffset(textSize: Float, typeface: Typeface): Float {
+        baselineProbePaint.textSize = textSize
+        baselineProbePaint.typeface = typeface
+        return -baselineProbePaint.fontMetrics.ascent
+    }
 
     private fun getStepIconBitmap(drawableId: Int, context: Context): Bitmap? {
         if (drawableId == 0) return null
