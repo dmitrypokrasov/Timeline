@@ -36,7 +36,7 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedEnd = config.stepYFirst + config.stepY * 2
+        val expectedEnd = config.marginTopTitle + config.stepYFirst + config.stepY * 2
         val lastStepPosition = layout.steps.last().titleY - config.marginTopTitle
 
         assertEquals(expectedEnd, lastStepPosition, 0.01f)
@@ -65,7 +65,7 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedTop = config.marginTopProgressIcon - config.sizeIconProgress / 2f
+        val expectedTop = config.marginTopTitle + config.marginTopProgressIcon - config.sizeIconProgress / 2f
         assertEquals(expectedTop, layout.progressIcon?.top, 0.01f)
     }
 
@@ -76,7 +76,7 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedTop = config.stepYFirst * 0.5f +
+        val expectedTop = config.marginTopTitle + config.stepYFirst * 0.5f +
             config.marginTopProgressIcon - config.sizeIconProgress / 2f
         assertEquals(expectedTop, layout.progressIcon?.top, 0.01f)
     }
@@ -144,8 +144,9 @@ class LinearTimelineMathTest {
         val layout = math.buildLayout()
         val firstStep = layout.steps.first()
         val firstStepAnchorY = firstStep.iconY + config.sizeImageLvl / 2f
-        val expectedFirstStepAnchorY = config.stepYFirst
-        val expectedProgressTop = config.marginTopProgressIcon - config.sizeIconProgress / 2f
+        val expectedFirstStepAnchorY = config.marginTopTitle + config.stepYFirst
+        val expectedProgressTop = config.marginTopTitle +
+            config.marginTopProgressIcon - config.sizeIconProgress / 2f
 
         assertEquals(expectedFirstStepAnchorY, firstStepAnchorY, 0.01f)
         assertEquals(expectedFirstStepAnchorY + config.marginTopTitle, firstStep.titleY, 0.01f)
@@ -190,6 +191,7 @@ class LinearTimelineMathTest {
             },
             stepY = 100f,
             stepYFirst = 20f,
+            marginTopTitle = 0f,
             marginTopProgressIcon = 8f,
             sizeIconProgress = 10f,
             sizeImageLvl = 20f

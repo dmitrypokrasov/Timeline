@@ -18,10 +18,11 @@ class TimelineHeightCalculator {
         val stepsCount = mathConfig.steps.size
         val horizontal = mathEngine is LinearTimelineMath &&
             mathEngine.orientation == LinearTimelineMath.Orientation.HORIZONTAL
+        val verticalStartY = getVerticalLineStartY(mathEngine)
         val baseHeight = if (horizontal) {
             max(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress)
         } else {
-            (mathConfig.spacing.stepY * stepsCount) + mathConfig.spacing.stepYFirst +
+            verticalStartY + (mathConfig.spacing.stepY * stepsCount) + mathConfig.spacing.stepYFirst +
                 mathConfig.sizes.sizeIconProgress / 2f
         }
         val textHeight = if (stepsCount == 0) {
@@ -32,11 +33,22 @@ class TimelineHeightCalculator {
                 max(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress) / 2f +
                     textBlockHeight
             } else {
-                (mathConfig.spacing.stepY * (stepsCount - 1)) + textBlockHeight
+                verticalStartY + (mathConfig.spacing.stepY * (stepsCount - 1)) + textBlockHeight
             }
         }
 
         return max(baseHeight, textHeight).toInt()
+    }
+
+
+    private fun getVerticalLineStartY(mathEngine: TimelineMathEngine): Float {
+        return if (mathEngine is LinearTimelineMath &&
+            mathEngine.orientation == LinearTimelineMath.Orientation.VERTICAL
+        ) {
+            mathEngine.getConfig().spacing.marginTopTitle
+        } else {
+            0f
+        }
     }
 
     private fun getTextBlockHeight(
