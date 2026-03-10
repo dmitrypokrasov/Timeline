@@ -178,7 +178,8 @@ class LinearTimelineMath(
 
     override fun getTitleYCoordinates(i: Int): Float =
         if (orientation == Orientation.VERTICAL) {
-            getStepPosition(i) - getLineStartY() + mathConfig.spacing.marginTopTitle
+            getStepPosition(i) - mathConfig.spacing.stepYFirst - getLineStartY() +
+                mathConfig.spacing.marginTopTitle
         } else {
             calculateTitleYCoordinates(i)
         }
