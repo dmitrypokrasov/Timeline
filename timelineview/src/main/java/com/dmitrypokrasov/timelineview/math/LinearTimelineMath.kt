@@ -178,7 +178,7 @@ class LinearTimelineMath(
 
     override fun getTitleYCoordinates(i: Int): Float =
         if (orientation == Orientation.VERTICAL) {
-            getStepPosition(i) + mathConfig.spacing.marginTopTitle
+            getStepPosition(i) - getLineStartY() + mathConfig.spacing.marginTopTitle
         } else {
             calculateTitleYCoordinates(i)
         }
@@ -195,7 +195,10 @@ class LinearTimelineMath(
         getStepPosition(i) - mathConfig.spacing.stepYFirst + mathConfig.spacing.marginTopTitle
 
     private fun getLineStartY(): Float =
-        if (orientation == Orientation.VERTICAL) mathConfig.spacing.marginTopTitle else 0f
+        if (orientation == Orientation.VERTICAL) getVerticalTopInset() else 0f
+
+    private fun getVerticalTopInset(): Float =
+        maxOf(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress) / 2f
 
     private fun getSegmentLength(index: Int): Float {
         return if (index == 0) mathConfig.spacing.stepYFirst else mathConfig.spacing.stepY

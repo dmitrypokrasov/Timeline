@@ -4,6 +4,7 @@ import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import kotlin.math.maxOf
 
 class LinearTimelineMathTest {
     @Test
@@ -36,7 +37,7 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedEnd = config.marginTopTitle + config.stepYFirst + config.stepY * 2
+        val expectedEnd = config.stepYFirst + config.stepY * 2
         val lastStepPosition = layout.steps.last().titleY - config.marginTopTitle
 
         assertEquals(expectedEnd, lastStepPosition, 0.01f)
@@ -65,7 +66,8 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedTop = config.marginTopTitle + config.marginTopProgressIcon - config.sizeIconProgress / 2f
+        val topInset = maxOf(config.sizeImageLvl, config.sizeIconProgress) / 2f
+        val expectedTop = topInset + config.marginTopProgressIcon - config.sizeIconProgress / 2f
         assertEquals(expectedTop, layout.progressIcon?.top, 0.01f)
     }
 
@@ -76,7 +78,8 @@ class LinearTimelineMathTest {
 
         val layout = math.buildLayout()
 
-        val expectedTop = config.marginTopTitle + config.stepYFirst * 0.5f +
+        val topInset = maxOf(config.sizeImageLvl, config.sizeIconProgress) / 2f
+        val expectedTop = topInset + config.stepYFirst * 0.5f +
             config.marginTopProgressIcon - config.sizeIconProgress / 2f
         assertEquals(expectedTop, layout.progressIcon?.top, 0.01f)
     }
@@ -144,12 +147,13 @@ class LinearTimelineMathTest {
         val layout = math.buildLayout()
         val firstStep = layout.steps.first()
         val firstStepAnchorY = firstStep.iconY + config.sizeImageLvl / 2f
-        val expectedFirstStepAnchorY = config.marginTopTitle + config.stepYFirst
-        val expectedProgressTop = config.marginTopTitle +
+        val topInset = maxOf(config.sizeImageLvl, config.sizeIconProgress) / 2f
+        val expectedFirstStepAnchorY = topInset + config.stepYFirst
+        val expectedProgressTop = topInset +
             config.marginTopProgressIcon - config.sizeIconProgress / 2f
 
         assertEquals(expectedFirstStepAnchorY, firstStepAnchorY, 0.01f)
-        assertEquals(expectedFirstStepAnchorY + config.marginTopTitle, firstStep.titleY, 0.01f)
+        assertEquals(config.stepYFirst + config.marginTopTitle, firstStep.titleY, 0.01f)
         assertEquals(firstStep.titleY + config.marginTopDescription, firstStep.descriptionY, 0.01f)
         assertEquals(expectedProgressTop, layout.progressIcon?.top, 0.01f)
         assertEquals(expectedProgressTop, math.getVerticalOffset(0), 0.01f)

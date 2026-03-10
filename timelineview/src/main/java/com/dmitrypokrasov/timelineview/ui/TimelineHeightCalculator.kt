@@ -45,7 +45,7 @@ class TimelineHeightCalculator {
         return if (mathEngine is LinearTimelineMath &&
             mathEngine.orientation == LinearTimelineMath.Orientation.VERTICAL
         ) {
-            mathEngine.getConfig().spacing.marginTopTitle
+            max(mathEngine.getConfig().sizes.sizeImageLvl, mathEngine.getConfig().sizes.sizeIconProgress) / 2f
         } else {
             0f
         }
