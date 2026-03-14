@@ -5,7 +5,9 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.view.ViewCompat
 import com.dmitrypokrasov.timelineview.config.StrategyKey
+import com.dmitrypokrasov.timelineview.config.TimelineConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
@@ -26,27 +28,43 @@ class TimelineView
         defStyleAttr: Int = 0,
     ) : View(context, attrs, defStyleAttr) {
         private val controller = TimelineViewController(this, context, attrs)
+        private val accessibilityHelper = TimelineAccessibilityHelper(this, controller)
+
+        init {
+            isFocusable = true
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
+            ViewCompat.setAccessibilityDelegate(this, accessibilityHelper)
+        }
+
+        /** Returns the current declarative timeline config. */
+        fun getConfig(): TimelineConfig = controller.getConfig()
+
+        /** Replaces the full declarative timeline config. */
+        fun setConfig(config: TimelineConfig) {
+            mutateTimeline {
+                setConfig(config)
+            }
+        }
 
         /** Replaces the current steps and triggers a relayout/redraw. */
         fun replaceSteps(steps: List<TimelineStepData>) {
-            controller.replaceSteps(steps)
-            updateAccessibilityDescription()
-            requestLayout()
-            invalidate()
+            mutateTimeline {
+                replaceSteps(steps)
+            }
         }
 
         /** Replaces only the math engine. */
         fun setMathEngine(engine: TimelineMathEngine) {
-            controller.setMathEngine(engine)
-            requestLayout()
-            invalidate()
+            mutateTimeline {
+                setMathEngine(engine)
+            }
         }
 
         /** Replaces only the UI renderer. */
         fun setUiRenderer(renderer: TimelineUiRenderer) {
-            controller.setUiRenderer(renderer)
-            requestLayout()
-            invalidate()
+            mutateTimeline {
+                setUiRenderer(renderer)
+            }
         }
 
         /** Switches both math and UI using built-in strategy types. */
@@ -54,16 +72,16 @@ class TimelineView
             mathStrategy: TimelineMathStrategy,
             uiStrategy: TimelineUiStrategy,
         ) {
-            controller.setStrategy(mathStrategy, uiStrategy)
-            requestLayout()
-            invalidate()
+            mutateTimeline {
+                setStrategy(mathStrategy, uiStrategy)
+            }
         }
 
         /** Switches both math and UI using a prebuilt composite strategy. */
         fun setStrategy(strategy: TimelineStrategy) {
-            controller.setStrategy(strategy)
-            requestLayout()
-            invalidate()
+            mutateTimeline {
+                setStrategy(strategy)
+            }
         }
 
         /** Switches both math and UI using strategy keys resolved from the registry. */
@@ -71,9 +89,9 @@ class TimelineView
             mathStrategyKey: StrategyKey?,
             uiStrategyKey: StrategyKey?,
         ) {
-            controller.setStrategy(mathStrategyKey, uiStrategyKey)
-            requestLayout()
-            invalidate()
+            mutateTimeline {
+                setStrategy(mathStrategyKey, uiStrategyKey)
+            }
         }
 
         /** Replaces both the math engine and renderer directly. */
@@ -81,16 +99,16 @@ class TimelineView
             mathEngine: TimelineMathEngine,
             uiRenderer: TimelineUiRenderer,
         ) {
-            controller.setStrategies(mathEngine, uiRenderer)
-            requestLayout()
-            invalidate()
+            mutateTimeline {
+                setStrategies(mathEngine, uiRenderer)
+            }
         }
 
         /** Replaces the strategy registry used by this view. */
         fun setStrategyRegistry(registry: TimelineStrategyRegistryContract) {
-            controller.setStrategyRegistry(registry)
-            requestLayout()
-            invalidate()
+            mutateTimeline {
+                setStrategyRegistry(registry)
+            }
         }
 
         /** Creates and installs a local strategy registry configured by [configure]. */
@@ -102,16 +120,16 @@ class TimelineView
 
         /** Registers a click listener for badge icons. */
         fun setOnStepClickListener(listener: (index: Int, step: TimelineStepData) -> Unit) {
-            controller.setOnStepClickListener(listener)
-            isClickable = true
-            updateAccessibilityDescription()
+            mutateTimeline(requestLayout = false, redraw = false) {
+                setOnStepClickListener(listener)
+            }
         }
 
         /** Registers a click listener for the active progress icon. */
         fun setOnProgressIconClickListener(listener: () -> Unit) {
-            controller.setOnProgressIconClickListener(listener)
-            isClickable = true
-            updateAccessibilityDescription()
+            mutateTimeline(requestLayout = false, redraw = false) {
+                setOnProgressIconClickListener(listener)
+            }
         }
 
         override fun onMeasure(
@@ -127,7 +145,7 @@ class TimelineView
             val contentWidth = (resolvedWidth - paddingLeft - paddingRight).coerceAtLeast(0)
             val desiredHeight = controller.measure(contentWidth) + paddingTop + paddingBottom
             val resolvedHeight = resolveSizeAndState(desiredHeight, heightMeasureSpec, 0)
-            updateAccessibilityDescription()
+            accessibilityHelper.invalidateTimeline()
             setMeasuredDimension(resolvedWidth, resolvedHeight)
         }
 
@@ -157,6 +175,10 @@ class TimelineView
             }
         }
 
+        override fun dispatchHoverEvent(event: MotionEvent): Boolean {
+            return accessibilityHelper.dispatchHoverEvent(event) || super.dispatchHoverEvent(event)
+        }
+
         override fun performClick(): Boolean {
             super.performClick()
             return true
@@ -167,7 +189,19 @@ class TimelineView
             super.onDetachedFromWindow()
         }
 
-        private fun updateAccessibilityDescription() {
-            contentDescription = controller.getAccessibilityDescription()
+        private fun mutateTimeline(
+            requestLayout: Boolean = true,
+            redraw: Boolean = true,
+            mutation: TimelineViewController.() -> Unit,
+        ) {
+            controller.mutation()
+            isClickable = controller.isInteractive()
+            accessibilityHelper.invalidateTimeline()
+            if (requestLayout) {
+                requestLayout()
+            }
+            if (redraw) {
+                invalidate()
+            }
         }
     }

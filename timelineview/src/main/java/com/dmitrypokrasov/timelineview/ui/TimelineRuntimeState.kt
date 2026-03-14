@@ -31,6 +31,8 @@ internal data class TimelineRuntimeState(
         return copy(config = config.copy(ui = renderer.getConfig()))
     }
 
+    fun withConfig(config: TimelineConfig): TimelineRuntimeState = from(config)
+
     fun withStrategy(strategy: TimelineStrategy): TimelineRuntimeState {
         return copy(
             mathStrategy = strategy.math,

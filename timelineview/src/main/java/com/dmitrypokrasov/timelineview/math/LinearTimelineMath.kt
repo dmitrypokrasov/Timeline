@@ -27,10 +27,12 @@ class LinearTimelineMath(
     private var startPositionX = 0f
     private var measuredWidth = 0
     private var cachedSegments: List<SegmentInfo> = emptyList()
+    private var stepIndexes: Map<TimelineStepData, Int> = buildStepIndexMap(mathConfig.steps)
     private var segmentsValid = false
 
     override fun setConfig(config: TimelineMathConfig) {
         mathConfig = config
+        stepIndexes = buildStepIndexMap(config.steps)
         segmentsValid = false
     }
 
@@ -38,6 +40,7 @@ class LinearTimelineMath(
 
     override fun replaceSteps(steps: List<TimelineStepData>) {
         mathConfig = mathConfig.copy(steps = steps)
+        stepIndexes = buildStepIndexMap(steps)
         segmentsValid = false
     }
 
@@ -121,14 +124,14 @@ class LinearTimelineMath(
         return if (orientation == Orientation.VERTICAL) {
             -mathConfig.sizes.sizeIconProgress / 2f
         } else {
-            val index = mathConfig.steps.indexOf(step).coerceAtLeast(0)
+            val index = stepIndexes[step] ?: 0
             getProgressPosition(index) - mathConfig.sizes.sizeIconProgress / 2f
         }
     }
 
     override fun getTopCoordinates(step: TimelineStepData): Float {
         return if (orientation == Orientation.VERTICAL) {
-            val index = mathConfig.steps.indexOf(step).coerceAtLeast(0)
+            val index = stepIndexes[step] ?: 0
             getProgressPosition(index) + mathConfig.spacing.marginTopProgressIcon -
                 mathConfig.sizes.sizeIconProgress / 2f
         } else {
@@ -348,6 +351,14 @@ class LinearTimelineMath(
 
     private fun getHorizontalTerminalInset(): Float =
         (mathConfig.sizes.sizeImageLvl / 2f - 2f).coerceAtLeast(0f)
+
+    private fun buildStepIndexMap(steps: List<TimelineStepData>): Map<TimelineStepData, Int> {
+        val result = linkedMapOf<TimelineStepData, Int>()
+        steps.forEachIndexed { index, step ->
+            result.putIfAbsent(step, index)
+        }
+        return result
+    }
 
     private fun moveTo(
         path: Path,

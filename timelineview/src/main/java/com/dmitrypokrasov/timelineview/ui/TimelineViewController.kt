@@ -3,9 +3,9 @@ package com.dmitrypokrasov.timelineview.ui
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.StrategyKey
+import com.dmitrypokrasov.timelineview.config.TimelineConfig
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
@@ -25,10 +25,6 @@ class TimelineViewController(
     attrs: AttributeSet?,
     registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry,
 ) {
-    companion object {
-        private const val TAG = "TimelineView"
-    }
-
     private val initialConfig = TimelineConfigParser(context).parse(attrs)
     private var state = TimelineRuntimeState.from(initialConfig)
     private var timelineMath: TimelineMathEngine
@@ -45,6 +41,13 @@ class TimelineViewController(
         timelineMath = resolved.math
         timelineUi = resolved.ui
         initTools()
+    }
+
+    fun getConfig(): TimelineConfig = state.config
+
+    fun setConfig(config: TimelineConfig) {
+        state = state.withConfig(config)
+        applyResolvedState()
     }
 
     fun replaceSteps(steps: List<TimelineStepData>) {
@@ -114,6 +117,8 @@ class TimelineViewController(
         onProgressIconClickListener = listener
     }
 
+    fun isInteractive(): Boolean = onStepClickListener != null || onProgressIconClickListener != null
+
     fun handleClick(
         x: Float,
         y: Float,
@@ -145,27 +150,6 @@ class TimelineViewController(
 
             null -> false
         }
-    }
-
-    fun getAccessibilityDescription(): String? {
-        val parts = mutableListOf<String>()
-        if (onStepClickListener != null) {
-            val steps = timelineMath.getSteps()
-            if (steps.isNotEmpty()) {
-                val titles =
-                    steps.mapIndexed { index, step ->
-                        val title = step.title?.toString()?.takeIf { it.isNotBlank() } ?: "step ${index + 1}"
-                        "${index + 1}. $title"
-                    }
-                parts += "Clickable timeline steps: ${titles.joinToString(", ")}"
-            }
-        }
-
-        if (onProgressIconClickListener != null && hasProgressIcon(layout?.progressIcon)) {
-            parts += "Progress icon is clickable"
-        }
-
-        return parts.takeIf { it.isNotEmpty() }?.joinToString(separator = ". ")
     }
 
     fun measure(width: Int): Int {
@@ -241,6 +225,34 @@ class TimelineViewController(
         lottieOverlayManager.clear()
     }
 
+    internal fun buildAccessibilitySnapshot(
+        paddingLeft: Int,
+        paddingTop: Int,
+    ): TimelineAccessibilitySnapshot {
+        val density = context.resources.displayMetrics.density
+        return TimelineAccessibilitySnapshotBuilder.build(
+            layout = layout,
+            stepIconSize = timelineMath.getConfig().sizes.sizeImageLvl,
+            progressIconSize = timelineMath.getConfig().sizes.sizeIconProgress,
+            density = density,
+            paddingLeft = paddingLeft,
+            paddingTop = paddingTop,
+            stepClickable = onStepClickListener != null,
+            progressClickable = onProgressIconClickListener != null,
+        )
+    }
+
+    fun performStepClick(index: Int): Boolean {
+        val step = timelineMath.getSteps().getOrNull(index) ?: return false
+        onStepClickListener?.invoke(index, step)
+        return onStepClickListener != null
+    }
+
+    fun performProgressIconClick(): Boolean {
+        onProgressIconClickListener?.invoke()
+        return onProgressIconClickListener != null && hasProgressIcon(layout?.progressIcon)
+    }
+
     private fun drawProgressIcon(
         canvas: Canvas,
         layout: TimelineLayout?,
@@ -272,10 +284,6 @@ class TimelineViewController(
     private fun hasProgressIcon(progressIcon: TimelineProgressIcon?): Boolean = progressIcon != null
 
     private fun initTools() {
-        Log.d(
-            TAG,
-            "initTools timelineMathConfig: ${timelineMath.getConfig()}, timelineUiConfig: ${timelineUi.getConfig()}",
-        )
         timelineUi.initTools(timelineMath.getConfig(), context)
     }
 }

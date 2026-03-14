@@ -1,6 +1,5 @@
 package com.dmitrypokrasov.timeline
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -133,15 +132,9 @@ class TimelineSampleFragment : Fragment() {
         )
     }
 
-    @Suppress("DEPRECATION")
     private fun requireSample(): TimelineSample {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireNotNull(
-                requireArguments().getSerializable(ARG_SAMPLE, TimelineSample::class.java),
-            )
-        } else {
-            requireNotNull(requireArguments().getSerializable(ARG_SAMPLE) as? TimelineSample)
-        }
+        val sampleName = requireArguments().getString(ARG_SAMPLE)
+        return requireNotNull(sampleName).let(TimelineSample::valueOf)
     }
 
     companion object {
@@ -153,7 +146,7 @@ class TimelineSampleFragment : Fragment() {
             return TimelineSampleFragment().apply {
                 arguments =
                     Bundle().apply {
-                        putSerializable(ARG_SAMPLE, sample)
+                        putString(ARG_SAMPLE, sample.name)
                     }
             }
         }
