@@ -23,7 +23,6 @@ import com.dmitrypokrasov.timelineview.model.TimelineStepData
 open class BaseTimelineUi(
     private var uiConfig: TimelineUiConfig,
 ) : TimelineUiRenderer {
-
     private val textLayoutBuilder: TimelineTextLayoutBuilder = StaticTimelineTextLayoutBuilder()
     private val pathEnable = Path()
     private val pathDisable = Path()
@@ -37,30 +36,38 @@ open class BaseTimelineUi(
     private val iconPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val baselineProbePaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) {
+    override fun initTools(
+        timelineMathConfig: TimelineMathConfig,
+        context: Context,
+    ) {
         pathEffect = CornerPathEffect(uiConfig.stroke.radius)
         stepIconSize = timelineMathConfig.sizes.sizeImageLvl.toInt()
         stepIconCache.clear()
 
         getBitmap(uiConfig.icons.iconDisableLvl, context)?.let { bitmap ->
-            iconDisableStep = bitmap.scale(
-                timelineMathConfig.sizes.sizeImageLvl.toInt(),
-                timelineMathConfig.sizes.sizeImageLvl.toInt(),
-                false
-            )
+            iconDisableStep =
+                bitmap.scale(
+                    timelineMathConfig.sizes.sizeImageLvl.toInt(),
+                    timelineMathConfig.sizes.sizeImageLvl.toInt(),
+                    false,
+                )
         }
 
         getBitmap(uiConfig.icons.iconProgress, context)?.let { bitmap ->
-            iconProgressBitmap = bitmap.scale(
-                timelineMathConfig.sizes.sizeIconProgress.toInt(),
-                timelineMathConfig.sizes.sizeIconProgress.toInt(),
-                false
-            )
+            iconProgressBitmap =
+                bitmap.scale(
+                    timelineMathConfig.sizes.sizeIconProgress.toInt(),
+                    timelineMathConfig.sizes.sizeIconProgress.toInt(),
+                    false,
+                )
         }
     }
 
     override fun prepareStrokePaint() {
         linePaint.reset()
+        linePaint.isAntiAlias = true
+        linePaint.strokeCap = Paint.Cap.ROUND
+        linePaint.strokeJoin = Paint.Join.ROUND
         linePaint.style = Paint.Style.STROKE
         linePaint.strokeWidth = uiConfig.stroke.sizeStroke
         linePaint.pathEffect = pathEffect
@@ -76,7 +83,11 @@ open class BaseTimelineUi(
         iconPaint.isAntiAlias = true
     }
 
-    override fun drawProgressIcon(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) {
+    override fun drawProgressIcon(
+        canvas: Canvas,
+        leftCoordinates: Float,
+        topCoordinates: Float,
+    ) {
         iconProgressBitmap?.let {
             canvas.drawBitmap(it, leftCoordinates, topCoordinates, iconPaint)
         }
@@ -102,7 +113,7 @@ open class BaseTimelineUi(
         x: Float,
         y: Float,
         align: Paint.Align,
-        maxWidth: Int
+        maxWidth: Int,
     ) {
         drawTextBlock(
             canvas = canvas,
@@ -113,7 +124,7 @@ open class BaseTimelineUi(
             maxWidth = maxWidth,
             textSize = uiConfig.textSizes.sizeTitle,
             typeface = Typeface.DEFAULT_BOLD,
-            color = uiConfig.colors.colorTitle
+            color = uiConfig.colors.colorTitle,
         )
     }
 
@@ -123,7 +134,7 @@ open class BaseTimelineUi(
         x: Float,
         y: Float,
         align: Paint.Align,
-        maxWidth: Int
+        maxWidth: Int,
     ) {
         drawTextBlock(
             canvas = canvas,
@@ -134,25 +145,29 @@ open class BaseTimelineUi(
             maxWidth = maxWidth,
             textSize = uiConfig.textSizes.sizeDescription,
             typeface = Typeface.DEFAULT,
-            color = uiConfig.colors.colorDescription
+            color = uiConfig.colors.colorDescription,
         )
     }
 
-    override fun measureTitleHeight(title: CharSequence, maxWidth: Int, align: Paint.Align): Int {
+    override fun measureTitleHeight(
+        title: CharSequence,
+        maxWidth: Int,
+        align: Paint.Align,
+    ): Int {
         return measureTextBlock(
             text = title,
             maxWidth = maxWidth,
             textSize = uiConfig.textSizes.sizeTitle,
             typeface = Typeface.DEFAULT_BOLD,
             color = uiConfig.colors.colorTitle,
-            align = align
+            align = align,
         )
     }
 
     override fun measureDescriptionHeight(
         description: CharSequence,
         maxWidth: Int,
-        align: Paint.Align
+        align: Paint.Align,
     ): Int {
         return measureTextBlock(
             text = description,
@@ -160,7 +175,7 @@ open class BaseTimelineUi(
             textSize = uiConfig.textSizes.sizeDescription,
             typeface = Typeface.DEFAULT,
             color = uiConfig.colors.colorDescription,
-            align = align
+            align = align,
         )
     }
 
@@ -176,14 +191,19 @@ open class BaseTimelineUi(
         align: Paint.Align,
         context: Context,
         x: Float,
-        y: Float
+        y: Float,
     ) {
-        val bitmap = when {
-            step.progress == 100 && step.iconRes != null -> getStepIconBitmap(step.iconRes, context)
-            step.progress != 100 && step.iconDisabledRes != null ->
-                getStepIconBitmap(step.iconDisabledRes, context)
-            else -> iconDisableStep
-        }
+        val bitmap =
+            when {
+                step.progress == 100 && step.iconRes != null ->
+                    getStepIconBitmap(
+                        step.iconRes,
+                        context,
+                    )
+                step.progress != 100 && step.iconDisabledRes != null ->
+                    getStepIconBitmap(step.iconDisabledRes, context)
+                else -> iconDisableStep
+            }
         bitmap?.let {
             iconPaint.textAlign = align
             canvas.drawBitmap(it, x, y, iconPaint)
@@ -207,24 +227,26 @@ open class BaseTimelineUi(
         maxWidth: Int,
         textSize: Float,
         typeface: Typeface,
-        color: Int
+        color: Int,
     ) {
         val value = text.toString()
         if (value.isBlank()) return
 
-        val layout = textLayoutBuilder.build(
-            text = value,
-            textSize = textSize,
-            typeface = typeface,
-            color = color,
-            align = align,
-            width = maxWidth
-        )
-        val translateX = when (align) {
-            Paint.Align.LEFT -> x
-            Paint.Align.CENTER -> x - maxWidth / 2f
-            Paint.Align.RIGHT -> x - maxWidth
-        }
+        val layout =
+            textLayoutBuilder.build(
+                text = value,
+                textSize = textSize,
+                typeface = typeface,
+                color = color,
+                align = align,
+                width = maxWidth,
+            )
+        val translateX =
+            when (align) {
+                Paint.Align.LEFT -> x
+                Paint.Align.CENTER -> x - maxWidth / 2f
+                Paint.Align.RIGHT -> x - maxWidth
+            }
 
         canvas.save()
         canvas.translate(translateX, y)
@@ -238,7 +260,7 @@ open class BaseTimelineUi(
         textSize: Float,
         typeface: Typeface,
         color: Int,
-        align: Paint.Align
+        align: Paint.Align,
     ): Int {
         val value = text.toString()
         if (value.isBlank()) return 0
@@ -249,27 +271,37 @@ open class BaseTimelineUi(
             typeface = typeface,
             color = color,
             align = align,
-            width = maxWidth
+            width = maxWidth,
         ).height
     }
 
-    private fun getBaselineOffset(textSize: Float, typeface: Typeface): Float {
+    private fun getBaselineOffset(
+        textSize: Float,
+        typeface: Typeface,
+    ): Float {
         baselineProbePaint.textSize = textSize
         baselineProbePaint.typeface = typeface
         return -baselineProbePaint.fontMetrics.ascent
     }
 
-    private fun getStepIconBitmap(drawableId: Int, context: Context): Bitmap? {
+    private fun getStepIconBitmap(
+        drawableId: Int,
+        context: Context,
+    ): Bitmap? {
         if (drawableId == 0) return null
         stepIconCache[drawableId]?.let { return it }
 
-        val bitmap = getBitmap(drawableId, context)?.scale(stepIconSize, stepIconSize, false)
-            ?: return null
+        val bitmap =
+            getBitmap(drawableId, context)?.scale(stepIconSize, stepIconSize, false)
+                ?: return null
         stepIconCache[drawableId] = bitmap
         return bitmap
     }
 
-    private fun getBitmap(drawableId: Int, context: Context): Bitmap? {
+    private fun getBitmap(
+        drawableId: Int,
+        context: Context,
+    ): Bitmap? {
         if (drawableId == 0) return null
 
         return when (val drawable = ContextCompat.getDrawable(context, drawableId)) {

@@ -9,7 +9,7 @@ data class TimelineLottieSpec(
     @RawRes val rawRes: Int,
     val repeat: Boolean = true,
     val autoPlay: Boolean = true,
-    val scale: Float = 1f
+    val scale: Float = 1f,
 ) {
     init {
         require(rawRes != 0) { "rawRes must be a valid raw resource id" }

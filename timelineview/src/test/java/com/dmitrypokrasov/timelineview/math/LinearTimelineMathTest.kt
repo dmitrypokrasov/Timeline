@@ -25,10 +25,12 @@ class LinearTimelineMathTest {
         val math = LinearTimelineMath(config, LinearTimelineMath.Orientation.VERTICAL)
 
         val lastIndex = config.steps.lastIndex
-        val lastAnchor = math.getVerticalOffset(lastIndex) - config.spacing.marginTopProgressIcon +
-            config.sizes.sizeIconProgress / 2f
-        val expectedAnchor = maxOf(config.sizes.sizeImageLvl, config.sizes.sizeIconProgress) / 2f +
-            config.spacing.stepYFirst + config.spacing.stepY * lastIndex
+        val lastAnchor =
+            math.getVerticalOffset(lastIndex) - config.spacing.marginTopProgressIcon +
+                config.sizes.sizeIconProgress / 2f
+        val expectedAnchor =
+            maxOf(config.sizes.sizeImageLvl, config.sizes.sizeIconProgress) / 2f +
+                config.spacing.stepYFirst + config.spacing.stepY * lastIndex
 
         assertEquals(expectedAnchor, lastAnchor, 0.01f)
     }
@@ -51,7 +53,8 @@ class LinearTimelineMathTest {
 
         val lastIndex = config.steps.lastIndex
         val lastAnchor = math.getHorizontalIconOffset(lastIndex) + config.sizes.sizeIconProgress / 2f
-        val expectedAnchor = config.spacing.stepYFirst + config.spacing.stepY * lastIndex -
+        val expectedAnchor =
+            config.spacing.stepYFirst + config.spacing.stepY * lastIndex -
                 (config.sizes.sizeImageLvl / 2f - 2f)
 
         assertEquals(expectedAnchor, lastAnchor, 0.01f)
@@ -71,23 +74,32 @@ class LinearTimelineMathTest {
 
     @Test
     fun `vertical layout keeps first step anchor and text offsets stable`() {
-        val config = TimelineMathConfig(
-            steps = listOf(
-                TimelineStepData(title = "1", description = "1", iconRes = 1, progress = 0),
-                TimelineStepData(title = "2", description = "2", iconRes = 2, progress = 100)
-            ),
-            spacing = TimelineMathConfig.Spacing(
-                stepY = 90f,
-                stepYFirst = 32f,
-                marginTopTitle = 12f,
-                marginTopDescription = 7f,
-                marginTopProgressIcon = 18f
-            ),
-            sizes = TimelineMathConfig.Sizes(
-                sizeIconProgress = 14f,
-                sizeImageLvl = 20f
+        val config =
+            TimelineMathConfig(
+                steps =
+                    listOf(
+                        TimelineStepData(title = "1", description = "1", iconRes = 1, progress = 0),
+                        TimelineStepData(
+                            title = "2",
+                            description = "2",
+                            iconRes = 2,
+                            progress = 100,
+                        ),
+                    ),
+                spacing =
+                    TimelineMathConfig.Spacing(
+                        stepY = 90f,
+                        stepYFirst = 32f,
+                        marginTopTitle = 12f,
+                        marginTopDescription = 7f,
+                        marginTopProgressIcon = 18f,
+                    ),
+                sizes =
+                    TimelineMathConfig.Sizes(
+                        sizeIconProgress = 14f,
+                        sizeImageLvl = 20f,
+                    ),
             )
-        )
         val math = LinearTimelineMath(config, LinearTimelineMath.Orientation.VERTICAL)
 
         val layout = math.buildLayout()
@@ -98,8 +110,16 @@ class LinearTimelineMathTest {
         val expectedProgressTop = config.spacing.marginTopProgressIcon - config.sizes.sizeIconProgress / 2f
 
         assertEquals(expectedFirstStepAnchorY, firstStepAnchorY, 0.01f)
-        assertEquals(config.spacing.stepYFirst + config.spacing.marginTopTitle, firstStep.titleY, 0.01f)
-        assertEquals(firstStep.titleY + config.spacing.marginTopDescription, firstStep.descriptionY, 0.01f)
+        assertEquals(
+            config.spacing.stepYFirst + config.spacing.marginTopTitle,
+            firstStep.titleY,
+            0.01f,
+        )
+        assertEquals(
+            firstStep.titleY + config.spacing.marginTopDescription,
+            firstStep.descriptionY,
+            0.01f,
+        )
         assertEquals(expectedProgressTop, requireNotNull(layout.progressIcon).top, 0.01f)
         assertEquals(expectedProgressTop, math.getVerticalOffset(0), 0.01f)
         assertEquals(expectedProgressTop, math.getTopCoordinates(config.steps.first()), 0.01f)
@@ -121,24 +141,27 @@ class LinearTimelineMathTest {
 
     private fun progressConfig(progresses: List<Int>): TimelineMathConfig {
         return TimelineMathConfig(
-            steps = progresses.mapIndexed { index, progress ->
-                TimelineStepData(
-                    title = "Step ${index + 1}",
-                    description = "Step ${index + 1}",
-                    iconRes = index + 1,
-                    progress = progress
-                )
-            },
-            spacing = TimelineMathConfig.Spacing(
-                stepY = 100f,
-                stepYFirst = 20f,
-                marginTopTitle = 0f,
-                marginTopProgressIcon = 8f
-            ),
-            sizes = TimelineMathConfig.Sizes(
-                sizeIconProgress = 10f,
-                sizeImageLvl = 20f
-            )
+            steps =
+                progresses.mapIndexed { index, progress ->
+                    TimelineStepData(
+                        title = "Step ${index + 1}",
+                        description = "Step ${index + 1}",
+                        iconRes = index + 1,
+                        progress = progress,
+                    )
+                },
+            spacing =
+                TimelineMathConfig.Spacing(
+                    stepY = 100f,
+                    stepYFirst = 20f,
+                    marginTopTitle = 0f,
+                    marginTopProgressIcon = 8f,
+                ),
+            sizes =
+                TimelineMathConfig.Sizes(
+                    sizeIconProgress = 10f,
+                    sizeImageLvl = 20f,
+                ),
         )
     }
 }

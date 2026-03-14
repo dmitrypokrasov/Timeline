@@ -9,16 +9,17 @@ internal object TimelineTextWidthResolver {
         measuredWidth: Int,
         startPosition: Float,
         localX: Float,
-        align: Paint.Align
+        align: Paint.Align,
     ): Int {
         if (measuredWidth <= 0) return 1
 
         val absoluteX = (startPosition + localX).coerceIn(0f, measuredWidth.toFloat())
-        val available = when (align) {
-            Paint.Align.LEFT -> measuredWidth - absoluteX
-            Paint.Align.RIGHT -> absoluteX
-            Paint.Align.CENTER -> min(absoluteX, measuredWidth - absoluteX) * 2f
-        }
+        val available =
+            when (align) {
+                Paint.Align.LEFT -> measuredWidth - absoluteX
+                Paint.Align.RIGHT -> absoluteX
+                Paint.Align.CENTER -> min(absoluteX, measuredWidth - absoluteX) * 2f
+            }
 
         return available.roundToInt().coerceAtLeast(1)
     }

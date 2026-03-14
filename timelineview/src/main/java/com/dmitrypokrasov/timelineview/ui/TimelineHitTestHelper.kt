@@ -4,9 +4,9 @@ import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 internal object TimelineHitTestHelper {
-
     sealed interface HitResult {
         data class Step(val index: Int, val step: TimelineStepData) : HitResult
+
         object ProgressIcon : HitResult
     }
 
@@ -17,12 +17,20 @@ internal object TimelineHitTestHelper {
         x: Float,
         y: Float,
         minStepTouchSize: Float = 0f,
-        minProgressTouchSize: Float = 0f
+        minProgressTouchSize: Float = 0f,
     ): HitResult? {
         if (layout == null) return null
 
         layout.steps.forEachIndexed { index, stepLayout ->
-            if (contains(x, y, stepLayout.iconX, stepLayout.iconY, stepIconSize, minStepTouchSize)) {
+            if (contains(
+                    x,
+                    y,
+                    stepLayout.iconX,
+                    stepLayout.iconY,
+                    stepIconSize,
+                    minStepTouchSize,
+                )
+            ) {
                 return HitResult.Step(index, stepLayout.step)
             }
         }
@@ -43,7 +51,7 @@ internal object TimelineHitTestHelper {
         left: Float,
         top: Float,
         size: Float,
-        minTouchSize: Float
+        minTouchSize: Float,
     ): Boolean {
         val hitSize = maxOf(size, minTouchSize)
         val extra = (hitSize - size) / 2f

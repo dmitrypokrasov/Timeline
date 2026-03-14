@@ -12,7 +12,7 @@ data class TimelineStepData(
     @DrawableRes val iconDisabledRes: Int? = null,
     val badgeAnimation: TimelineLottieSpec? = null,
     val progressAnimation: TimelineLottieSpec? = null,
-    val progress: Int
+    val progress: Int,
 ) {
     init {
         require(progress in 0..100) { "progress must be in 0..100" }

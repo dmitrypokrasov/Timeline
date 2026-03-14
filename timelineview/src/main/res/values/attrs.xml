@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="TimelineView">
+        <!-- Strategy selection -->
         <attr name="timeline_math_strategy" format="enum">
             <enum name="SNAKE" value="0" />
             <enum name="LINEAR_VERTICAL" value="1" />
@@ -17,14 +18,18 @@
             <enum name="CENTER" value="1" />
             <enum name="END" value="2" />
         </attr>
+
+        <!-- Colors -->
         <attr name="timeline_progress_color" format="color" />
         <attr name="timeline_stroke_color" format="color" />
         <attr name="timeline_title_color" format="color" />
         <attr name="timeline_description_color" format="color" />
 
+        <!-- Icons -->
         <attr name="timeline_progress_icon" format="reference" />
         <attr name="timeline_disable_icon" format="reference" />
 
+        <!-- Sizes -->
         <attr name="timeline_stroke_size" format="dimension" />
         <attr name="timeline_title_size" format="dimension" />
         <attr name="timeline_description_size" format="dimension" />
@@ -32,6 +37,7 @@
         <attr name="timeline_step_y_size" format="dimension" />
         <attr name="timeline_step_y_first_size" format="dimension" />
 
+        <!-- Margins and offsets -->
         <attr name="timeline_margin_top_title" format="dimension" />
         <attr name="timeline_margin_top_description" format="dimension" />
         <attr name="timeline_margin_top_progress_icon" format="dimension" />
@@ -39,6 +45,7 @@
         <attr name="timeline_margin_horizontal_text" format="dimension" />
         <attr name="timeline_margin_horizontal_stroke" format="dimension" />
 
+        <!-- Icon sizes -->
         <attr name="timeline_image_lvl_size" format="dimension" />
         <attr name="timeline_icon_progress_size" format="dimension" />
     </declare-styleable>

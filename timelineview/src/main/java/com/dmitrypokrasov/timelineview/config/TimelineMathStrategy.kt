@@ -1,9 +1,10 @@
 package com.dmitrypokrasov.timelineview.config
 
 /**
- * Strategy type for math calculations.
+ * Built-in strategy type for math calculations.
  */
 sealed interface TimelineMathStrategy {
+    /** Stable key that can be reused in registries and XML configuration. */
     val key: StrategyKey
 
     data object Snake : TimelineMathStrategy {
@@ -19,10 +20,10 @@ sealed interface TimelineMathStrategy {
     }
 
     companion object {
+        /** Ordered list used for XML enum parsing and public iteration. */
         val entries: List<TimelineMathStrategy> = listOf(Snake, LinearVertical, LinearHorizontal)
 
-        fun fromOrdinal(ordinal: Int): TimelineMathStrategy =
-            entries.getOrElse(ordinal) { Snake }
+        /** Resolves a strategy from an XML enum ordinal, defaulting to [Snake]. */
+        fun fromOrdinal(ordinal: Int): TimelineMathStrategy = entries.getOrElse(ordinal) { Snake }
     }
 }
-

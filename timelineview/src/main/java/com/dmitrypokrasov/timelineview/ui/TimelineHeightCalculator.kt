@@ -7,21 +7,20 @@ import kotlin.math.ceil
 import kotlin.math.max
 
 class TimelineHeightCalculator {
-
     fun calculateHeight(
         layout: TimelineLayout?,
         mathEngine: TimelineMathEngine,
-        uiRenderer: TimelineUiRenderer
+        uiRenderer: TimelineUiRenderer,
     ): Int {
         if (layout == null) return 0
 
         val mathConfig = mathEngine.getConfig()
-        val resolvedTextBlocks = TimelineTextBlockResolver.resolve(
-            layout = layout,
-            mathEngine = mathEngine,
-            mathConfig = mathConfig,
-            uiRenderer = uiRenderer
-        )
+        val resolvedTextBlocks =
+            TimelineTextBlockResolver.resolve(
+                layout = layout,
+                mathEngine = mathEngine,
+                uiRenderer = uiRenderer,
+            )
         var maxBottom = 0f
 
         layout.steps.forEachIndexed { index, stepLayout ->

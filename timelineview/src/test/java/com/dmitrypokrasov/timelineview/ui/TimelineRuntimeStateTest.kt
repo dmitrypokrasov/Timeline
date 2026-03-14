@@ -26,31 +26,49 @@ class TimelineRuntimeStateTest {
     @Test
     fun `strategy resolution keeps replaced steps and configs`() {
         val steps = listOf(TimelineStepData(title = "Updated", progress = 25))
-        val mathConfig = TimelineMathConfig(
-            steps = emptyList(),
-            spacing = TimelineMathConfig.Spacing(stepY = 123f)
-        )
-        val uiConfig = TimelineUiConfig(
-            colors = TimelineUiConfig.Colors(colorTitle = 42)
-        )
-        val registry = TimelineStrategyRegistryImpl(registerDefaults = false).apply {
-            registerMath(object : TimelineMathProvider {
-                override val key: StrategyKey = StrategyKey("custom_math")
-                override fun create(config: TimelineMathConfig): TimelineMathEngine = CaptureMathEngine(config)
-            })
-            registerUi(object : TimelineUiProvider {
-                override val key: StrategyKey = StrategyKey("custom_ui")
-                override fun create(config: TimelineUiConfig): TimelineUiRenderer = CaptureUiRenderer(config)
-            })
-        }
-        val state = TimelineRuntimeState.from(
-            TimelineConfig(
-                math = mathConfig,
-                ui = uiConfig,
-                mathStrategy = TimelineMathStrategy.Snake,
-                uiStrategy = TimelineUiStrategy.Linear
+        val mathConfig =
+            TimelineMathConfig(
+                steps = emptyList(),
+                spacing = TimelineMathConfig.Spacing(stepY = 123f),
             )
-        ).withSteps(steps).withStrategyKeys(StrategyKey("custom_math"), StrategyKey("custom_ui"))
+        val uiConfig =
+            TimelineUiConfig(
+                colors = TimelineUiConfig.Colors(colorTitle = 42),
+            )
+        val registry =
+            TimelineStrategyRegistryImpl(registerDefaults = false).apply {
+                registerMath(
+                    object : TimelineMathProvider {
+                        override val key: StrategyKey = StrategyKey("custom_math")
+
+                        override fun create(config: TimelineMathConfig): TimelineMathEngine =
+                            CaptureMathEngine(
+                                config,
+                            )
+                    },
+                )
+                registerUi(
+                    object : TimelineUiProvider {
+                        override val key: StrategyKey = StrategyKey("custom_ui")
+
+                        override fun create(config: TimelineUiConfig): TimelineUiRenderer =
+                            CaptureUiRenderer(
+                                config,
+                            )
+                    },
+                )
+            }
+        val state =
+            TimelineRuntimeState.from(
+                TimelineConfig(
+                    math = mathConfig,
+                    ui = uiConfig,
+                    mathStrategy = TimelineMathStrategy.Snake,
+                    uiStrategy = TimelineUiStrategy.Linear,
+                ),
+            ).withSteps(
+                steps,
+            ).withStrategyKeys(StrategyKey("custom_math"), StrategyKey("custom_ui"))
 
         val resolved = state.resolve(TimelineViewStrategyController(registry))
 
@@ -61,21 +79,23 @@ class TimelineRuntimeStateTest {
 
     @Test
     fun `setting built in strategy clears custom keys`() {
-        val state = TimelineRuntimeState.from(
-            TimelineConfig(
-                math = TimelineMathConfig(),
-                ui = TimelineUiConfig(),
-                mathStrategyKey = StrategyKey("custom_math"),
-                uiStrategyKey = StrategyKey("custom_ui")
+        val state =
+            TimelineRuntimeState.from(
+                TimelineConfig(
+                    math = TimelineMathConfig(),
+                    ui = TimelineUiConfig(),
+                    mathStrategyKey = StrategyKey("custom_math"),
+                    uiStrategyKey = StrategyKey("custom_ui"),
+                ),
             )
-        )
 
-        val updated = state.withStrategy(
-            com.dmitrypokrasov.timelineview.config.TimelineStrategy(
-                math = TimelineMathStrategy.LinearVertical,
-                ui = TimelineUiStrategy.Snake
+        val updated =
+            state.withStrategy(
+                com.dmitrypokrasov.timelineview.config.TimelineStrategy(
+                    math = TimelineMathStrategy.LinearVertical,
+                    ui = TimelineUiStrategy.Snake,
+                ),
             )
-        )
 
         assertNull(updated.mathStrategyKey)
         assertNull(updated.uiStrategyKey)
@@ -85,7 +105,7 @@ class TimelineRuntimeStateTest {
 }
 
 private class CaptureMathEngine(
-    private var config: TimelineMathConfig
+    private var config: TimelineMathConfig,
 ) : TimelineMathEngine {
     override fun setConfig(config: TimelineMathConfig) {
         this.config = config
@@ -97,7 +117,10 @@ private class CaptureMathEngine(
         config = config.copy(steps = steps)
     }
 
-    override fun buildPath(pathEnable: Path, pathDisable: Path) = Unit
+    override fun buildPath(
+        pathEnable: Path,
+        pathDisable: Path,
+    ) = Unit
 
     override fun getStartPosition(): Float = 0f
 
@@ -127,7 +150,7 @@ private class CaptureMathEngine(
 }
 
 private class CaptureUiRenderer(
-    private var config: TimelineUiConfig
+    private var config: TimelineUiConfig,
 ) : TimelineUiRenderer {
     override fun setConfig(config: TimelineUiConfig) {
         this.config = config
@@ -135,7 +158,10 @@ private class CaptureUiRenderer(
 
     override fun getConfig(): TimelineUiConfig = config
 
-    override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) = Unit
+    override fun initTools(
+        timelineMathConfig: TimelineMathConfig,
+        context: Context,
+    ) = Unit
 
     override fun prepareStrokePaint() = Unit
 
@@ -143,7 +169,11 @@ private class CaptureUiRenderer(
 
     override fun prepareIconPaint() = Unit
 
-    override fun drawProgressIcon(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) = Unit
+    override fun drawProgressIcon(
+        canvas: Canvas,
+        leftCoordinates: Float,
+        topCoordinates: Float,
+    ) = Unit
 
     override fun drawCompletedPath(canvas: Canvas) = Unit
 
@@ -159,7 +189,7 @@ private class CaptureUiRenderer(
         x: Float,
         y: Float,
         align: Paint.Align,
-        maxWidth: Int
+        maxWidth: Int,
     ) = Unit
 
     override fun drawDescription(
@@ -168,12 +198,20 @@ private class CaptureUiRenderer(
         x: Float,
         y: Float,
         align: Paint.Align,
-        maxWidth: Int
+        maxWidth: Int,
     ) = Unit
 
-    override fun measureTitleHeight(title: CharSequence, maxWidth: Int, align: Paint.Align): Int = 0
+    override fun measureTitleHeight(
+        title: CharSequence,
+        maxWidth: Int,
+        align: Paint.Align,
+    ): Int = 0
 
-    override fun measureDescriptionHeight(description: CharSequence, maxWidth: Int, align: Paint.Align): Int = 0
+    override fun measureDescriptionHeight(
+        description: CharSequence,
+        maxWidth: Int,
+        align: Paint.Align,
+    ): Int = 0
 
     override fun getTitleBaselineOffset(): Float = 0f
 
@@ -185,7 +223,7 @@ private class CaptureUiRenderer(
         align: Paint.Align,
         context: Context,
         x: Float,
-        y: Float
+        y: Float,
     ) = Unit
 
     override fun getTextAlignment(): Paint.Align = Paint.Align.LEFT

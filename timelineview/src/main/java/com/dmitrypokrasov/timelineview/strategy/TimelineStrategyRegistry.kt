@@ -22,45 +22,73 @@ object TimelineStrategyRegistry : TimelineStrategyRegistryContract {
 
     override fun registerUi(provider: TimelineUiProvider) = delegate.registerUi(provider)
 
-    override fun unregisterMath(key: StrategyKey): TimelineMathProvider? = delegate.unregisterMath(key)
+    override fun unregisterMath(key: StrategyKey): TimelineMathProvider? =
+        delegate.unregisterMath(
+            key,
+        )
 
     override fun unregisterUi(key: StrategyKey): TimelineUiProvider? = delegate.unregisterUi(key)
 
-    override fun getMathProvider(key: StrategyKey): TimelineMathProvider? = delegate.getMathProvider(key)
+    override fun getMathProvider(key: StrategyKey): TimelineMathProvider? =
+        delegate.getMathProvider(
+            key,
+        )
 
     override fun getUiProvider(key: StrategyKey): TimelineUiProvider? = delegate.getUiProvider(key)
 
-    /**
-     * Creates a new registry that is not shared globally.
-     */
+    /** Creates a new registry that is not shared globally. */
     fun createLocalRegistry(registerDefaults: Boolean = true): TimelineStrategyRegistryContract {
         return TimelineStrategyRegistryImpl(registerDefaults = registerDefaults)
     }
 }
 
+/** Registers the built-in math and UI strategies into [registry]. */
 fun registerDefaults(registry: TimelineStrategyRegistryContract) {
-    registry.registerMath(object : TimelineMathProvider {
-        override val key: StrategyKey = TimelineMathStrategy.Snake.key
-        override fun create(config: TimelineMathConfig): TimelineMathEngine = SnakeTimelineMath(config)
-    })
-    registry.registerMath(object : TimelineMathProvider {
-        override val key: StrategyKey = TimelineMathStrategy.LinearVertical.key
-        override fun create(config: TimelineMathConfig): TimelineMathEngine =
-            LinearTimelineMath(config, LinearTimelineMath.Orientation.VERTICAL)
-    })
-    registry.registerMath(object : TimelineMathProvider {
-        override val key: StrategyKey = TimelineMathStrategy.LinearHorizontal.key
-        override fun create(config: TimelineMathConfig): TimelineMathEngine =
-            LinearTimelineMath(config, LinearTimelineMath.Orientation.HORIZONTAL)
-    })
+    registry.registerMath(
+        object : TimelineMathProvider {
+            override val key: StrategyKey = TimelineMathStrategy.Snake.key
 
-    registry.registerUi(object : TimelineUiProvider {
-        override val key: StrategyKey = TimelineUiStrategy.Snake.key
-        override fun create(config: TimelineUiConfig): TimelineUiRenderer = SnakeTimelineUi(config)
-    })
-    registry.registerUi(object : TimelineUiProvider {
-        override val key: StrategyKey = TimelineUiStrategy.Linear.key
-        override fun create(config: TimelineUiConfig): TimelineUiRenderer = LinearTimelineUi(config)
-    })
+            override fun create(config: TimelineMathConfig): TimelineMathEngine =
+                SnakeTimelineMath(
+                    config,
+                )
+        },
+    )
+    registry.registerMath(
+        object : TimelineMathProvider {
+            override val key: StrategyKey = TimelineMathStrategy.LinearVertical.key
+
+            override fun create(config: TimelineMathConfig): TimelineMathEngine =
+                LinearTimelineMath(config, LinearTimelineMath.Orientation.VERTICAL)
+        },
+    )
+    registry.registerMath(
+        object : TimelineMathProvider {
+            override val key: StrategyKey = TimelineMathStrategy.LinearHorizontal.key
+
+            override fun create(config: TimelineMathConfig): TimelineMathEngine =
+                LinearTimelineMath(config, LinearTimelineMath.Orientation.HORIZONTAL)
+        },
+    )
+
+    registry.registerUi(
+        object : TimelineUiProvider {
+            override val key: StrategyKey = TimelineUiStrategy.Snake.key
+
+            override fun create(config: TimelineUiConfig): TimelineUiRenderer =
+                SnakeTimelineUi(
+                    config,
+                )
+        },
+    )
+    registry.registerUi(
+        object : TimelineUiProvider {
+            override val key: StrategyKey = TimelineUiStrategy.Linear.key
+
+            override fun create(config: TimelineUiConfig): TimelineUiRenderer =
+                LinearTimelineUi(
+                    config,
+                )
+        },
+    )
 }
-

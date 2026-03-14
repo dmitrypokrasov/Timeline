@@ -5,5 +5,5 @@ import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
 data class TimelineViewStrategiesData(
     val math: TimelineMathEngine,
-    val ui: TimelineUiRenderer
+    val ui: TimelineUiRenderer,
 )

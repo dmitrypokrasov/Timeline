@@ -7,103 +7,64 @@ import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 /**
- * Математический движок временной шкалы.
- *
- * Выполняет расчёты для построения линий прогресса и предоставляет координаты
- * элементов интерфейса.
+ * Strategy interface that converts timeline input into drawable geometry and coordinates.
  */
 interface TimelineMathEngine {
-    /** Устанавливает новую конфигурацию математики. */
+    /** Replaces the current math configuration. */
     fun setConfig(config: TimelineMathConfig)
 
-    /** Возвращает текущую конфигурацию математики. */
+    /** Returns the current math configuration. */
     fun getConfig(): TimelineMathConfig
 
-    /**
-     * Заменяет текущий список шагов временной шкалы.
-     *
-     * После вызова все вычисления будут использовать новый набор шагов.
-     *
-     * @param steps новый список шагов
-     */
+    /** Replaces the current step list while preserving the rest of the configuration. */
     fun replaceSteps(steps: List<TimelineStepData>)
 
     /**
-     * Перестраивает пути для отображения прогресса.
+     * Rebuilds the completed and remaining line paths.
      *
-     * @param pathEnable путь пройденных шагов. Метод должен очистить и заполнить его заново
-     * @param pathDisable путь оставшихся шагов. Метод должен очистить и заполнить его заново
+     * Implementations are expected to clear and fill both paths.
      */
-    fun buildPath(pathEnable: Path, pathDisable: Path)
+    fun buildPath(
+        pathEnable: Path,
+        pathDisable: Path,
+    )
 
-    /**
-     * Возвращает X-координату точки начала рисования линии прогресса.
-     */
+    /** Returns the X offset that should be applied before drawing the timeline geometry. */
     fun getStartPosition(): Float
 
-    /**
-     * Сохраняет фактическую ширину View и пересчитывает начало рисования.
-     *
-     * @param measuredWidth измеренная ширина View
-     */
+    /** Stores the available width so the engine can recalculate dependent coordinates. */
     fun setMeasuredWidth(measuredWidth: Int)
 
-    /**
-     * Возвращает горизонтальное смещение иконки прогресса для шага [i].
-     */
+    /** Returns the horizontal progress-icon offset for step [i]. */
     fun getHorizontalIconOffset(i: Int): Float
 
-    /**
-     * Возвращает вертикальное смещение для шага [i].
-     */
+    /** Returns the vertical offset for step [i]. */
     fun getVerticalOffset(i: Int): Float
 
-    /** Возвращает список шагов таймлайна. */
+    /** Returns the steps currently used by this engine. */
     fun getSteps(): List<TimelineStepData>
 
-    /**
-     * Вычисляет левую координату иконки для указанного шага.
-     *
-     * @param step шаг временной шкалы
-     */
+    /** Returns the left coordinate for the progress icon bound to [step]. */
     fun getLeftCoordinates(step: TimelineStepData): Float
 
-    /**
-     * Вычисляет верхнюю координату иконки для указанного шага.
-     *
-     * @param step шаг временной шкалы
-     */
+    /** Returns the top coordinate for the progress icon bound to [step]. */
     fun getTopCoordinates(step: TimelineStepData): Float
 
-    /** Возвращает Y-координату иконки шага [i]. */
+    /** Returns the Y coordinate of the badge icon for step [i]. */
     fun getIconYCoordinates(i: Int): Float
 
-    /**
-     * Возвращает X-координату заголовка уровня в зависимости от выравнивания.
-     *
-     * @param align используемое выравнивание текста
-     */
+    /** Returns the title X coordinate for a given text [align]ment. */
     fun getTitleXCoordinates(align: Paint.Align): Float
 
-    /**
-     * Возвращает X-координату иконки уровня в зависимости от выравнивания.
-     *
-     * @param align используемое выравнивание текста
-     */
+    /** Returns the badge-icon X coordinate for a given text [align]ment. */
     fun getIconXCoordinates(align: Paint.Align): Float
 
-    /**
-     * Возвращает Y-координату заголовка шага [i].
-     */
+    /** Returns the title baseline Y coordinate for step [i]. */
     fun getTitleYCoordinates(i: Int): Float
 
-    /**
-     * Возвращает Y-координату описания шага [i].
-     */
+    /** Returns the description baseline Y coordinate for step [i]. */
     fun getDescriptionYCoordinates(i: Int): Float
 
-    /**
-     * Строит layout-данные для отрисовки шагов и прогресс-иконки.
-     */
+    /** Builds layout metadata for badges, text, and the active progress icon. */
     fun buildLayout(): TimelineLayout
 }
