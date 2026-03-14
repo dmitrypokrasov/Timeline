@@ -11,14 +11,14 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
  * Composes math and UI engines for the [com.dmitrypokrasov.timelineview.ui.TimelineView].
  */
 class TimelineViewStrategyController(
-    registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry
+    registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry,
 ) {
     private val resolver = TimelineStrategyResolver(registry)
 
     fun resolve(config: TimelineConfig): TimelineViewStrategiesData {
         return TimelineViewStrategiesData(
             math = resolver.resolveMath(config),
-            ui = resolver.resolveUi(config)
+            ui = resolver.resolveUi(config),
         )
     }
 
@@ -26,11 +26,11 @@ class TimelineViewStrategyController(
         mathStrategy: TimelineMathStrategy,
         uiStrategy: TimelineUiStrategy,
         mathConfig: TimelineMathConfig,
-        uiConfig: TimelineUiConfig
+        uiConfig: TimelineUiConfig,
     ): TimelineViewStrategiesData {
         return TimelineViewStrategiesData(
             math = resolver.resolveMath(mathStrategy, mathConfig),
-            ui = resolver.resolveUi(uiStrategy, uiConfig)
+            ui = resolver.resolveUi(uiStrategy, uiConfig),
         )
     }
 
@@ -40,11 +40,11 @@ class TimelineViewStrategyController(
         fallbackMath: TimelineMathStrategy,
         fallbackUi: TimelineUiStrategy,
         mathConfig: TimelineMathConfig,
-        uiConfig: TimelineUiConfig
+        uiConfig: TimelineUiConfig,
     ): TimelineViewStrategiesData {
         return TimelineViewStrategiesData(
             math = resolver.resolveMath(mathStrategyKey, fallbackMath, mathConfig),
-            ui = resolver.resolveUi(uiStrategyKey, fallbackUi, uiConfig)
+            ui = resolver.resolveUi(uiStrategyKey, fallbackUi, uiConfig),
         )
     }
 }

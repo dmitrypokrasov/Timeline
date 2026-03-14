@@ -10,11 +10,11 @@ import java.util.IdentityHashMap
 import kotlin.math.roundToInt
 
 internal class TimelineLottieOverlayManager(
-    private val ownerView: View
+    private val ownerView: View,
 ) {
     private data class OverlayEntry(
         val drawable: LottieDrawable,
-        var autoPlayConsumed: Boolean = false
+        var autoPlayConsumed: Boolean = false,
     )
 
     private val drawableCache = IdentityHashMap<TimelineLottieSpec, OverlayEntry>()
@@ -25,13 +25,14 @@ internal class TimelineLottieOverlayManager(
         spec: TimelineLottieSpec?,
         left: Float,
         top: Float,
-        size: Float
+        size: Float,
     ) {
         if (spec == null) return
 
-        val entry = drawableCache.getOrPut(spec) {
-            OverlayEntry(createDrawable(context, spec))
-        }
+        val entry =
+            drawableCache.getOrPut(spec) {
+                OverlayEntry(createDrawable(context, spec))
+            }
         val drawable = entry.drawable
 
         val scaledSize = size * spec.scale
@@ -42,7 +43,7 @@ internal class TimelineLottieOverlayManager(
             drawLeft.roundToInt(),
             drawTop.roundToInt(),
             (drawLeft + scaledSize).roundToInt(),
-            (drawTop + scaledSize).roundToInt()
+            (drawTop + scaledSize).roundToInt(),
         )
 
         if (spec.autoPlay) {
@@ -74,9 +75,13 @@ internal class TimelineLottieOverlayManager(
         drawableCache.clear()
     }
 
-    private fun createDrawable(context: Context, spec: TimelineLottieSpec): LottieDrawable {
-        val composition = LottieCompositionFactory.fromRawResSync(context, spec.rawRes).value
-            ?: throw IllegalArgumentException("Unable to load Lottie animation: ${spec.rawRes}")
+    private fun createDrawable(
+        context: Context,
+        spec: TimelineLottieSpec,
+    ): LottieDrawable {
+        val composition =
+            LottieCompositionFactory.fromRawResSync(context, spec.rawRes).value
+                ?: throw IllegalArgumentException("Unable to load Lottie animation: ${spec.rawRes}")
 
         return LottieDrawable().apply {
             callback = ownerView

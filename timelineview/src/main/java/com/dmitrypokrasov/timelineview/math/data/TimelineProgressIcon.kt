@@ -5,5 +5,5 @@ package com.dmitrypokrasov.timelineview.math.data
  */
 data class TimelineProgressIcon(
     val left: Float,
-    val top: Float
+    val top: Float,
 )

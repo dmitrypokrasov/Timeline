@@ -1,7 +1,7 @@
 package com.dmitrypokrasov.timelineview.config
 
 /**
- * Stable identifier for timeline strategy providers.
+ * Stable identifier for custom timeline strategy providers.
  */
 @JvmInline
 value class StrategyKey(val value: String) {

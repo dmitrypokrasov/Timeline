@@ -4,25 +4,26 @@ import com.dmitrypokrasov.timelineview.model.TimelineConstants
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 /**
- * Конфигурация параметров позиционирования и размеров таймлайна.
+ * Positioning and sizing input for a timeline math engine.
  *
- * @property startPosition начальная позиция таймлайна (слева, по центру или справа)
- * @property steps список шагов, образующих таймлайн
- * @property spacing группа отступов таймлайна
- * @property sizes группа размеров таймлайна
+ * This object stores declarative input only. Concrete coordinates and paths are calculated by
+ * [com.dmitrypokrasov.timelineview.math.TimelineMathEngine] implementations.
  *
- * Хранит только данные без дополнительных вычислений. Вся логика расчётов
- * вынесена в реализации [com.dmitrypokrasov.timelineview.math.TimelineMathEngine].
+ * @property startPosition where the timeline should start within the available width.
+ * @property steps steps to render.
+ * @property spacing offsets and inter-step distances in pixels.
+ * @property sizes icon sizes in pixels.
  */
 data class TimelineMathConfig(
     val startPosition: StartPosition = StartPosition.CENTER,
     val steps: List<TimelineStepData> = listOf(),
     var spacing: Spacing = Spacing(),
-    var sizes: Sizes = Sizes()
+    var sizes: Sizes = Sizes(),
 ) {
-    /** Положение первого шага таймлайна относительно контейнера. */
+    /** Placement of the timeline relative to the container width. */
     enum class StartPosition { START, CENTER, END }
 
+    /** Spacing values used by math engines, expressed in pixels. */
     data class Spacing(
         var stepY: Float = TimelineConstants.DEFAULT_STEP_Y_SIZE,
         var stepYFirst: Float = TimelineConstants.DEFAULT_STEP_Y_FIRST_SIZE,
@@ -31,7 +32,7 @@ data class TimelineMathConfig(
         var marginTopProgressIcon: Float = TimelineConstants.DEFAULT_MARGIN_TOP_PROGRESS_ICON,
         var marginHorizontalImage: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_IMAGE,
         var marginHorizontalText: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_TEXT,
-        var marginHorizontalStroke: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_STROKE
+        var marginHorizontalStroke: Float = TimelineConstants.DEFAULT_MARGIN_HORIZONTAL_STROKE,
     ) {
         init {
             stepY = stepY.coerceAtLeast(0f)
@@ -45,9 +46,10 @@ data class TimelineMathConfig(
         }
     }
 
+    /** Icon sizes used by math engines, expressed in pixels. */
     data class Sizes(
         var sizeIconProgress: Float = TimelineConstants.DEFAULT_ICON_PROGRESS_SIZE,
-        var sizeImageLvl: Float = TimelineConstants.DEFAULT_IMAGE_LVL_SIZE
+        var sizeImageLvl: Float = TimelineConstants.DEFAULT_IMAGE_LVL_SIZE,
     ) {
         init {
             sizeIconProgress = sizeIconProgress.coerceAtLeast(0f)

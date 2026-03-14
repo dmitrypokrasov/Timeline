@@ -15,9 +15,11 @@ internal data class TimelineRuntimeState(
     val mathStrategy: TimelineMathStrategy,
     val uiStrategy: TimelineUiStrategy,
     val mathStrategyKey: StrategyKey?,
-    val uiStrategyKey: StrategyKey?
+    val uiStrategyKey: StrategyKey?,
 ) {
-    fun withSteps(steps: List<com.dmitrypokrasov.timelineview.model.TimelineStepData>): TimelineRuntimeState {
+    fun withSteps(
+        steps: List<com.dmitrypokrasov.timelineview.model.TimelineStepData>,
+    ): TimelineRuntimeState {
         return copy(config = config.copy(math = config.math.copy(steps = steps)))
     }
 
@@ -34,11 +36,14 @@ internal data class TimelineRuntimeState(
             mathStrategy = strategy.math,
             uiStrategy = strategy.ui,
             mathStrategyKey = null,
-            uiStrategyKey = null
+            uiStrategyKey = null,
         )
     }
 
-    fun withStrategyKeys(mathKey: StrategyKey?, uiKey: StrategyKey?): TimelineRuntimeState {
+    fun withStrategyKeys(
+        mathKey: StrategyKey?,
+        uiKey: StrategyKey?,
+    ): TimelineRuntimeState {
         return copy(mathStrategyKey = mathKey, uiStrategyKey = uiKey)
     }
 
@@ -49,7 +54,7 @@ internal data class TimelineRuntimeState(
             fallbackMath = mathStrategy,
             fallbackUi = uiStrategy,
             mathConfig = config.math,
-            uiConfig = config.ui
+            uiConfig = config.ui,
         )
     }
 
@@ -60,7 +65,7 @@ internal data class TimelineRuntimeState(
                 mathStrategy = config.mathStrategy,
                 uiStrategy = config.uiStrategy,
                 mathStrategyKey = config.mathStrategyKey,
-                uiStrategyKey = config.uiStrategyKey
+                uiStrategyKey = config.uiStrategyKey,
             )
         }
     }

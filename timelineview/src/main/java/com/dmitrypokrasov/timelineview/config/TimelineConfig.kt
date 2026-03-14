@@ -16,5 +16,5 @@ data class TimelineConfig(
     val mathStrategy: TimelineMathStrategy = TimelineMathStrategy.Snake,
     val uiStrategy: TimelineUiStrategy = TimelineUiStrategy.Snake,
     val mathStrategyKey: StrategyKey? = null,
-    val uiStrategyKey: StrategyKey? = null
+    val uiStrategyKey: StrategyKey? = null,
 )

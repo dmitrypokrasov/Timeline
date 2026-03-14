@@ -24,10 +24,13 @@ class TimelineSampleFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View = inflater.inflate(R.layout.fragment_timeline_sample, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         val timelineView = view.findViewById<TimelineView>(R.id.timeline)
         val sample = requireSample()
 
@@ -38,22 +41,24 @@ class TimelineSampleFragment : Fragment() {
         timelineView.replaceSteps(steps)
 
         timelineView.setOnStepClickListener { index, _ ->
-            steps = steps.mapIndexed { stepIndex, step ->
-                if (stepIndex != index) {
-                    step
-                } else {
-                    val updatedProgress = (step.progress + 10).coerceAtMost(100)
-                    val justCompleted = step.progress < 100 && updatedProgress == 100
-                    step.copy(
-                        progress = updatedProgress,
-                        badgeAnimation = if (justCompleted) {
-                            TimelineSampleData.buildCompletionBadgeAnimation()
-                        } else {
-                            step.badgeAnimation
-                        }
-                    )
+            steps =
+                steps.mapIndexed { stepIndex, step ->
+                    if (stepIndex != index) {
+                        step
+                    } else {
+                        val updatedProgress = (step.progress + 10).coerceAtMost(100)
+                        val justCompleted = step.progress < 100 && updatedProgress == 100
+                        step.copy(
+                            progress = updatedProgress,
+                            badgeAnimation =
+                                if (justCompleted) {
+                                    TimelineSampleData.buildCompletionBadgeAnimation()
+                                } else {
+                                    step.badgeAnimation
+                                },
+                        )
+                    }
                 }
-            }
             timelineView.replaceSteps(steps)
         }
         timelineView.setOnProgressIconClickListener {
@@ -70,21 +75,21 @@ class TimelineSampleFragment : Fragment() {
 
             TimelineSample.LINEAR_VERTICAL -> {
                 timelineView.setMathEngine(
-                    LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL)
+                    LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL),
                 )
                 timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
             }
 
             TimelineSample.LINEAR_HORIZONTAL -> {
                 timelineView.setMathEngine(
-                    LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.HORIZONTAL)
+                    LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.HORIZONTAL),
                 )
                 timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
             }
 
             TimelineSample.MIXED -> {
                 timelineView.setMathEngine(
-                    LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL)
+                    LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.VERTICAL),
                 )
                 timelineView.setUiRenderer(SnakeTimelineUi(uiConfig))
             }
@@ -97,7 +102,7 @@ class TimelineSampleFragment : Fragment() {
                 timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
                 timelineView.setStrategy(
                     mathStrategyKey = StrategyKey(CUSTOM_MATH_ID),
-                    uiStrategyKey = StrategyKey(CUSTOM_UI_ID)
+                    uiStrategyKey = StrategyKey(CUSTOM_UI_ID),
                 )
             }
         }
@@ -112,20 +117,28 @@ class TimelineSampleFragment : Fragment() {
     }
 
     private fun registerCustomStrategies(registry: TimelineStrategyRegistryContract) {
-        registry.registerMath(object : TimelineMathProvider {
-            override val key: StrategyKey = StrategyKey(CUSTOM_MATH_ID)
-            override fun create(config: TimelineMathConfig) = SnakeTimelineMath(config)
-        })
-        registry.registerUi(object : TimelineUiProvider {
-            override val key: StrategyKey = StrategyKey(CUSTOM_UI_ID)
-            override fun create(config: TimelineUiConfig) = LinearTimelineUi(config)
-        })
+        registry.registerMath(
+            object : TimelineMathProvider {
+                override val key: StrategyKey = StrategyKey(CUSTOM_MATH_ID)
+
+                override fun create(config: TimelineMathConfig) = SnakeTimelineMath(config)
+            },
+        )
+        registry.registerUi(
+            object : TimelineUiProvider {
+                override val key: StrategyKey = StrategyKey(CUSTOM_UI_ID)
+
+                override fun create(config: TimelineUiConfig) = LinearTimelineUi(config)
+            },
+        )
     }
 
     @Suppress("DEPRECATION")
     private fun requireSample(): TimelineSample {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requireNotNull(requireArguments().getSerializable(ARG_SAMPLE, TimelineSample::class.java))
+            requireNotNull(
+                requireArguments().getSerializable(ARG_SAMPLE, TimelineSample::class.java),
+            )
         } else {
             requireNotNull(requireArguments().getSerializable(ARG_SAMPLE) as? TimelineSample)
         }
@@ -138,9 +151,10 @@ class TimelineSampleFragment : Fragment() {
 
         fun newInstance(sample: TimelineSample): TimelineSampleFragment {
             return TimelineSampleFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(ARG_SAMPLE, sample)
-                }
+                arguments =
+                    Bundle().apply {
+                        putSerializable(ARG_SAMPLE, sample)
+                    }
             }
         }
     }

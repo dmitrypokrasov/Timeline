@@ -6,22 +6,25 @@ import org.junit.Test
 class TimelineConfigNormalizationTest {
     @Test
     fun `math config clamps negative values to zero`() {
-        val config = TimelineMathConfig(
-            spacing = TimelineMathConfig.Spacing(
-                stepY = -10f,
-                stepYFirst = -5f,
-                marginTopDescription = -1f,
-                marginTopTitle = -2f,
-                marginTopProgressIcon = -3f,
-                marginHorizontalImage = -4f,
-                marginHorizontalText = -5f,
-                marginHorizontalStroke = -6f
-            ),
-            sizes = TimelineMathConfig.Sizes(
-                sizeIconProgress = -7f,
-                sizeImageLvl = -8f
+        val config =
+            TimelineMathConfig(
+                spacing =
+                    TimelineMathConfig.Spacing(
+                        stepY = -10f,
+                        stepYFirst = -5f,
+                        marginTopDescription = -1f,
+                        marginTopTitle = -2f,
+                        marginTopProgressIcon = -3f,
+                        marginHorizontalImage = -4f,
+                        marginHorizontalText = -5f,
+                        marginHorizontalStroke = -6f,
+                    ),
+                sizes =
+                    TimelineMathConfig.Sizes(
+                        sizeIconProgress = -7f,
+                        sizeImageLvl = -8f,
+                    ),
             )
-        )
 
         assertEquals(0f, config.spacing.stepY, 0.0f)
         assertEquals(0f, config.spacing.stepYFirst, 0.0f)
@@ -37,20 +40,24 @@ class TimelineConfigNormalizationTest {
 
     @Test
     fun `ui config clamps negative values to zero`() {
-        val config = TimelineUiConfig(
-            icons = TimelineUiConfig.Icons(
-                iconDisableLvl = -1,
-                iconProgress = -2
-            ),
-            textSizes = TimelineUiConfig.TextSizes(
-                sizeDescription = -10f,
-                sizeTitle = -5f
-            ),
-            stroke = TimelineUiConfig.Stroke(
-                radius = -5f,
-                sizeStroke = -1f
+        val config =
+            TimelineUiConfig(
+                icons =
+                    TimelineUiConfig.Icons(
+                        iconDisableLvl = -1,
+                        iconProgress = -2,
+                    ),
+                textSizes =
+                    TimelineUiConfig.TextSizes(
+                        sizeDescription = -10f,
+                        sizeTitle = -5f,
+                    ),
+                stroke =
+                    TimelineUiConfig.Stroke(
+                        radius = -5f,
+                        sizeStroke = -1f,
+                    ),
             )
-        )
 
         assertEquals(0, config.icons.iconDisableLvl)
         assertEquals(0, config.icons.iconProgress)

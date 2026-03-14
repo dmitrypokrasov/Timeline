@@ -13,7 +13,7 @@ import com.dmitrypokrasov.timelineview.render.TimelineUiFactory
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
 class TimelineStrategyResolver(
-    private val registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry
+    private val registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry,
 ) {
     companion object {
         private const val TAG = "TimelineStrategyResolver"
@@ -27,18 +27,24 @@ class TimelineStrategyResolver(
         return resolveUi(config.uiStrategyKey, config.uiStrategy, config.ui)
     }
 
-    fun resolveMath(strategy: TimelineMathStrategy, config: TimelineMathConfig): TimelineMathEngine {
+    fun resolveMath(
+        strategy: TimelineMathStrategy,
+        config: TimelineMathConfig,
+    ): TimelineMathEngine {
         return resolveMath(strategy.key, strategy, config)
     }
 
-    fun resolveUi(strategy: TimelineUiStrategy, config: TimelineUiConfig): TimelineUiRenderer {
+    fun resolveUi(
+        strategy: TimelineUiStrategy,
+        config: TimelineUiConfig,
+    ): TimelineUiRenderer {
         return resolveUi(strategy.key, strategy, config)
     }
 
     fun resolveMath(
         strategyKey: StrategyKey?,
         fallbackStrategy: TimelineMathStrategy,
-        config: TimelineMathConfig
+        config: TimelineMathConfig,
     ): TimelineMathEngine {
         if (strategyKey != null) {
             val provider = registry.getMathProvider(strategyKey)
@@ -47,7 +53,7 @@ class TimelineStrategyResolver(
             }
             Log.w(
                 TAG,
-                "No math strategy registered for key: ${strategyKey.value}. Falling back to $fallbackStrategy."
+                "No math strategy registered for key: ${strategyKey.value}. Falling back to $fallbackStrategy.",
             )
         }
         return TimelineMathFactory.create(fallbackStrategy, config)
@@ -56,7 +62,7 @@ class TimelineStrategyResolver(
     fun resolveUi(
         strategyKey: StrategyKey?,
         fallbackStrategy: TimelineUiStrategy,
-        config: TimelineUiConfig
+        config: TimelineUiConfig,
     ): TimelineUiRenderer {
         if (strategyKey != null) {
             val provider = registry.getUiProvider(strategyKey)
@@ -65,7 +71,7 @@ class TimelineStrategyResolver(
             }
             Log.w(
                 TAG,
-                "No UI strategy registered for key: ${strategyKey.value}. Falling back to $fallbackStrategy."
+                "No UI strategy registered for key: ${strategyKey.value}. Falling back to $fallbackStrategy.",
             )
         }
         return TimelineUiFactory.create(fallbackStrategy, config)

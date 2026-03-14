@@ -23,9 +23,8 @@ class TimelineViewController(
     private val ownerView: View,
     private val context: Context,
     attrs: AttributeSet?,
-    registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry
+    registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry,
 ) {
-
     companion object {
         private const val TAG = "TimelineView"
     }
@@ -65,7 +64,10 @@ class TimelineViewController(
         initTools()
     }
 
-    fun setStrategy(mathStrategy: TimelineMathStrategy, uiStrategy: TimelineUiStrategy) {
+    fun setStrategy(
+        mathStrategy: TimelineMathStrategy,
+        uiStrategy: TimelineUiStrategy,
+    ) {
         state = state.withStrategy(TimelineStrategy(mathStrategy, uiStrategy))
         applyResolvedState()
     }
@@ -75,12 +77,18 @@ class TimelineViewController(
         applyResolvedState()
     }
 
-    fun setStrategy(mathStrategyKey: StrategyKey?, uiStrategyKey: StrategyKey?) {
+    fun setStrategy(
+        mathStrategyKey: StrategyKey?,
+        uiStrategyKey: StrategyKey?,
+    ) {
         state = state.withStrategyKeys(mathStrategyKey, uiStrategyKey)
         applyResolvedState()
     }
 
-    fun setStrategies(mathEngine: TimelineMathEngine, uiRenderer: TimelineUiRenderer) {
+    fun setStrategies(
+        mathEngine: TimelineMathEngine,
+        uiRenderer: TimelineUiRenderer,
+    ) {
         timelineMath = mathEngine
         timelineUi = uiRenderer
         state = state.withMathEngine(mathEngine).withUiRenderer(uiRenderer)
@@ -106,20 +114,24 @@ class TimelineViewController(
         onProgressIconClickListener = listener
     }
 
-    fun handleClick(x: Float, y: Float): Boolean {
+    fun handleClick(
+        x: Float,
+        y: Float,
+    ): Boolean {
         val sizes = timelineMath.getConfig().sizes
         val minimumTouchTargetPx = 48f * context.resources.displayMetrics.density
         val translatedX = x - timelineMath.getStartPosition()
         return when (
-            val hit = TimelineHitTestHelper.findHit(
-                layout = layout,
-                stepIconSize = sizes.sizeImageLvl,
-                progressIconSize = sizes.sizeIconProgress,
-                x = translatedX,
-                y = y,
-                minStepTouchSize = minimumTouchTargetPx,
-                minProgressTouchSize = minimumTouchTargetPx
-            )
+            val hit =
+                TimelineHitTestHelper.findHit(
+                    layout = layout,
+                    stepIconSize = sizes.sizeImageLvl,
+                    progressIconSize = sizes.sizeIconProgress,
+                    x = translatedX,
+                    y = y,
+                    minStepTouchSize = minimumTouchTargetPx,
+                    minProgressTouchSize = minimumTouchTargetPx,
+                )
         ) {
             is TimelineHitTestHelper.HitResult.Step -> {
                 onStepClickListener?.invoke(hit.index, hit.step)
@@ -140,10 +152,11 @@ class TimelineViewController(
         if (onStepClickListener != null) {
             val steps = timelineMath.getSteps()
             if (steps.isNotEmpty()) {
-                val titles = steps.mapIndexed { index, step ->
-                    val title = step.title?.toString()?.takeIf { it.isNotBlank() } ?: "step ${index + 1}"
-                    "${index + 1}. $title"
-                }
+                val titles =
+                    steps.mapIndexed { index, step ->
+                        val title = step.title?.toString()?.takeIf { it.isNotBlank() } ?: "step ${index + 1}"
+                        "${index + 1}. $title"
+                    }
                 parts += "Clickable timeline steps: ${titles.joinToString(", ")}"
             }
         }
@@ -175,12 +188,12 @@ class TimelineViewController(
 
         drawProgressIcon(canvas, layout)
 
-        val resolvedTextBlocks = TimelineTextBlockResolver.resolve(
-            layout = layout,
-            mathEngine = timelineMath,
-            mathConfig = timelineMath.getConfig(),
-            uiRenderer = timelineUi
-        )
+        val resolvedTextBlocks =
+            TimelineTextBlockResolver.resolve(
+                layout = layout,
+                mathEngine = timelineMath,
+                uiRenderer = timelineUi,
+            )
 
         layout?.steps?.forEachIndexed { index, stepLayout ->
             val textBlock = resolvedTextBlocks.getOrNull(index) ?: return@forEachIndexed
@@ -193,7 +206,7 @@ class TimelineViewController(
                 stepLayout.titleX,
                 textBlock.titleTop,
                 stepLayout.textAlign,
-                stepLayout.titleWidth
+                stepLayout.titleWidth,
             )
             timelineUi.drawDescription(
                 canvas,
@@ -201,7 +214,7 @@ class TimelineViewController(
                 stepLayout.descriptionX,
                 textBlock.descriptionTop,
                 stepLayout.textAlign,
-                stepLayout.descriptionWidth
+                stepLayout.descriptionWidth,
             )
             timelineUi.drawStepIcon(
                 stepLayout.step,
@@ -209,7 +222,7 @@ class TimelineViewController(
                 stepLayout.textAlign,
                 context,
                 stepLayout.iconX,
-                stepLayout.iconY
+                stepLayout.iconY,
             )
             lottieOverlayManager.draw(
                 canvas = canvas,
@@ -217,7 +230,7 @@ class TimelineViewController(
                 spec = stepLayout.step.badgeAnimation,
                 left = stepLayout.iconX,
                 top = stepLayout.iconY,
-                size = timelineMath.getConfig().sizes.sizeImageLvl
+                size = timelineMath.getConfig().sizes.sizeImageLvl,
             )
         }
 
@@ -228,19 +241,23 @@ class TimelineViewController(
         lottieOverlayManager.clear()
     }
 
-    private fun drawProgressIcon(canvas: Canvas, layout: TimelineLayout?) {
+    private fun drawProgressIcon(
+        canvas: Canvas,
+        layout: TimelineLayout?,
+    ) {
         val progress = layout?.progressIcon ?: return
         timelineUi.drawProgressIcon(canvas, progress.left, progress.top)
-        val progressStep = layout.progressStepIndex?.let { index ->
-            timelineMath.getSteps().getOrNull(index)
-        }
+        val progressStep =
+            layout.progressStepIndex?.let { index ->
+                timelineMath.getSteps().getOrNull(index)
+            }
         lottieOverlayManager.draw(
             canvas = canvas,
             context = context,
             spec = progressStep?.progressAnimation,
             left = progress.left,
             top = progress.top,
-            size = timelineMath.getConfig().sizes.sizeIconProgress
+            size = timelineMath.getConfig().sizes.sizeIconProgress,
         )
     }
 
@@ -257,7 +274,7 @@ class TimelineViewController(
     private fun initTools() {
         Log.d(
             TAG,
-            "initTools timelineMathConfig: ${timelineMath.getConfig()}, timelineUiConfig: ${timelineUi.getConfig()}"
+            "initTools timelineMathConfig: ${timelineMath.getConfig()}, timelineUiConfig: ${timelineUi.getConfig()}",
         )
         timelineUi.initTools(timelineMath.getConfig(), context)
     }

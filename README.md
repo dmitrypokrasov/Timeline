@@ -2,6 +2,14 @@
 
 Android timeline widget with pluggable math/UI strategies, multiline text rendering, click handling, and optional Lottie overlays for step badges and the active progress icon.
 
+## Project quality
+
+The project now ships with a shared quality toolchain:
+
+- `./gradlew qualityCheck` runs `ktlint`, `detekt`, Android lint, and unit tests for both modules.
+- `./gradlew qualityFormat` formats Kotlin sources with `ktlint`.
+- `./gradlew qualityDocs` generates Dokka API docs for the library module.
+
 ## Installation
 
 ```gradle
@@ -156,4 +164,7 @@ timelineView.setStrategy(
 
 - Linear timelines now start before the first badge and stop at the last badge anchor instead of drawing a trailing tail.
 - Long titles and descriptions are rendered with multiline `StaticLayout` and contribute to measured height.
+- `TimelineView` respects padding during drawing, hit testing, and measurement.
+- Linear vertical measurement is based on the actual rendered content bounds, which keeps multi-step previews from reserving extra empty space below the last visible element.
+- Snake timelines keep their corner transition stable when progress switches color at the beginning of a turn.
 - Click handling stays attached to the badge/progress icon bounds even when Lottie overlays are enabled.

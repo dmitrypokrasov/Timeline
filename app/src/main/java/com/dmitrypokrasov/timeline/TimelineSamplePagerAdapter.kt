@@ -6,7 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class TimelineSamplePagerAdapter(
     activity: FragmentActivity,
-    private val samples: List<TimelineSample>
+    private val samples: List<TimelineSample>,
 ) : FragmentStateAdapter(activity) {
     override fun getItemCount(): Int = samples.size
 

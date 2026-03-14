@@ -54,21 +54,21 @@ class TimelineStrategyRegistryIsolationTest {
 
 private class FakeMathProvider(
     override val key: StrategyKey,
-    private val id: String
+    private val id: String,
 ) : TimelineMathProvider {
     override fun create(config: TimelineMathConfig): TimelineMathEngine = FakeMathEngine(id, config)
 }
 
 private class FakeUiProvider(
     override val key: StrategyKey,
-    private val id: String
+    private val id: String,
 ) : TimelineUiProvider {
     override fun create(config: TimelineUiConfig): TimelineUiRenderer = FakeUiRenderer(id, config)
 }
 
 private class FakeMathEngine(
     val id: String,
-    private var config: TimelineMathConfig
+    private var config: TimelineMathConfig,
 ) : TimelineMathEngine {
     override fun setConfig(config: TimelineMathConfig) {
         this.config = config
@@ -80,7 +80,10 @@ private class FakeMathEngine(
         config = config.copy(steps = steps)
     }
 
-    override fun buildPath(pathEnable: Path, pathDisable: Path) {
+    override fun buildPath(
+        pathEnable: Path,
+        pathDisable: Path,
+    ) {
         pathEnable.reset()
         pathDisable.reset()
     }
@@ -109,16 +112,17 @@ private class FakeMathEngine(
 
     override fun getDescriptionYCoordinates(i: Int): Float = 0f
 
-    override fun buildLayout(): TimelineLayout = TimelineLayout(
-        steps = emptyList<TimelineLayoutStep>(),
-        progressIcon = null,
-        progressStepIndex = null
-    )
+    override fun buildLayout(): TimelineLayout =
+        TimelineLayout(
+            steps = emptyList<TimelineLayoutStep>(),
+            progressIcon = null,
+            progressStepIndex = null,
+        )
 }
 
 private class FakeUiRenderer(
     val id: String,
-    private var config: TimelineUiConfig
+    private var config: TimelineUiConfig,
 ) : TimelineUiRenderer {
     private val completedPath = Path()
     private val remainingPath = Path()
@@ -129,7 +133,10 @@ private class FakeUiRenderer(
 
     override fun getConfig(): TimelineUiConfig = config
 
-    override fun initTools(timelineMathConfig: TimelineMathConfig, context: Context) = Unit
+    override fun initTools(
+        timelineMathConfig: TimelineMathConfig,
+        context: Context,
+    ) = Unit
 
     override fun prepareStrokePaint() = Unit
 
@@ -137,7 +144,11 @@ private class FakeUiRenderer(
 
     override fun prepareIconPaint() = Unit
 
-    override fun drawProgressIcon(canvas: Canvas, leftCoordinates: Float, topCoordinates: Float) = Unit
+    override fun drawProgressIcon(
+        canvas: Canvas,
+        leftCoordinates: Float,
+        topCoordinates: Float,
+    ) = Unit
 
     override fun drawCompletedPath(canvas: Canvas) = Unit
 
@@ -153,7 +164,7 @@ private class FakeUiRenderer(
         x: Float,
         y: Float,
         align: Paint.Align,
-        maxWidth: Int
+        maxWidth: Int,
     ) = Unit
 
     override fun drawDescription(
@@ -162,12 +173,20 @@ private class FakeUiRenderer(
         x: Float,
         y: Float,
         align: Paint.Align,
-        maxWidth: Int
+        maxWidth: Int,
     ) = Unit
 
-    override fun measureTitleHeight(title: CharSequence, maxWidth: Int, align: Paint.Align): Int = 0
+    override fun measureTitleHeight(
+        title: CharSequence,
+        maxWidth: Int,
+        align: Paint.Align,
+    ): Int = 0
 
-    override fun measureDescriptionHeight(description: CharSequence, maxWidth: Int, align: Paint.Align): Int = 0
+    override fun measureDescriptionHeight(
+        description: CharSequence,
+        maxWidth: Int,
+        align: Paint.Align,
+    ): Int = 0
 
     override fun getTitleBaselineOffset(): Float = 0f
 
@@ -179,7 +198,7 @@ private class FakeUiRenderer(
         align: Paint.Align,
         context: Context,
         x: Float,
-        y: Float
+        y: Float,
     ) = Unit
 
     override fun getTextAlignment(): Paint.Align = Paint.Align.LEFT

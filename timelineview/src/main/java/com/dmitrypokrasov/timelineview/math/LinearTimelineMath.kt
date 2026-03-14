@@ -15,7 +15,6 @@ class LinearTimelineMath(
     private var mathConfig: TimelineMathConfig,
     val orientation: Orientation = Orientation.VERTICAL,
 ) : TimelineMathEngine {
-
     private data class SegmentInfo(
         val start: Float,
         val end: Float,
@@ -42,7 +41,10 @@ class LinearTimelineMath(
         segmentsValid = false
     }
 
-    override fun buildPath(pathEnable: Path, pathDisable: Path) {
+    override fun buildPath(
+        pathEnable: Path,
+        pathDisable: Path,
+    ) {
         pathEnable.reset()
         pathDisable.reset()
 
@@ -51,11 +53,11 @@ class LinearTimelineMath(
         val pathStart = segments.firstOrNull()?.start ?: 0f
         pathEnable.moveTo(
             if (orientation == Orientation.VERTICAL) 0f else pathStart,
-            if (orientation == Orientation.VERTICAL) pathStart else crossAxis
+            if (orientation == Orientation.VERTICAL) pathStart else crossAxis,
         )
         pathDisable.moveTo(
             if (orientation == Orientation.VERTICAL) 0f else pathStart,
-            if (orientation == Orientation.VERTICAL) pathStart else crossAxis
+            if (orientation == Orientation.VERTICAL) pathStart else crossAxis,
         )
 
         var drawEnable = true
@@ -78,21 +80,22 @@ class LinearTimelineMath(
 
     override fun setMeasuredWidth(measuredWidth: Int) {
         this.measuredWidth = measuredWidth
-        startPositionX = if (orientation == Orientation.VERTICAL) {
-            when (mathConfig.startPosition) {
-                TimelineMathConfig.StartPosition.START -> mathConfig.spacing.marginHorizontalStroke
-                TimelineMathConfig.StartPosition.CENTER -> measuredWidth / 2f
-                TimelineMathConfig.StartPosition.END -> measuredWidth.toFloat() - mathConfig.spacing.marginHorizontalStroke
+        startPositionX =
+            if (orientation == Orientation.VERTICAL) {
+                when (mathConfig.startPosition) {
+                    TimelineMathConfig.StartPosition.START -> mathConfig.spacing.marginHorizontalStroke
+                    TimelineMathConfig.StartPosition.CENTER -> measuredWidth / 2f
+                    TimelineMathConfig.StartPosition.END -> measuredWidth.toFloat() - mathConfig.spacing.marginHorizontalStroke
+                }
+            } else {
+                val totalLength = getTotalLength()
+                when (mathConfig.startPosition) {
+                    TimelineMathConfig.StartPosition.START -> mathConfig.spacing.marginHorizontalStroke
+                    TimelineMathConfig.StartPosition.CENTER -> (measuredWidth - totalLength) / 2f
+                    TimelineMathConfig.StartPosition.END ->
+                        measuredWidth.toFloat() - totalLength - mathConfig.spacing.marginHorizontalStroke
+                }
             }
-        } else {
-            val totalLength = getTotalLength()
-            when (mathConfig.startPosition) {
-                TimelineMathConfig.StartPosition.START -> mathConfig.spacing.marginHorizontalStroke
-                TimelineMathConfig.StartPosition.CENTER -> (measuredWidth - totalLength) / 2f
-                TimelineMathConfig.StartPosition.END ->
-                    measuredWidth.toFloat() - totalLength - mathConfig.spacing.marginHorizontalStroke
-            }
-        }
         segmentsValid = false
     }
 
@@ -138,11 +141,12 @@ class LinearTimelineMath(
         return when (align) {
             Paint.Align.LEFT -> -(startPositionX - mathConfig.spacing.marginHorizontalText)
             Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER) {
-                startPositionX - mathConfig.spacing.marginHorizontalText
-            } else {
-                -startPositionX + stepX
-            }
+            Paint.Align.RIGHT ->
+                if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER) {
+                    startPositionX - mathConfig.spacing.marginHorizontalText
+                } else {
+                    -startPositionX + stepX
+                }
         }
     }
 
@@ -151,11 +155,12 @@ class LinearTimelineMath(
         return when (align) {
             Paint.Align.LEFT -> -(startPositionX - mathConfig.spacing.marginHorizontalImage)
             Paint.Align.CENTER -> startPositionX
-            Paint.Align.RIGHT -> if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER) {
-                startPositionX - mathConfig.spacing.marginHorizontalImage - mathConfig.sizes.sizeImageLvl
-            } else {
-                -startPositionX + stepX + mathConfig.spacing.marginHorizontalImage
-            }
+            Paint.Align.RIGHT ->
+                if (mathConfig.startPosition == TimelineMathConfig.StartPosition.CENTER) {
+                    startPositionX - mathConfig.spacing.marginHorizontalImage - mathConfig.sizes.sizeImageLvl
+                } else {
+                    -startPositionX + stepX + mathConfig.spacing.marginHorizontalImage
+                }
         }
     }
 
@@ -177,8 +182,7 @@ class LinearTimelineMath(
     override fun getDescriptionYCoordinates(i: Int): Float =
         getTitleYCoordinates(i) + mathConfig.spacing.marginTopDescription
 
-    private fun getStepX(): Float =
-        measuredWidth - mathConfig.spacing.marginHorizontalStroke * 2
+    private fun getStepX(): Float = measuredWidth - mathConfig.spacing.marginHorizontalStroke * 2
 
     private fun getVerticalContentInset(): Float =
         maxOf(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress) / 2f
@@ -201,82 +205,95 @@ class LinearTimelineMath(
         maxOf(mathConfig.sizes.sizeImageLvl, mathConfig.sizes.sizeIconProgress) / 2f
 
     override fun buildLayout(): TimelineLayout {
-        val layoutSteps = if (orientation == Orientation.HORIZONTAL) {
-            mathConfig.steps.mapIndexed { index, step ->
-                val positionX = getBadgeCenterPosition(index)
-                val baseline = getHorizontalBaseline()
-                val titleWidth = TimelineTextWidthResolver.resolve(
-                    measuredWidth = measuredWidth,
-                    startPosition = startPositionX,
-                    localX = positionX,
-                    align = Paint.Align.CENTER
-                )
-                TimelineLayoutStep(
-                    step = step,
-                    titleX = positionX,
-                    titleY = baseline + mathConfig.spacing.marginTopTitle,
-                    titleWidth = titleWidth,
-                    descriptionX = positionX,
-                    descriptionY = baseline + mathConfig.spacing.marginTopTitle +
-                        mathConfig.spacing.marginTopDescription,
-                    descriptionWidth = titleWidth,
-                    iconX = positionX - mathConfig.sizes.sizeImageLvl / 2f,
-                    iconY = baseline - mathConfig.sizes.sizeImageLvl / 2f,
-                    textAlign = Paint.Align.CENTER
-                )
-            }
-        } else {
-            val align = when (mathConfig.startPosition) {
-                TimelineMathConfig.StartPosition.START -> Paint.Align.LEFT
-                else -> Paint.Align.RIGHT
-            }
-            val titleX = getTitleXCoordinates(align)
-            val descriptionX = getTitleXCoordinates(align)
-            val titleWidth = TimelineTextWidthResolver.resolve(measuredWidth, startPositionX, titleX, align)
-            val descriptionWidth = TimelineTextWidthResolver.resolve(
-                measuredWidth,
-                startPositionX,
-                descriptionX,
-                align
-            )
+        val layoutSteps =
+            if (orientation == Orientation.HORIZONTAL) {
+                mathConfig.steps.mapIndexed { index, step ->
+                    val positionX = getBadgeCenterPosition(index)
+                    val baseline = getHorizontalBaseline()
+                    val titleWidth =
+                        TimelineTextWidthResolver.resolve(
+                            measuredWidth = measuredWidth,
+                            startPosition = startPositionX,
+                            localX = positionX,
+                            align = Paint.Align.CENTER,
+                        )
+                    TimelineLayoutStep(
+                        step = step,
+                        titleX = positionX,
+                        titleY = baseline + mathConfig.spacing.marginTopTitle,
+                        titleWidth = titleWidth,
+                        descriptionX = positionX,
+                        descriptionY =
+                            baseline + mathConfig.spacing.marginTopTitle +
+                                mathConfig.spacing.marginTopDescription,
+                        descriptionWidth = titleWidth,
+                        iconX = positionX - mathConfig.sizes.sizeImageLvl / 2f,
+                        iconY = baseline - mathConfig.sizes.sizeImageLvl / 2f,
+                        textAlign = Paint.Align.CENTER,
+                    )
+                }
+            } else {
+                val align =
+                    when (mathConfig.startPosition) {
+                        TimelineMathConfig.StartPosition.START -> Paint.Align.LEFT
+                        else -> Paint.Align.RIGHT
+                    }
+                val titleX = getTitleXCoordinates(align)
+                val descriptionX = getTitleXCoordinates(align)
+                val titleWidth =
+                    TimelineTextWidthResolver.resolve(
+                        measuredWidth,
+                        startPositionX,
+                        titleX,
+                        align,
+                    )
+                val descriptionWidth =
+                    TimelineTextWidthResolver.resolve(
+                        measuredWidth,
+                        startPositionX,
+                        descriptionX,
+                        align,
+                    )
 
-            mathConfig.steps.mapIndexed { index, step ->
-                TimelineLayoutStep(
-                    step = step,
-                    titleX = titleX,
-                    titleY = getTitleYCoordinates(index),
-                    titleWidth = titleWidth,
-                    descriptionX = descriptionX,
-                    descriptionY = getDescriptionYCoordinates(index),
-                    descriptionWidth = descriptionWidth,
-                    iconX = getIconXCoordinates(align),
-                    iconY = getIconYCoordinates(index),
-                    textAlign = align
-                )
+                mathConfig.steps.mapIndexed { index, step ->
+                    TimelineLayoutStep(
+                        step = step,
+                        titleX = titleX,
+                        titleY = getTitleYCoordinates(index),
+                        titleWidth = titleWidth,
+                        descriptionX = descriptionX,
+                        descriptionY = getDescriptionYCoordinates(index),
+                        descriptionWidth = descriptionWidth,
+                        iconX = getIconXCoordinates(align),
+                        iconY = getIconYCoordinates(index),
+                        textAlign = align,
+                    )
+                }
             }
-        }
 
         val progressIndex = mathConfig.steps.indexOfFirst { it.progress != 100 }.takeIf { it >= 0 }
-        val progressIcon = progressIndex?.let { index ->
-            val progressPosition = getProgressPosition(index)
-            if (orientation == Orientation.VERTICAL) {
-                TimelineProgressIcon(
-                    left = -mathConfig.sizes.sizeIconProgress / 2f,
-                    top = progressPosition + mathConfig.spacing.marginTopProgressIcon -
-                        mathConfig.sizes.sizeIconProgress / 2f
-                )
-            } else {
-                TimelineProgressIcon(
-                    left = progressPosition - mathConfig.sizes.sizeIconProgress / 2f,
-                    top = getHorizontalProgressTop()
-                )
+        val progressIcon =
+            progressIndex?.let { index ->
+                val progressPosition = getProgressPosition(index)
+                if (orientation == Orientation.VERTICAL) {
+                    TimelineProgressIcon(
+                        left = -mathConfig.sizes.sizeIconProgress / 2f,
+                        top =
+                            progressPosition + mathConfig.spacing.marginTopProgressIcon -
+                                mathConfig.sizes.sizeIconProgress / 2f,
+                    )
+                } else {
+                    TimelineProgressIcon(
+                        left = progressPosition - mathConfig.sizes.sizeIconProgress / 2f,
+                        top = getHorizontalProgressTop(),
+                    )
+                }
             }
-        }
 
         return TimelineLayout(
             steps = layoutSteps,
             progressIcon = progressIcon,
-            progressStepIndex = progressIndex
+            progressStepIndex = progressIndex,
         )
     }
 
@@ -301,10 +318,10 @@ class LinearTimelineMath(
     private fun getStepPosition(index: Int): Float =
         mathConfig.steps.getOrNull(index)?.let { getBadgeCenterPosition(index) }
             ?: if (orientation == Orientation.VERTICAL) {
-            getVerticalContentInset()
-        } else {
-            0f
-        }
+                getVerticalContentInset()
+            } else {
+                0f
+            }
 
     private fun getProgressPosition(index: Int): Float {
         val segment = getSegments().getOrNull(index) ?: return 0f
@@ -326,13 +343,17 @@ class LinearTimelineMath(
 
     private fun getHorizontalLeadIn(): Float =
         (startPositionX + mathConfig.sizes.sizeImageLvl / 2f).coerceAtLeast(
-            mathConfig.sizes.sizeImageLvl / 2f
+            mathConfig.sizes.sizeImageLvl / 2f,
         )
 
     private fun getHorizontalTerminalInset(): Float =
         (mathConfig.sizes.sizeImageLvl / 2f - 2f).coerceAtLeast(0f)
 
-    private fun moveTo(path: Path, value: Float, crossAxis: Float) {
+    private fun moveTo(
+        path: Path,
+        value: Float,
+        crossAxis: Float,
+    ) {
         if (orientation == Orientation.VERTICAL) {
             path.moveTo(0f, value)
         } else {
@@ -340,7 +361,11 @@ class LinearTimelineMath(
         }
     }
 
-    private fun lineTo(path: Path, value: Float, crossAxis: Float) {
+    private fun lineTo(
+        path: Path,
+        value: Float,
+        crossAxis: Float,
+    ) {
         if (orientation == Orientation.VERTICAL) {
             path.lineTo(0f, value)
         } else {

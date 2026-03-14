@@ -7,7 +7,11 @@ import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
  * Factory for creating math engines based on strategy.
  */
 object TimelineMathFactory {
-    fun create(strategy: TimelineMathStrategy, config: TimelineMathConfig): TimelineMathEngine {
+    /** Creates a math engine for the supplied built-in [strategy]. */
+    fun create(
+        strategy: TimelineMathStrategy,
+        config: TimelineMathConfig,
+    ): TimelineMathEngine {
         return when (strategy) {
             TimelineMathStrategy.Snake -> SnakeTimelineMath(config)
             TimelineMathStrategy.LinearVertical ->

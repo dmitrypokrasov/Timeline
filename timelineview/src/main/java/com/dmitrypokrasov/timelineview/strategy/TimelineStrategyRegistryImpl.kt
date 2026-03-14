@@ -6,7 +6,7 @@ import com.dmitrypokrasov.timelineview.config.StrategyKey
  * Independent registry instance for custom strategy collections.
  */
 class TimelineStrategyRegistryImpl(
-    registerDefaults: Boolean = true
+    registerDefaults: Boolean = true,
 ) : TimelineStrategyRegistryContract {
     private val mathProviders = mutableMapOf<StrategyKey, TimelineMathProvider>()
     private val uiProviders = mutableMapOf<StrategyKey, TimelineUiProvider>()
