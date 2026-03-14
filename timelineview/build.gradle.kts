@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.binary.compatibility.validator)
     id("maven-publish")
 }
 
@@ -25,21 +26,6 @@ android {
                 "proguard-rules.pro",
             )
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    lint {
-        abortOnError = true
-        checkReleaseBuilds = false
-        explainIssues = true
-        htmlReport = true
-        warningsAsErrors = false
-        xmlReport = true
     }
 }
 
@@ -73,6 +59,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.customview)
     implementation(libs.material)
     implementation(libs.lottie)
     testImplementation(libs.junit)

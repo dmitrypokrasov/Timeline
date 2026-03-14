@@ -102,6 +102,33 @@ class TimelineRuntimeStateTest {
         assertEquals(TimelineMathStrategy.LinearVertical, updated.mathStrategy)
         assertEquals(TimelineUiStrategy.Snake, updated.uiStrategy)
     }
+
+    @Test
+    fun `with config replaces stored config and strategy keys`() {
+        val replacement =
+            TimelineConfig(
+                math = TimelineMathConfig(steps = listOf(TimelineStepData(title = "A", progress = 30))),
+                ui = TimelineUiConfig(colors = TimelineUiConfig.Colors(colorProgress = 9)),
+                mathStrategy = TimelineMathStrategy.LinearHorizontal,
+                uiStrategy = TimelineUiStrategy.Linear,
+                mathStrategyKey = StrategyKey("math_key"),
+                uiStrategyKey = StrategyKey("ui_key"),
+            )
+
+        val updated =
+            TimelineRuntimeState.from(
+                TimelineConfig(
+                    math = TimelineMathConfig(),
+                    ui = TimelineUiConfig(),
+                ),
+            ).withConfig(replacement)
+
+        assertEquals(replacement, updated.config)
+        assertEquals(TimelineMathStrategy.LinearHorizontal, updated.mathStrategy)
+        assertEquals(TimelineUiStrategy.Linear, updated.uiStrategy)
+        assertEquals(StrategyKey("math_key"), updated.mathStrategyKey)
+        assertEquals(StrategyKey("ui_key"), updated.uiStrategyKey)
+    }
 }
 
 private class CaptureMathEngine(

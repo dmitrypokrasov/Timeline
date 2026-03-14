@@ -2,22 +2,26 @@ package com.dmitrypokrasov.timelineview.ui
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.Log
 import android.view.View
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
-import java.util.IdentityHashMap
 import kotlin.math.roundToInt
 
 internal class TimelineLottieOverlayManager(
     private val ownerView: View,
 ) {
+    companion object {
+        private const val TAG = "TimelineLottieOverlay"
+    }
+
     private data class OverlayEntry(
-        val drawable: LottieDrawable,
+        val drawable: LottieDrawable?,
         var autoPlayConsumed: Boolean = false,
     )
 
-    private val drawableCache = IdentityHashMap<TimelineLottieSpec, OverlayEntry>()
+    private val drawableCache = mutableMapOf<TimelineLottieSpec, OverlayEntry>()
 
     fun draw(
         canvas: Canvas,
@@ -33,7 +37,7 @@ internal class TimelineLottieOverlayManager(
             drawableCache.getOrPut(spec) {
                 OverlayEntry(createDrawable(context, spec))
             }
-        val drawable = entry.drawable
+        val drawable = entry.drawable ?: return
 
         val scaledSize = size * spec.scale
         val inset = (size - scaledSize) / 2f
@@ -69,8 +73,8 @@ internal class TimelineLottieOverlayManager(
 
     fun clear() {
         drawableCache.values.forEach { entry ->
-            entry.drawable.cancelAnimation()
-            entry.drawable.callback = null
+            entry.drawable?.cancelAnimation()
+            entry.drawable?.callback = null
         }
         drawableCache.clear()
     }
@@ -78,10 +82,13 @@ internal class TimelineLottieOverlayManager(
     private fun createDrawable(
         context: Context,
         spec: TimelineLottieSpec,
-    ): LottieDrawable {
+    ): LottieDrawable? {
         val composition =
             LottieCompositionFactory.fromRawResSync(context, spec.rawRes).value
-                ?: throw IllegalArgumentException("Unable to load Lottie animation: ${spec.rawRes}")
+                ?: run {
+                    Log.w(TAG, "Unable to load Lottie animation: ${spec.rawRes}")
+                    return null
+                }
 
         return LottieDrawable().apply {
             callback = ownerView

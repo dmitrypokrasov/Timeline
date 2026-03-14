@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
+import java.util.LinkedHashMap
 
 internal interface TimelineTextLayout {
     val height: Int
@@ -25,6 +26,22 @@ internal interface TimelineTextLayoutBuilder {
 }
 
 internal class StaticTimelineTextLayoutBuilder : TimelineTextLayoutBuilder {
+    private data class LayoutCacheKey(
+        val text: CharSequence,
+        val textSize: Float,
+        val typefaceStyle: Int,
+        val color: Int,
+        val align: Paint.Align,
+        val width: Int,
+    )
+
+    private val cache =
+        object : LinkedHashMap<LayoutCacheKey, TimelineTextLayout>(64, 0.75f, true) {
+            override fun removeEldestEntry(eldest: MutableMap.MutableEntry<LayoutCacheKey, TimelineTextLayout>?): Boolean {
+                return size > 64
+            }
+        }
+
     override fun build(
         text: CharSequence,
         textSize: Float,
@@ -33,6 +50,18 @@ internal class StaticTimelineTextLayoutBuilder : TimelineTextLayoutBuilder {
         align: Paint.Align,
         width: Int,
     ): TimelineTextLayout {
+        val resolvedWidth = width.coerceAtLeast(1)
+        val cacheKey =
+            LayoutCacheKey(
+                text = text.toString(),
+                textSize = textSize,
+                typefaceStyle = typeface.style,
+                color = color,
+                align = align,
+                width = resolvedWidth,
+            )
+        cache[cacheKey]?.let { return it }
+
         val textPaint =
             TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
                 this.textSize = textSize
@@ -41,7 +70,7 @@ internal class StaticTimelineTextLayoutBuilder : TimelineTextLayoutBuilder {
             }
         val staticLayout =
             StaticLayout.Builder
-                .obtain(text, 0, text.length, textPaint, width.coerceAtLeast(1))
+                .obtain(text, 0, text.length, textPaint, resolvedWidth)
                 .setAlignment(
                     when (align) {
                         Paint.Align.LEFT -> Layout.Alignment.ALIGN_NORMAL
@@ -58,6 +87,6 @@ internal class StaticTimelineTextLayoutBuilder : TimelineTextLayoutBuilder {
             override fun draw(canvas: Canvas) {
                 staticLayout.draw(canvas)
             }
-        }
+        }.also { cache[cacheKey] = it }
     }
 }

@@ -10,6 +10,7 @@ import android.graphics.Path
 import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
@@ -23,6 +24,10 @@ import com.dmitrypokrasov.timelineview.model.TimelineStepData
 open class BaseTimelineUi(
     private var uiConfig: TimelineUiConfig,
 ) : TimelineUiRenderer {
+    companion object {
+        private const val TAG = "BaseTimelineUi"
+    }
+
     private val textLayoutBuilder: TimelineTextLayoutBuilder = StaticTimelineTextLayoutBuilder()
     private val pathEnable = Path()
     private val pathDisable = Path()
@@ -314,7 +319,15 @@ open class BaseTimelineUi(
                 bitmap
             }
 
-            else -> throw IllegalArgumentException("Unsupported drawable type")
+            null -> {
+                Log.w(TAG, "Unable to load drawable: $drawableId")
+                null
+            }
+
+            else -> {
+                Log.w(TAG, "Unsupported drawable type for resource: $drawableId")
+                null
+            }
         }
     }
 }

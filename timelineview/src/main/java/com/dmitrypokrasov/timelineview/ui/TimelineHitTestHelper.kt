@@ -52,13 +52,18 @@ internal object TimelineHitTestHelper {
         top: Float,
         size: Float,
         minTouchSize: Float,
-    ): Boolean {
+    ): Boolean = buildBounds(left, top, size, minTouchSize).contains(x, y)
+
+    fun buildBounds(
+        left: Float,
+        top: Float,
+        size: Float,
+        minTouchSize: Float,
+    ): TimelineBounds {
         val hitSize = maxOf(size, minTouchSize)
         val extra = (hitSize - size) / 2f
         val hitLeft = left - extra
         val hitTop = top - extra
-        val right = hitLeft + hitSize
-        val bottom = hitTop + hitSize
-        return x in hitLeft..right && y in hitTop..bottom
+        return TimelineBounds(hitLeft, hitTop, hitLeft + hitSize, hitTop + hitSize)
     }
 }

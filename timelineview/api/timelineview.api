@@ -1,0 +1,658 @@
+public final class com/dmitrypokrasov/timelineview/config/StrategyKey {
+	public static final synthetic fun box-impl (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/config/StrategyKey;
+	public static fun constructor-impl (Ljava/lang/String;)Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (Ljava/lang/String;Ljava/lang/Object;)Z
+	public static final fun equals-impl0 (Ljava/lang/String;Ljava/lang/String;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public static fun hashCode-impl (Ljava/lang/String;)I
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (Ljava/lang/String;)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineConfig {
+	public synthetic fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;
+	public final fun component2 ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;
+	public final fun component3 ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;
+	public final fun component4 ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;
+	public final fun component5-KvJZA58 ()Ljava/lang/String;
+	public final fun component6-KvJZA58 ()Ljava/lang/String;
+	public final fun copy-q3_fUOE (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Ljava/lang/String;Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
+	public static synthetic fun copy-q3_fUOE$default (Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMath ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;
+	public final fun getMathStrategy ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;
+	public final fun getMathStrategyKey-KvJZA58 ()Ljava/lang/String;
+	public final fun getUi ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;
+	public final fun getUiStrategy ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;
+	public final fun getUiStrategyKey-KvJZA58 ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineConfigParser {
+	public fun <init> (Landroid/content/Context;)V
+	public final fun parse (Landroid/util/AttributeSet;)Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineMathConfig {
+	public fun <init> ()V
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;Ljava/util/List;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;)V
+	public synthetic fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;Ljava/util/List;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;
+	public final fun component4 ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;
+	public final fun copy (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;Ljava/util/List;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;)Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;Ljava/util/List;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSizes ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;
+	public final fun getSpacing ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;
+	public final fun getStartPosition ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;
+	public final fun getSteps ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun setSizes (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;)V
+	public final fun setSpacing (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes {
+	public fun <init> ()V
+	public fun <init> (FF)V
+	public synthetic fun <init> (FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;FFILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSizeIconProgress ()F
+	public final fun getSizeImageLvl ()F
+	public fun hashCode ()I
+	public final fun setSizeIconProgress (F)V
+	public final fun setSizeImageLvl (F)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing {
+	public fun <init> ()V
+	public fun <init> (FFFFFFFF)V
+	public synthetic fun <init> (FFFFFFFFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()F
+	public final fun component5 ()F
+	public final fun component6 ()F
+	public final fun component7 ()F
+	public final fun component8 ()F
+	public final fun copy (FFFFFFFF)Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;FFFFFFFFILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMarginHorizontalImage ()F
+	public final fun getMarginHorizontalStroke ()F
+	public final fun getMarginHorizontalText ()F
+	public final fun getMarginTopDescription ()F
+	public final fun getMarginTopProgressIcon ()F
+	public final fun getMarginTopTitle ()F
+	public final fun getStepY ()F
+	public final fun getStepYFirst ()F
+	public fun hashCode ()I
+	public final fun setMarginHorizontalImage (F)V
+	public final fun setMarginHorizontalStroke (F)V
+	public final fun setMarginHorizontalText (F)V
+	public final fun setMarginTopDescription (F)V
+	public final fun setMarginTopProgressIcon (F)V
+	public final fun setMarginTopTitle (F)V
+	public final fun setStepY (F)V
+	public final fun setStepYFirst (F)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition : java/lang/Enum {
+	public static final field CENTER Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;
+	public static final field END Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;
+	public static final field START Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;
+	public static fun values ()[Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;
+}
+
+public abstract interface class com/dmitrypokrasov/timelineview/config/TimelineMathStrategy {
+	public static final field Companion Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy$Companion;
+	public abstract fun getKey-RZ6gGB0 ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineMathStrategy$Companion {
+	public final fun fromOrdinal (I)Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;
+	public final fun getEntries ()Ljava/util/List;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineMathStrategy$LinearHorizontal : com/dmitrypokrasov/timelineview/config/TimelineMathStrategy {
+	public static final field INSTANCE Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy$LinearHorizontal;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey-RZ6gGB0 ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineMathStrategy$LinearVertical : com/dmitrypokrasov/timelineview/config/TimelineMathStrategy {
+	public static final field INSTANCE Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy$LinearVertical;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey-RZ6gGB0 ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineMathStrategy$Snake : com/dmitrypokrasov/timelineview/config/TimelineMathStrategy {
+	public static final field INSTANCE Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy$Snake;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey-RZ6gGB0 ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineStrategy {
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;)V
+	public final fun component1 ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;
+	public final fun component2 ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;
+	public final fun copy (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;)Lcom/dmitrypokrasov/timelineview/config/TimelineStrategy;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/config/TimelineStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineStrategy;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMath ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;
+	public final fun getUi ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineUiConfig {
+	public fun <init> ()V
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;)V
+	public synthetic fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;
+	public final fun component2 ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;
+	public final fun component3 ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;
+	public final fun component4 ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;
+	public final fun copy (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColors ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;
+	public final fun getIcons ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;
+	public final fun getStroke ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;
+	public final fun getTextSizes ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;
+	public fun hashCode ()I
+	public final fun setColors (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;)V
+	public final fun setIcons (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;)V
+	public final fun setStroke (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;)V
+	public final fun setTextSizes (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors {
+	public fun <init> ()V
+	public fun <init> (IIII)V
+	public synthetic fun <init> (IIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun copy (IIII)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;IIIIILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Colors;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColorDescription ()I
+	public final fun getColorProgress ()I
+	public final fun getColorStroke ()I
+	public final fun getColorTitle ()I
+	public fun hashCode ()I
+	public final fun setColorDescription (I)V
+	public final fun setColorProgress (I)V
+	public final fun setColorStroke (I)V
+	public final fun setColorTitle (I)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons {
+	public fun <init> ()V
+	public fun <init> (II)V
+	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun copy (II)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;IIILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Icons;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIconDisableLvl ()I
+	public final fun getIconProgress ()I
+	public fun hashCode ()I
+	public final fun setIconDisableLvl (I)V
+	public final fun setIconProgress (I)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke {
+	public fun <init> ()V
+	public fun <init> (FF)V
+	public synthetic fun <init> (FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;FFILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$Stroke;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRadius ()F
+	public final fun getSizeStroke ()F
+	public fun hashCode ()I
+	public final fun setRadius (F)V
+	public final fun setSizeStroke (F)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes {
+	public fun <init> ()V
+	public fun <init> (FF)V
+	public synthetic fun <init> (FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;FFILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig$TextSizes;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSizeDescription ()F
+	public final fun getSizeTitle ()F
+	public fun hashCode ()I
+	public final fun setSizeDescription (F)V
+	public final fun setSizeTitle (F)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/dmitrypokrasov/timelineview/config/TimelineUiStrategy {
+	public static final field Companion Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy$Companion;
+	public abstract fun getKey-RZ6gGB0 ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineUiStrategy$Companion {
+	public final fun fromOrdinal (I)Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;
+	public final fun getEntries ()Ljava/util/List;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineUiStrategy$Linear : com/dmitrypokrasov/timelineview/config/TimelineUiStrategy {
+	public static final field INSTANCE Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy$Linear;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey-RZ6gGB0 ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/config/TimelineUiStrategy$Snake : com/dmitrypokrasov/timelineview/config/TimelineUiStrategy {
+	public static final field INSTANCE Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy$Snake;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey-RZ6gGB0 ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/math/LinearTimelineMath : com/dmitrypokrasov/timelineview/math/TimelineMathEngine {
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation;)V
+	public synthetic fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun buildLayout ()Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;
+	public fun buildPath (Landroid/graphics/Path;Landroid/graphics/Path;)V
+	public fun getConfig ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;
+	public fun getDescriptionYCoordinates (I)F
+	public fun getHorizontalIconOffset (I)F
+	public fun getIconXCoordinates (Landroid/graphics/Paint$Align;)F
+	public fun getIconYCoordinates (I)F
+	public fun getLeftCoordinates (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;)F
+	public final fun getOrientation ()Lcom/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation;
+	public fun getStartPosition ()F
+	public fun getSteps ()Ljava/util/List;
+	public fun getTitleXCoordinates (Landroid/graphics/Paint$Align;)F
+	public fun getTitleYCoordinates (I)F
+	public fun getTopCoordinates (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;)F
+	public fun getVerticalOffset (I)F
+	public fun replaceSteps (Ljava/util/List;)V
+	public fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)V
+	public fun setMeasuredWidth (I)V
+}
+
+public final class com/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation : java/lang/Enum {
+	public static final field HORIZONTAL Lcom/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation;
+	public static final field VERTICAL Lcom/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation;
+	public static fun values ()[Lcom/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation;
+}
+
+public final class com/dmitrypokrasov/timelineview/math/SnakeTimelineMath : com/dmitrypokrasov/timelineview/math/TimelineMathEngine {
+	public static final field Companion Lcom/dmitrypokrasov/timelineview/math/SnakeTimelineMath$Companion;
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)V
+	public fun buildLayout ()Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;
+	public fun buildPath (Landroid/graphics/Path;Landroid/graphics/Path;)V
+	public fun getConfig ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;
+	public fun getDescriptionYCoordinates (I)F
+	public fun getHorizontalIconOffset (I)F
+	public fun getIconXCoordinates (Landroid/graphics/Paint$Align;)F
+	public fun getIconYCoordinates (I)F
+	public fun getLeftCoordinates (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;)F
+	public fun getStartPosition ()F
+	public fun getSteps ()Ljava/util/List;
+	public fun getTitleXCoordinates (Landroid/graphics/Paint$Align;)F
+	public fun getTitleYCoordinates (I)F
+	public fun getTopCoordinates (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;)F
+	public fun getVerticalOffset (I)F
+	public fun replaceSteps (Ljava/util/List;)V
+	public fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)V
+	public fun setMeasuredWidth (I)V
+}
+
+public final class com/dmitrypokrasov/timelineview/math/SnakeTimelineMath$Companion {
+}
+
+public abstract interface class com/dmitrypokrasov/timelineview/math/TimelineMathEngine {
+	public abstract fun buildLayout ()Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;
+	public abstract fun buildPath (Landroid/graphics/Path;Landroid/graphics/Path;)V
+	public abstract fun getConfig ()Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;
+	public abstract fun getDescriptionYCoordinates (I)F
+	public abstract fun getHorizontalIconOffset (I)F
+	public abstract fun getIconXCoordinates (Landroid/graphics/Paint$Align;)F
+	public abstract fun getIconYCoordinates (I)F
+	public abstract fun getLeftCoordinates (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;)F
+	public abstract fun getStartPosition ()F
+	public abstract fun getSteps ()Ljava/util/List;
+	public abstract fun getTitleXCoordinates (Landroid/graphics/Paint$Align;)F
+	public abstract fun getTitleYCoordinates (I)F
+	public abstract fun getTopCoordinates (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;)F
+	public abstract fun getVerticalOffset (I)F
+	public abstract fun replaceSteps (Ljava/util/List;)V
+	public abstract fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)V
+	public abstract fun setMeasuredWidth (I)V
+}
+
+public final class com/dmitrypokrasov/timelineview/math/data/TimelineLayout {
+	public fun <init> (Ljava/util/List;Lcom/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon;Ljava/lang/Integer;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Lcom/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/util/List;Lcom/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon;Ljava/lang/Integer;)Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;Ljava/util/List;Lcom/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon;Ljava/lang/Integer;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getProgressIcon ()Lcom/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon;
+	public final fun getProgressStepIndex ()Ljava/lang/Integer;
+	public final fun getSteps ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/math/data/TimelineLayoutStep {
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;FFIFFIFFLandroid/graphics/Paint$Align;)V
+	public final fun component1 ()Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;
+	public final fun component10 ()Landroid/graphics/Paint$Align;
+	public final fun component2 ()F
+	public final fun component3 ()F
+	public final fun component4 ()I
+	public final fun component5 ()F
+	public final fun component6 ()F
+	public final fun component7 ()I
+	public final fun component8 ()F
+	public final fun component9 ()F
+	public final fun copy (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;FFIFFIFFLandroid/graphics/Paint$Align;)Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayoutStep;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayoutStep;Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;FFIFFIFFLandroid/graphics/Paint$Align;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayoutStep;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescriptionWidth ()I
+	public final fun getDescriptionX ()F
+	public final fun getDescriptionY ()F
+	public final fun getIconX ()F
+	public final fun getIconY ()F
+	public final fun getStep ()Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;
+	public final fun getTextAlign ()Landroid/graphics/Paint$Align;
+	public final fun getTitleWidth ()I
+	public final fun getTitleX ()F
+	public final fun getTitleY ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon {
+	public fun <init> (FF)V
+	public final fun component1 ()F
+	public final fun component2 ()F
+	public final fun copy (FF)Lcom/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon;FFILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLeft ()F
+	public final fun getTop ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/model/TimelineLottieSpec {
+	public fun <init> (IZZF)V
+	public synthetic fun <init> (IZZFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun component4 ()F
+	public final fun copy (IZZF)Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;IZZFILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAutoPlay ()Z
+	public final fun getRawRes ()I
+	public final fun getRepeat ()Z
+	public final fun getScale ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/model/TimelineStepData {
+	public fun <init> (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;I)V
+	public synthetic fun <init> (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/CharSequence;
+	public final fun component2 ()Ljava/lang/CharSequence;
+	public final fun component3 ()Ljava/lang/Integer;
+	public final fun component4 ()Ljava/lang/Integer;
+	public final fun component5 ()Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;
+	public final fun component6 ()Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;
+	public final fun component7 ()I
+	public final fun copy (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;I)Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;IILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBadgeAnimation ()Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;
+	public final fun getDescription ()Ljava/lang/CharSequence;
+	public final fun getIconDisabledRes ()Ljava/lang/Integer;
+	public final fun getIconRes ()Ljava/lang/Integer;
+	public final fun getProgress ()I
+	public final fun getProgressAnimation ()Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;
+	public final fun getTitle ()Ljava/lang/CharSequence;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public class com/dmitrypokrasov/timelineview/render/BaseTimelineUi : com/dmitrypokrasov/timelineview/render/TimelineUiRenderer {
+	public static final field Companion Lcom/dmitrypokrasov/timelineview/render/BaseTimelineUi$Companion;
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)V
+	public fun drawCompletedPath (Landroid/graphics/Canvas;)V
+	public fun drawDescription (Landroid/graphics/Canvas;Ljava/lang/CharSequence;FFLandroid/graphics/Paint$Align;I)V
+	public fun drawProgressIcon (Landroid/graphics/Canvas;FF)V
+	public fun drawRemainingPath (Landroid/graphics/Canvas;)V
+	public fun drawStepIcon (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;Landroid/graphics/Canvas;Landroid/graphics/Paint$Align;Landroid/content/Context;FF)V
+	public fun drawTitle (Landroid/graphics/Canvas;Ljava/lang/CharSequence;FFLandroid/graphics/Paint$Align;I)V
+	public fun getCompletedPath ()Landroid/graphics/Path;
+	public fun getConfig ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;
+	public fun getDescriptionBaselineOffset ()F
+	public fun getRemainingPath ()Landroid/graphics/Path;
+	public fun getTextAlignment ()Landroid/graphics/Paint$Align;
+	public fun getTitleBaselineOffset ()F
+	public fun initTools (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Landroid/content/Context;)V
+	public fun measureDescriptionHeight (Ljava/lang/CharSequence;ILandroid/graphics/Paint$Align;)I
+	public fun measureTitleHeight (Ljava/lang/CharSequence;ILandroid/graphics/Paint$Align;)I
+	public fun prepareIconPaint ()V
+	public fun prepareStrokePaint ()V
+	public fun prepareTextPaint ()V
+	public fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)V
+}
+
+public final class com/dmitrypokrasov/timelineview/render/BaseTimelineUi$Companion {
+}
+
+public final class com/dmitrypokrasov/timelineview/render/LinearTimelineUi : com/dmitrypokrasov/timelineview/render/BaseTimelineUi {
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)V
+}
+
+public final class com/dmitrypokrasov/timelineview/render/SnakeTimelineUi : com/dmitrypokrasov/timelineview/render/BaseTimelineUi {
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)V
+}
+
+public abstract interface class com/dmitrypokrasov/timelineview/render/TimelineUiRenderer {
+	public abstract fun drawCompletedPath (Landroid/graphics/Canvas;)V
+	public abstract fun drawDescription (Landroid/graphics/Canvas;Ljava/lang/CharSequence;FFLandroid/graphics/Paint$Align;I)V
+	public abstract fun drawProgressIcon (Landroid/graphics/Canvas;FF)V
+	public abstract fun drawRemainingPath (Landroid/graphics/Canvas;)V
+	public abstract fun drawStepIcon (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;Landroid/graphics/Canvas;Landroid/graphics/Paint$Align;Landroid/content/Context;FF)V
+	public abstract fun drawTitle (Landroid/graphics/Canvas;Ljava/lang/CharSequence;FFLandroid/graphics/Paint$Align;I)V
+	public abstract fun getCompletedPath ()Landroid/graphics/Path;
+	public abstract fun getConfig ()Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;
+	public abstract fun getDescriptionBaselineOffset ()F
+	public abstract fun getRemainingPath ()Landroid/graphics/Path;
+	public abstract fun getTextAlignment ()Landroid/graphics/Paint$Align;
+	public abstract fun getTitleBaselineOffset ()F
+	public abstract fun initTools (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Landroid/content/Context;)V
+	public abstract fun measureDescriptionHeight (Ljava/lang/CharSequence;ILandroid/graphics/Paint$Align;)I
+	public abstract fun measureTitleHeight (Ljava/lang/CharSequence;ILandroid/graphics/Paint$Align;)I
+	public abstract fun prepareIconPaint ()V
+	public abstract fun prepareStrokePaint ()V
+	public abstract fun prepareTextPaint ()V
+	public abstract fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)V
+}
+
+public abstract interface class com/dmitrypokrasov/timelineview/strategy/TimelineMathProvider {
+	public abstract fun create (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;
+	public abstract fun getKey-RZ6gGB0 ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistry : com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract {
+	public static final field INSTANCE Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistry;
+	public final fun createLocalRegistry (Z)Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;
+	public static synthetic fun createLocalRegistry$default (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistry;ZILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;
+	public fun getMathProvider-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineMathProvider;
+	public fun getUiProvider-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineUiProvider;
+	public fun registerMath (Lcom/dmitrypokrasov/timelineview/strategy/TimelineMathProvider;)V
+	public fun registerUi (Lcom/dmitrypokrasov/timelineview/strategy/TimelineUiProvider;)V
+	public fun unregisterMath-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineMathProvider;
+	public fun unregisterUi-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineUiProvider;
+}
+
+public abstract interface class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract {
+	public abstract fun getMathProvider-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineMathProvider;
+	public abstract fun getUiProvider-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineUiProvider;
+	public abstract fun registerMath (Lcom/dmitrypokrasov/timelineview/strategy/TimelineMathProvider;)V
+	public abstract fun registerUi (Lcom/dmitrypokrasov/timelineview/strategy/TimelineUiProvider;)V
+	public abstract fun unregisterMath-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineMathProvider;
+	public abstract fun unregisterUi-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineUiProvider;
+}
+
+public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryImpl : com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract {
+	public fun <init> ()V
+	public fun <init> (Z)V
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getMathProvider-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineMathProvider;
+	public fun getUiProvider-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineUiProvider;
+	public fun registerMath (Lcom/dmitrypokrasov/timelineview/strategy/TimelineMathProvider;)V
+	public fun registerUi (Lcom/dmitrypokrasov/timelineview/strategy/TimelineUiProvider;)V
+	public fun unregisterMath-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineMathProvider;
+	public fun unregisterUi-MVoWZYA (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineUiProvider;
+}
+
+public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryKt {
+	public static final fun registerDefaults (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;)V
+}
+
+public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyResolver {
+	public fun <init> ()V
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;)V
+	public synthetic fun <init> (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun resolveMath (Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;
+	public final fun resolveMath (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;
+	public final fun resolveMath-omWTb1Q (Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;
+	public final fun resolveUi (Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;
+	public final fun resolveUi (Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;
+	public final fun resolveUi-omWTb1Q (Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;
+}
+
+public abstract interface class com/dmitrypokrasov/timelineview/strategy/TimelineUiProvider {
+	public abstract fun create (Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;
+	public abstract fun getKey-RZ6gGB0 ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData {
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;)V
+	public final fun component1 ()Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;
+	public final fun component2 ()Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;
+	public final fun copy (Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMath ()Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;
+	public final fun getUi ()Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/strategy/TimelineViewStrategyController {
+	public fun <init> ()V
+	public fun <init> (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;)V
+	public synthetic fun <init> (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun resolve (Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
+	public final fun resolve (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
+	public final fun resolve-Fw8CsJI (Ljava/lang/String;Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
+}
+
+public final class com/dmitrypokrasov/timelineview/ui/TimelineHeightCalculator {
+	public fun <init> ()V
+	public final fun calculateHeight (Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;)I
+}
+
+public final class com/dmitrypokrasov/timelineview/ui/TimelineView : android/view/View {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getConfig ()Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
+	public fun onTouchEvent (Landroid/view/MotionEvent;)Z
+	public fun performClick ()Z
+	public final fun replaceSteps (Ljava/util/List;)V
+	public final fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)V
+	public final fun setMathEngine (Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;)V
+	public final fun setOnProgressIconClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setOnStepClickListener (Lkotlin/jvm/functions/Function2;)V
+	public final fun setStrategies (Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;)V
+	public final fun setStrategy (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;)V
+	public final fun setStrategy (Lcom/dmitrypokrasov/timelineview/config/TimelineStrategy;)V
+	public final fun setStrategy-qcADWwk (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun setStrategyRegistry (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;)V
+	public final fun setStrategyRegistry (Lkotlin/jvm/functions/Function1;)V
+	public final fun setUiRenderer (Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;)V
+}
+
+public final class com/dmitrypokrasov/timelineview/ui/TimelineViewController {
+	public fun <init> (Landroid/view/View;Landroid/content/Context;Landroid/util/AttributeSet;Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;)V
+	public synthetic fun <init> (Landroid/view/View;Landroid/content/Context;Landroid/util/AttributeSet;Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun draw (Landroid/graphics/Canvas;)V
+	public final fun getConfig ()Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
+	public final fun handleClick (FF)Z
+	public final fun isInteractive ()Z
+	public final fun measure (I)I
+	public final fun performProgressIconClick ()Z
+	public final fun performStepClick (I)Z
+	public final fun release ()V
+	public final fun replaceSteps (Ljava/util/List;)V
+	public final fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)V
+	public final fun setMathEngine (Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;)V
+	public final fun setOnProgressIconClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setOnStepClickListener (Lkotlin/jvm/functions/Function2;)V
+	public final fun setStrategies (Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;)V
+	public final fun setStrategy (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;)V
+	public final fun setStrategy (Lcom/dmitrypokrasov/timelineview/config/TimelineStrategy;)V
+	public final fun setStrategy-qcADWwk (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun setStrategyRegistry (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;)V
+	public final fun setStrategyRegistry (Lkotlin/jvm/functions/Function1;)V
+	public final fun setUiRenderer (Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;)V
+}
+
