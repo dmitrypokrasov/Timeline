@@ -86,6 +86,15 @@ check; the workflow generates the public site's version banner from published me
 
 ## API and dependency maintenance
 
+External GitHub Actions are pinned to full commit SHAs, with their release tags retained
+as comments. Resolve updates from the action's official repository and review its changes.
+Dependabot opens weekly update PRs against `dev` for Actions, the root Gradle build and the
+independent consumer. Its configuration must exist on the repository's default branch
+before GitHub starts scheduling updates; bring it to `main` through the next normal release.
+Updates are not automatically merged. Gradle changes still require reviewed dependency
+verification metadata and green consumer/API checks; a bot PR alone does not establish
+compatibility. Major toolchain upgrades should be reviewed separately from runtime libraries.
+
 `./gradlew :timelineview:apiCheck` checks Kotlin-visible binary API through Kotlin's validator.
 The reviewed baseline is `timelineview/api/timelineview.api`. `python3 scripts/check-api.py`
 also checks the release AAR's JVM surface, including JVM-public internals. Source compatibility
