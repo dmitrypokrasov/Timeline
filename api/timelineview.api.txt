@@ -637,6 +637,21 @@ public final class com.dmitrypokrasov.timelineview.model.TimelineLottieSpec {
   public static com.dmitrypokrasov.timelineview.model.TimelineLottieSpec copy$default(com.dmitrypokrasov.timelineview.model.TimelineLottieSpec, int, boolean, boolean, float, int, java.lang.Object);
 }
 
+public final class com.dmitrypokrasov.timelineview.model.TimelineSection {
+  public boolean equals(java.lang.Object);
+  public com.dmitrypokrasov.timelineview.model.TimelineSection(java.lang.String, java.lang.CharSequence, java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData>);
+  public final com.dmitrypokrasov.timelineview.model.TimelineSection copy(java.lang.String, java.lang.CharSequence, java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData>);
+  public final java.lang.CharSequence component2();
+  public final java.lang.CharSequence getTitle();
+  public final java.lang.String component1();
+  public final java.lang.String getId();
+  public final java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData> component3();
+  public final java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData> getSteps();
+  public int hashCode();
+  public java.lang.String toString();
+  public static com.dmitrypokrasov.timelineview.model.TimelineSection copy$default(com.dmitrypokrasov.timelineview.model.TimelineSection, java.lang.String, java.lang.CharSequence, java.util.List, int, java.lang.Object);
+}
+
 public final class com.dmitrypokrasov.timelineview.model.TimelineStepData {
   public boolean equals(java.lang.Object);
   public com.dmitrypokrasov.timelineview.model.TimelineStepData(java.lang.CharSequence, java.lang.CharSequence, java.lang.Integer, java.lang.Integer, com.dmitrypokrasov.timelineview.model.TimelineLottieSpec, com.dmitrypokrasov.timelineview.model.TimelineLottieSpec, int, java.lang.String, java.lang.Long);
@@ -918,6 +933,18 @@ public final class com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategy
   public final com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategiesData resolve(com.dmitrypokrasov.timelineview.config.TimelineMathStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.config.TimelineMathConfig, com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
   public final com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategiesData resolve-zTCkI4g(java.lang.String, java.lang.String, com.dmitrypokrasov.timelineview.config.TimelineMathStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, com.dmitrypokrasov.timelineview.config.TimelineMathConfig, com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
   public static com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategiesData resolve-zTCkI4g$default(com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController, java.lang.String, java.lang.String, com.dmitrypokrasov.timelineview.config.TimelineMathStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, com.dmitrypokrasov.timelineview.config.TimelineMathConfig, com.dmitrypokrasov.timelineview.config.TimelineUiConfig, int, java.lang.Object);
+}
+
+public final class com.dmitrypokrasov.timelineview.ui.GroupedTimelineView extends android.widget.LinearLayout {
+  public com.dmitrypokrasov.timelineview.ui.GroupedTimelineView(android.content.Context);
+  public com.dmitrypokrasov.timelineview.ui.GroupedTimelineView(android.content.Context, android.util.AttributeSet);
+  public com.dmitrypokrasov.timelineview.ui.GroupedTimelineView(android.content.Context, android.util.AttributeSet, int);
+  public com.dmitrypokrasov.timelineview.ui.GroupedTimelineView(android.content.Context, android.util.AttributeSet, int, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.util.List<com.dmitrypokrasov.timelineview.model.TimelineSection> getSections();
+  public final void replaceSections(java.util.List<com.dmitrypokrasov.timelineview.model.TimelineSection>);
+  public final void setOnStepClickListener(kotlin.jvm.functions.Function3<? super java.lang.String, ? super java.lang.Integer, ? super com.dmitrypokrasov.timelineview.model.TimelineStepData, kotlin.Unit>);
+  public final void setSections(java.util.List<com.dmitrypokrasov.timelineview.model.TimelineSection>, com.dmitrypokrasov.timelineview.config.TimelineConfig);
+  public static final kotlin.jvm.functions.Function3 access$getListener$p(com.dmitrypokrasov.timelineview.ui.GroupedTimelineView);
 }
 
 public interface com.dmitrypokrasov.timelineview.ui.MathSelection {

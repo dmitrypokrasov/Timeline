@@ -583,6 +583,21 @@ public final class com/dmitrypokrasov/timelineview/model/TimelineLottieSpec {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/dmitrypokrasov/timelineview/model/TimelineSection {
+	public fun <init> (Ljava/lang/String;Ljava/lang/CharSequence;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/CharSequence;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/CharSequence;Ljava/util/List;)Lcom/dmitrypokrasov/timelineview/model/TimelineSection;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/model/TimelineSection;Ljava/lang/String;Ljava/lang/CharSequence;Ljava/util/List;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/model/TimelineSection;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()Ljava/lang/String;
+	public final fun getSteps ()Ljava/util/List;
+	public final fun getTitle ()Ljava/lang/CharSequence;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/dmitrypokrasov/timelineview/model/TimelineStepData {
 	public fun <init> (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;ILjava/lang/String;Ljava/lang/Long;)V
 	public synthetic fun <init> (Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/Integer;Ljava/lang/Integer;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;Lcom/dmitrypokrasov/timelineview/model/TimelineLottieSpec;ILjava/lang/String;Ljava/lang/Long;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -755,6 +770,17 @@ public final class com/dmitrypokrasov/timelineview/strategy/TimelineViewStrategy
 	public final fun resolve (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
 	public final fun resolve-zTCkI4g (Ljava/lang/String;Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
 	public static synthetic fun resolve-zTCkI4g$default (Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategyController;Ljava/lang/String;Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
+}
+
+public final class com/dmitrypokrasov/timelineview/ui/GroupedTimelineView : android/widget/LinearLayout {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getSections ()Ljava/util/List;
+	public final fun replaceSections (Ljava/util/List;)V
+	public final fun setOnStepClickListener (Lkotlin/jvm/functions/Function3;)V
+	public final fun setSections (Ljava/util/List;Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)V
 }
 
 public final class com/dmitrypokrasov/timelineview/ui/TimelineHeightCalculator {

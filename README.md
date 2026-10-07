@@ -196,6 +196,49 @@ timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
 
 Overlays support only local `@RawRes` animations.
 
+## Grouped events (development preview)
+
+`GroupedTimelineView` and `TimelineSection` are additions for the next release; they are not
+in the published 2.0.0 AAR. Test this example against `build/repository` after running
+`bash scripts/check-release.sh`. The example is compiled by the independent consumer.
+
+Each section has an accessible heading and an independent timeline. Section order and date
+formatting belong to the host; IDs must be unique per section, while step IDs may repeat
+across different sections. All built-in layouts are supported. Use individual `TimelineView`s
+for custom registries. Empty sections retain their headings. This container measures all
+sections and is intended for bounded histories, not an unbounded feed.
+
+<!-- source: integration/migration/after/GroupedTimelineSample.kt -->
+```kotlin
+package com.example.migration
+
+import android.content.Context
+import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
+import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
+import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
+import com.dmitrypokrasov.timelineview.model.TimelineSection
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
+import com.dmitrypokrasov.timelineview.ui.GroupedTimelineView
+
+/** The host chooses section order, labels and the time zone used for date grouping. */
+fun groupedTimeline(context: Context): GroupedTimelineView {
+    val config = TimelineConfigParser(context).parse(null).copy(
+        mathStrategy = TimelineMathStrategy.LinearVertical,
+        uiStrategy = TimelineUiStrategy.Linear,
+    )
+    return GroupedTimelineView(context).apply {
+        setSections(listOf(
+            TimelineSection("today", "Today", listOf(TimelineStepData(id = "delivery", title = "Delivered", progress = 100))),
+            TimelineSection("yesterday", "Yesterday", listOf(TimelineStepData(id = "dispatch", title = "Dispatched", progress = 100))),
+        ), config)
+    }
+}
+```
+
+Use `replaceSections` to update data without replacing unchanged section views.
+`setOnStepClickListener` receives `(sectionId, indexWithinSection, step)`; the host owns progress
+and persistence. Put the container in a `ScrollView` when its sections exceed the screen.
+
 ## Strategies
 
 Built-in math strategies:
