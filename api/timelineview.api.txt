@@ -984,8 +984,10 @@ public final class com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManag
   public com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManager(android.view.View);
   public final int getEntryCount$timelineview_release();
   public final int getRunningAnimationCount$timelineview_release();
+  public final void beginFrame();
   public final void clear();
   public final void draw(android.graphics.Canvas, com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManager$Key, float, float, float);
+  public final void endFrame();
   public final void setActive(boolean);
   public final void submit(java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData>);
   public static final android.view.View access$getOwnerView$p(com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManager);
