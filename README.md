@@ -12,7 +12,7 @@ The project now ships with a shared quality toolchain:
 
 ## Development status
 
-The working tree targets **2.0.0** (not yet published). The last public artifact is **1.1.0**.
+The latest public release is **2.0.0**, published on 2026-10-07. Version **1.1.0** remains available unchanged.
 See [CHANGELOG.md](CHANGELOG.md) for behavior changes and migration instructions.
 
 Documentation: [migration 1.1 → 2.0](MIGRATION_1_TO_2.md), [architecture](ARCHITECTURE.md),
@@ -31,7 +31,7 @@ the required one-time GitHub Pages and branch-protection settings.
 
 ## Requirements
 
-The 2.0 candidate supports **Android 8.1 / API 27 and newer**. The checked-in builds use
+Timeline 2.0 supports **Android 8.1 / API 27 and newer**. The checked-in builds use
 JDK 17, Gradle 8.6, AGP 8.4.0, Kotlin 1.9.0 and compile SDK 34; library bytecode targets
 Java 8. These are the verified toolchain versions, not a claim that every older/newer
 consumer toolchain is compatible. Kotlin and Java consumers are compiled against the AAR.
@@ -45,18 +45,16 @@ repositories {
 }
 
 dependencies {
-    implementation "com.github.dmitrypokrasov:timelineview:1.1.0"
+    implementation "com.github.dmitrypokrasov:timelineview:2.0.0"
 }
 ```
 
 GitHub Packages publication is still available for private/authenticated installs, but the public distribution endpoint is GitHub Pages.
 
-## Minimal Kotlin quickstart (2.0 candidate)
+## Minimal Kotlin quickstart (2.0)
 
-The installation coordinate above is the published **1.1.0**. To test the unreleased 2.0
-API locally, run `:timelineview:publishReleasePublicationToBuildRepository`, add the
-resulting `build/repository` as a Maven repository in your host, and use version `2.0.0`.
-Do not expect that version at the public URL until publication is complete.
+The example below uses the published **2.0.0** dependency above. When upgrading an existing
+1.1.0 host, follow the [migration guide](MIGRATION_1_TO_2.md); 2.0 is a breaking major release.
 
 The following host is compiled and rendered by the independent consumer tests. Attach
 `MigratedTimeline(context).view` to your layout. It draws text and a progress line without
@@ -196,7 +194,7 @@ timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
 - `badgeAnimation`: drawn above the step badge icon.
 - `progressAnimation`: drawn above the active progress icon for the first step with `progress != 100`.
 
-Version 1 supports only local `@RawRes` animations.
+Overlays support only local `@RawRes` animations.
 
 ## Strategies
 
