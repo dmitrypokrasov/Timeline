@@ -26,3 +26,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "TimelinePublishedConsumer"
 include(":legacy")
+include(":compose")

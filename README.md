@@ -35,7 +35,8 @@ Timeline 2.0 supports **Android 8.1 / API 27 and newer**. The checked-in builds 
 JDK 17, Gradle 8.6, AGP 8.4.0, Kotlin 1.9.0 and compile SDK 34; library bytecode targets
 Java 8. These are the verified toolchain versions, not a claim that every older/newer
 consumer toolchain is compatible. Kotlin and Java consumers are compiled against the AAR.
-The library uses Android Views; a Compose host needs its own `AndroidView` integration.
+The library uses Android Views; the [compiled Compose wrapper](integration/consumer/compose/src/main/java/com/example/timelinecompose/Timeline.kt) demonstrates `AndroidView` integration.
+View, engine and renderer updates run on the Android UI thread.
 
 ## Installation
 
@@ -264,6 +265,40 @@ timelineView.setStrategy(
         ui = TimelineUiStrategy.Linear
     )
 )
+```
+
+## Compose and density-aware hosts
+
+The [Compose example](integration/consumer/compose/src/main/java/com/example/timelinecompose/Timeline.kt)
+accepts immutable `TimelineConfig`, a `Modifier` and an optional click callback. Copy it into
+your Compose host. It creates the View in `AndroidView.factory`, refreshes callbacks on every
+update, reuses engines for step-only changes and clears the callback on release. Keep progress
+in host state; changing the callback alone does not request another layout. The wrapper uses
+public 2.0 APIs and is compiled/tested as part of the independent AAR consumer. Compose is
+not a transitive dependency of the library. Its fixture compiler version is paired with the
+repository's Kotlin 1.9.0 toolchain; your app keeps its own compatible Compose toolchain.
+
+**Development preview:** `TimelineDefaults` is an additive API for the next release, not part
+of the published 2.0.0 AAR. It provides XML-equivalent defaults and explicit `dp`/`sp`
+conversion using the current context. Recreate these values after density/font configuration
+changes; Kotlin configuration values continue to mean pixels. Test the following compiled
+example against the local staged artifact with `bash scripts/check-release.sh`.
+
+<!-- source: integration/migration/after/DensityAwareTimeline.kt -->
+```kotlin
+package com.example.migration
+
+import android.content.Context
+import com.dmitrypokrasov.timelineview.config.TimelineDefaults
+import com.dmitrypokrasov.timelineview.ui.TimelineView
+
+/** Development API: convert dp/sp at the host boundary; configuration still stores pixels. */
+fun densityAwareTimeline(context: Context): TimelineView {
+    val defaults = TimelineDefaults.config(context)
+    val math = defaults.math.copy(spacing = defaults.math.spacing.copy(stepY = TimelineDefaults.dp(context, 80f)))
+    val ui = defaults.ui.copy(textSizes = defaults.ui.textSizes.copy(sizeTitle = TimelineDefaults.sp(context, 18f)))
+    return TimelineView(context).apply { setConfig(defaults.copy(math = math, ui = ui)) }
+}
 ```
 
 ## Custom registries
