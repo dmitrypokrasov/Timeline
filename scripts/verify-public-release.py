@@ -68,7 +68,11 @@ def verify_site(base, site, release, commit, download=fetch):
 def prepare_consumer(destination, manifest):
     shutil.copytree(ROOT / 'integration', destination / 'integration', ignore=shutil.ignore_patterns('build', '.gradle', 'local.properties'))
     consumer = destination / 'integration/consumer'
-    (consumer / 'settings.gradle.kts').write_text('''pluginManagement {
+    settings = consumer / 'settings.gradle.kts'
+    # Keep every ordinary integration module (for example Compose) in public verification.
+    # Opt-in device-only modules are intentionally not enabled by this JVM build.
+    includes = re.findall(r'^include\([^\n]+\)$', settings.read_text(), re.M)
+    settings.write_text('''pluginManagement {
     repositories { google(); mavenCentral(); gradlePluginPortal() }
 }
 dependencyResolutionManagement {
@@ -83,8 +87,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "TimelinePublicReleaseConsumer"
-include(":legacy")
-''')
+''' + '\n'.join(includes) + '\n')
     verification = consumer / 'gradle/verification-metadata.xml'
     tree = ET.parse(verification)
     trusted = tree.getroot().find(NS + 'configuration/' + NS + 'trusted-artifacts')
@@ -131,8 +134,8 @@ def main():
                                 '-PtimelineRepository=' + args.url.rstrip('/') + '/maven'], check=True)
             finally:
                 report = ROOT / 'build/reports/public-consumer'
-                if (consumer / 'build/reports').exists():
-                    shutil.copytree(consumer / 'build/reports', report, dirs_exist_ok=True)
+                for reports in consumer.glob('**/build/reports'):
+                    shutil.copytree(reports, report / reports.relative_to(consumer).parent, dirs_exist_ok=True)
     print('Public release verification passed.', flush=True)
 
 

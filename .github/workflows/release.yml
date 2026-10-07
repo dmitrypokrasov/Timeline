@@ -124,7 +124,7 @@ jobs:
           else
             gh release create "$RELEASE_TAG" --verify-tag --title "Timeline ${RELEASE_TAG#v}" --notes-file build/release-notes.md
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: public-consumer-reports

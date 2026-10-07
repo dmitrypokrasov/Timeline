@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
 
@@ -71,6 +72,18 @@ class PublicReleaseTest(unittest.TestCase):
         self.assertEqual(len(component), 3)
         self.assertEqual({a.find(public.NS + 'sha256').get('value') for a in component}, set(self.manifest['files'].values()))
         self.assertNotIn('docs/maven', (consumer / 'settings.gradle.kts').read_text())
+
+    def test_public_consumer_keeps_additional_integration_modules(self):
+        fixture = self.root / 'fixture'
+        first = public.prepare_consumer(fixture, self.manifest)
+        settings = first / 'settings.gradle.kts'
+        settings.write_text(settings.read_text() + 'include(":compose")\n')
+        with patch.object(public, 'ROOT', fixture):
+            second = public.prepare_consumer(self.root / 'second', self.manifest)
+        result = (second / 'settings.gradle.kts').read_text()
+        self.assertIn('include(":legacy")', result)
+        self.assertIn('include(":compose")', result)
+        self.assertNotIn('docs/maven', result)
 
     def test_release_notes_select_exact_version_and_fail_when_missing(self):
         changelog = '# Changes\n\n## 2.0.0 — today\n\nNew features\n\n## 1.1.0\n\nOld features\n'
