@@ -1,6 +1,6 @@
 # Releasing Timeline
 
-The checkout targets **2.0.0, unreleased**. Local verification never publishes. Publishing
+The checkout targets **2.0.0**. Local verification never publishes. Publishing
 requires explicitly dispatching **Publish tested release** for an existing stable tag.
 The workflow builds/tests that tag and publishes the exact staged Maven bytes it tested.
 
