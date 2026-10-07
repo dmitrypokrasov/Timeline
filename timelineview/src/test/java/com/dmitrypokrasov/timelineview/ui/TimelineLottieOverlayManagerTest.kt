@@ -1,8 +1,11 @@
 package com.dmitrypokrasov.timelineview.ui
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.view.View
+import android.widget.FrameLayout
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieTask
 import com.dmitrypokrasov.timelineview.R
@@ -10,10 +13,13 @@ import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
@@ -99,6 +105,42 @@ class TimelineLottieOverlayManagerTest {
             assertEquals(0, manager.runningAnimationCount)
         } finally {
             manager.clear()
+        }
+    }
+
+    @Test
+    fun `fully clipped owner pauses even when drawing is skipped and reentry resumes`() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().visible()
+        val parent = FrameLayout(activity.get())
+        val owner = View(activity.get())
+        val manager = TimelineLottieOverlayManager(owner)
+        try {
+            activity.get().setContentView(parent)
+            parent.addView(owner, FrameLayout.LayoutParams(100, 100))
+            val exact = View.MeasureSpec.makeMeasureSpec(200, View.MeasureSpec.EXACTLY)
+            parent.measure(exact, exact)
+            parent.layout(0, 0, 200, 200)
+            manager.submit(listOf(TimelineStepData(progress = 20, badgeAnimation = TimelineLottieSpec(R.raw.timeline_test_animation))))
+            manager.setActive(true)
+            owner.viewTreeObserver.dispatchOnPreDraw()
+            assertTrue(owner.getGlobalVisibleRect(Rect()))
+            drawVisible(manager, listOf(0))
+            assertEquals(1, manager.runningAnimationCount)
+            parent.scrollTo(0, 300)
+            assertFalse(owner.getGlobalVisibleRect(Rect()))
+            owner.viewTreeObserver.dispatchOnPreDraw()
+            // A parent can skip onDraw entirely for a fully clipped child.
+            assertEquals(0, manager.runningAnimationCount)
+            parent.scrollTo(0, 0)
+            owner.viewTreeObserver.dispatchOnPreDraw()
+            drawVisible(manager, listOf(0))
+            assertEquals(1, manager.runningAnimationCount)
+            manager.clear()
+            owner.viewTreeObserver.dispatchOnPreDraw()
+            assertEquals(0, manager.runningAnimationCount)
+        } finally {
+            manager.clear()
+            activity.pause().stop().destroy()
         }
     }
 

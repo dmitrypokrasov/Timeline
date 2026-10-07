@@ -1,9 +1,11 @@
 package com.dmitrypokrasov.timelineview.ui
 
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
 import android.view.View
+import android.view.ViewTreeObserver
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
@@ -31,6 +33,18 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
 
     private val entries = mutableMapOf<Key, Entry>()
     private var active = false
+    private var ownerVisible = true
+    private val ownerBounds = Rect()
+    private var observedTree: ViewTreeObserver? = null
+    private val preDrawListener =
+        ViewTreeObserver.OnPreDrawListener {
+            val visible = ownerView.getGlobalVisibleRect(ownerBounds)
+            if (ownerVisible != visible) {
+                ownerVisible = visible
+                entries.values.forEach(::updatePlayback)
+            }
+            true
+        }
     internal val entryCount: Int get() = entries.size
     internal val runningAnimationCount: Int get() = entries.values.count { it.drawable.isAnimating }
 
@@ -96,6 +110,14 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
 
     fun setActive(active: Boolean) {
         this.active = active
+        if (active && observedTree == null) {
+            observedTree = ownerView.viewTreeObserver.also { it.addOnPreDrawListener(preDrawListener) }
+        } else if (!active) {
+            observedTree?.let { tree ->
+                (if (tree.isAlive) tree else ownerView.viewTreeObserver).removeOnPreDrawListener(preDrawListener)
+            }
+            observedTree = null
+        }
         entries.values.forEach(::updatePlayback)
     }
 
@@ -104,12 +126,13 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
     }
 
     fun endFrame() {
-        entries.values.filter { !it.visible }.forEach(::updatePlayback)
+        entries.values.forEach { if (!it.visible) updatePlayback(it) }
     }
 
     private fun updatePlayback(entry: Entry) {
         val drawable = entry.drawable
-        if (!active || !entry.visible || !entry.spec.autoPlay) {
+        val visible = ownerVisible && entry.visible
+        if (!active || !visible || !entry.spec.autoPlay) {
             drawable.pauseAnimation()
         } else if (drawable.composition != null && !drawable.isAnimating) {
             if (!entry.started) {
@@ -148,6 +171,7 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
     }
 
     fun clear() {
+        setActive(false)
         entries.values.forEach(::dispose)
         entries.clear()
     }

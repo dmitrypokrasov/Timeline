@@ -84,6 +84,8 @@ incoming segment separately. Both modes expose one active progress marker.
 - Lottie drawables are keyed by stable step identity and overlay role, paused while hidden,
   paused outside the drawn viewport, evicted when removed, and released on detach.
   Viewport culling includes scaled overlay bounds; returning overlays resume playback.
+  A lifecycle-bound pre-draw observer also pauses fully clipped owner views when their
+  parent skips drawing them; the observer is removed while inactive and on release.
   The frame does not own animation playback.
 - Offscreen steps are skipped during drawing. Layout still measures the complete dataset;
   an unbounded feed needs a recycling container.
