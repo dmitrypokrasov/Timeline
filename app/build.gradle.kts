@@ -27,26 +27,11 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     testOptions {
         unitTests.isIncludeAndroidResources = true
         unitTests.all {
             it.systemProperty("robolectric.dependency.repo.url", "https://repo.maven.apache.org/maven2")
         }
-    }
-    lint {
-        abortOnError = true
-        checkReleaseBuilds = false
-        explainIssues = true
-        htmlReport = true
-        warningsAsErrors = false
-        xmlReport = true
     }
 }
 

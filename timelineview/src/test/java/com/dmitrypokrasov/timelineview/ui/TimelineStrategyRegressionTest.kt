@@ -18,6 +18,7 @@ import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,6 +45,8 @@ class TimelineStrategyRegressionTest {
         controller.setStrategyRegistry(TimelineStrategyRegistry.createLocalRegistry(false))
         controller.replaceSteps(listOf(TimelineStepData(id = "retained", progress = 70)))
         assertEquals("retained", engine.getSteps().single().id)
+        assertThrows(IllegalArgumentException::class.java) { controller.setStrategy(TimelineMathStrategy.Snake, TimelineUiStrategy.Linear) }
+        controller.setStrategyRegistry(TimelineStrategyRegistry.createLocalRegistry())
         controller.setStrategy(TimelineMathStrategy.Snake, TimelineUiStrategy.Linear)
         controller.replaceSteps(emptyList())
         assertEquals(1, engine.getSteps().size)

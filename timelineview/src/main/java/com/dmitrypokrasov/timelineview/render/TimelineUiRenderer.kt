@@ -11,6 +11,7 @@ import com.dmitrypokrasov.timelineview.model.TimelineStepData
 /**
  * Renderer contract for drawing a timeline once the math engine has produced its geometry.
  */
+@Suppress("TooManyFunctions") // Public renderer contract; splitting it would break existing implementations.
 interface TimelineUiRenderer {
     /** Replaces the current renderer configuration. */
     fun setConfig(config: TimelineUiConfig)

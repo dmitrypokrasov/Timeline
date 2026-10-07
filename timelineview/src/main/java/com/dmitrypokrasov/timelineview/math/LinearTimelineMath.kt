@@ -12,6 +12,7 @@ import com.dmitrypokrasov.timelineview.model.indexOfStep
 /**
  * Simple [TimelineMathEngine] that arranges steps on a straight vertical or horizontal line.
  */
+@Suppress("TooManyFunctions") // Retains legacy coordinate methods alongside the complete-layout contract.
 class LinearTimelineMath(
     private var mathConfig: TimelineMathConfig,
     val orientation: Orientation = Orientation.VERTICAL,

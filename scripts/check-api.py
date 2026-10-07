@@ -42,7 +42,9 @@ with tempfile.TemporaryDirectory(prefix='timeline-api-') as directory:
         elif current:
             current.append(line)
             if line == '}':
-                blocks.append('\n'.join(current))
+                # Kotlin may reorder generated methods between clean and incremental builds.
+                # Declaration order is not JVM API; retain every signature and constant value.
+                blocks.append('\n'.join([current[0], *sorted(current[1:-1]), current[-1]]))
                 current = []
     actual = '\n\n'.join(blocks) + '\n'
 report = ROOT / 'build/reports/api/timelineview.api.txt'

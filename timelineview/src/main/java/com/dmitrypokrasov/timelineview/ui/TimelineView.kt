@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.view.ViewCompat
 import com.dmitrypokrasov.timelineview.config.StrategyKey
+import com.dmitrypokrasov.timelineview.config.TimelineConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
@@ -44,6 +45,15 @@ class TimelineView
             ViewCompat.setAccessibilityDelegate(this, accessibility)
             isFocusable = true
             ready = true
+        }
+
+        /** Returns declarative configuration; direct instances are represented by their fallback strategies. */
+        fun getConfig(): TimelineConfig = controller.getConfig()
+
+        /** Replaces the complete configuration and returns both strategies to registry selection. */
+        fun setConfig(config: TimelineConfig) {
+            controller.setConfig(config)
+            changed()
         }
 
         /** Applies immutable configuration explicitly and invalidates all derived geometry. */

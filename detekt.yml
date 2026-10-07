@@ -9,13 +9,18 @@ complexity:
   LongParameterList:
     active: false
   LongMethod:
-    active: false
+    active: true
+    threshold: 200
   TooManyFunctions:
-    active: false
+    active: true
+    thresholdInClasses: 35
+    thresholdInInterfaces: 20
+    thresholdInObjects: 20
+    thresholdInEnums: 20
 
 exceptions:
   TooGenericExceptionThrown:
-    active: false
+    active: true
 
 naming:
   FunctionNaming:
@@ -28,4 +33,5 @@ style:
   MaxLineLength:
     active: false
   ReturnCount:
-    active: false
+    active: true
+    max: 4

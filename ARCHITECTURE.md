@@ -38,9 +38,15 @@ repeatable. External side effects inside a custom factory are outside the contro
 registry preserves direct instances. `replaceSteps` retains the current strategy and updates
 its step data without rebuilding renderer resources.
 
+`setConfig(TimelineConfig)` replaces the full declarative selection; `setConfig(math, ui)`
+updates configuration while retaining direct instances. `getConfig()` returns the declarative
+values and fallback strategies, not a serialization of manually installed engine instances.
+
 The internal `TimelineBuiltIns` catalog supplies both public factories and default registry
 providers. The global registry remains a compatibility entry point; prefer a local registry
 for independent host screens and tests.
+Built-in selection also resolves through registry providers. A registry created with
+`registerDefaults = false` must supply the requested built-in fallback provider itself.
 
 ## Measurement and the frame
 

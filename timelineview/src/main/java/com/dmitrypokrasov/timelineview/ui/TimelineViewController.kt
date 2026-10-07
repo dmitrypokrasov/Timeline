@@ -8,6 +8,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.StrategyKey
+import com.dmitrypokrasov.timelineview.config.TimelineConfig
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
@@ -21,6 +22,7 @@ import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
 import com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController
 
+@Suppress("TooManyFunctions") // Includes compatibility entry points retained for existing callers.
 class TimelineViewController(
     private val ownerView: View,
     private val context: Context,
@@ -60,6 +62,10 @@ class TimelineViewController(
         timelineUi = resolved.ui
         initTools()
     }
+
+    fun getConfig(): TimelineConfig = state.toConfig()
+
+    fun setConfig(config: TimelineConfig) = transition(state.withConfig(config))
 
     fun setConfig(
         math: com.dmitrypokrasov.timelineview.config.TimelineMathConfig,
@@ -118,6 +124,16 @@ class TimelineViewController(
     fun setOnProgressIconClickListener(listener: (() -> Unit)?) {
         onProgressIconClickListener = listener
     }
+
+    fun isInteractive(): Boolean = onStepClickListener != null || onProgressIconClickListener != null
+
+    fun performStepClick(index: Int): Boolean {
+        val step = layout?.steps?.getOrNull(index)?.step ?: return false
+        val id = virtualIds[step.identity(index)] ?: return false
+        return clickTarget(id)
+    }
+
+    fun performProgressIconClick(): Boolean = clickTarget(PROGRESS_ID)
 
     internal fun targets(): List<Target> =
         frame?.targets().orEmpty().map {
@@ -186,15 +202,20 @@ class TimelineViewController(
 
     internal fun clickTarget(id: Int): Boolean {
         if (id == PROGRESS_ID && layout?.progressIcon != null) {
-            val listener = onProgressIconClickListener ?: return false
-            listener()
-            return true
+            return onProgressIconClickListener?.let {
+                it()
+                true
+            } ?: false
         }
-        val steps = layout?.steps ?: return false
-        val index = steps.indices.firstOrNull { virtualIds[steps[it].step.identity(it)] == id } ?: return false
-        val listener = onStepClickListener ?: return false
-        listener(index, steps[index].step)
-        return true
+        val steps = layout?.steps.orEmpty()
+        val index = steps.indices.firstOrNull { virtualIds[steps[it].step.identity(it)] == id }
+        val listener = onStepClickListener
+        return if (index != null && listener != null) {
+            listener(index, steps[index].step)
+            true
+        } else {
+            false
+        }
     }
 
     fun handleClick(

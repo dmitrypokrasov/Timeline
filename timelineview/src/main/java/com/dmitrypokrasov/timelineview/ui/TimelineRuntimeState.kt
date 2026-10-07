@@ -36,6 +36,10 @@ internal data class TimelineRuntimeState(
     val math: MathSelection,
     val ui: UiSelection,
 ) {
+    fun withConfig(config: TimelineConfig): TimelineRuntimeState = from(config)
+
+    fun toConfig(): TimelineConfig = TimelineConfig(mathConfig.copy(steps = mathConfig.steps.toList()), uiConfig, math.fallback, ui.fallback, (math as? MathSelection.ByKey)?.key, (ui as? UiSelection.ByKey)?.key)
+
     fun withSteps(steps: List<TimelineStepData>): TimelineRuntimeState = copy(mathConfig = mathConfig.copy(steps = steps.toList()))
 
     fun withMathEngine(engine: TimelineMathEngine): TimelineRuntimeState = copy(mathConfig = engine.getConfig(), math = MathSelection.Instance(engine, math.fallback))
@@ -62,6 +66,6 @@ internal data class TimelineRuntimeState(
         )
 
     companion object {
-        fun from(config: TimelineConfig): TimelineRuntimeState = TimelineRuntimeState(config.math, config.ui, MathSelection.ByKey(config.mathStrategyKey, config.mathStrategy), UiSelection.ByKey(config.uiStrategyKey, config.uiStrategy))
+        fun from(config: TimelineConfig): TimelineRuntimeState = TimelineRuntimeState(config.math.copy(steps = config.math.steps.toList()), config.ui, MathSelection.ByKey(config.mathStrategyKey, config.mathStrategy), UiSelection.ByKey(config.uiStrategyKey, config.uiStrategy))
     }
 }

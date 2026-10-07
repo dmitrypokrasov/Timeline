@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Path
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.StrategyKey
+import com.dmitrypokrasov.timelineview.config.TimelineConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
@@ -38,6 +39,24 @@ class TimelineAtomicStateTest {
     private fun math() = TimelineMathConfig(steps = listOf(TimelineStepData(id = "a", title = "A", progress = 40)))
 
     private fun controller() = TimelineViewController(View(context), context, null)
+
+    @Test
+    fun `full declarative config replaces direct selection and rolls back on failure`() {
+        val engine = LinearTimelineMath(math())
+        val controller = controller()
+        controller.setMathEngine(engine)
+        val replacement = TimelineConfig(math(), TimelineUiConfig(), TimelineMathStrategy.LinearHorizontal, TimelineUiStrategy.Linear)
+        controller.setConfig(replacement)
+        assertEquals(replacement, controller.getConfig())
+        controller.measure(320)
+        val before = controller.targets()
+        assertThrows(IllegalArgumentException::class.java) { controller.setConfig(replacement.copy(mathStrategy = TimelineMathStrategy.TimeScaled)) }
+        assertEquals(replacement, controller.getConfig())
+        assertEquals(before, controller.targets())
+        controller.replaceSteps(listOf(TimelineStepData(id = "replacement", progress = 0)))
+        assertEquals("a", engine.getSteps().single().id)
+        assertEquals("replacement", controller.getConfig().math.steps.single().id)
+    }
 
     @Test
     fun `invalid strategy keeps the explicit selection and measured targets`() {

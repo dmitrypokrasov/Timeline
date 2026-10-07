@@ -26,13 +26,6 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     testOptions {
         unitTests.isIncludeAndroidResources = true
         unitTests.all {
@@ -46,14 +39,6 @@ android {
     }
     publishing {
         singleVariant("release") { withSourcesJar() }
-    }
-    lint {
-        abortOnError = true
-        checkReleaseBuilds = false
-        explainIssues = true
-        htmlReport = true
-        warningsAsErrors = false
-        xmlReport = true
     }
 }
 
@@ -90,9 +75,9 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.customview)
     implementation(libs.material)
     implementation(libs.lottie)
-    implementation(libs.androidx.customview)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.junit)

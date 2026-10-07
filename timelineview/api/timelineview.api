@@ -718,7 +718,6 @@ public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegi
 }
 
 public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyResolver {
-	public static final field Companion Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyResolver$Companion;
 	public fun <init> ()V
 	public fun <init> (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;)V
 	public synthetic fun <init> (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -728,9 +727,6 @@ public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyReso
 	public final fun resolveUi (Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;
 	public final fun resolveUi (Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;
 	public final fun resolveUi-omWTb1Q (Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;
-}
-
-public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyResolver$Companion {
 }
 
 public abstract interface class com/dmitrypokrasov/timelineview/strategy/TimelineUiProvider {
@@ -772,10 +768,12 @@ public final class com/dmitrypokrasov/timelineview/ui/TimelineView : android/vie
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun dispatchKeyEvent (Landroid/view/KeyEvent;)Z
+	public final fun getConfig ()Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
 	public fun onRtlPropertiesChanged (I)V
 	public fun onTouchEvent (Landroid/view/MotionEvent;)Z
 	public fun performClick ()Z
 	public final fun replaceSteps (Ljava/util/List;)V
+	public final fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)V
 	public final fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)V
 	public fun setEnabled (Z)V
 	public final fun setMathEngine (Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;)V
@@ -797,10 +795,15 @@ public final class com/dmitrypokrasov/timelineview/ui/TimelineViewController {
 	public final fun desiredWidth ()I
 	public final fun draw (Landroid/graphics/Canvas;)V
 	public final fun getAccessibilityDescription ()Ljava/lang/String;
+	public final fun getConfig ()Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
 	public final fun handleClick (FF)Z
+	public final fun isInteractive ()Z
 	public final fun measure (I)I
+	public final fun performProgressIconClick ()Z
+	public final fun performStepClick (I)Z
 	public final fun release ()V
 	public final fun replaceSteps (Ljava/util/List;)V
+	public final fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)V
 	public final fun setConfig (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)V
 	public final fun setMathEngine (Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;)V
 	public final fun setOnProgressIconClickListener (Lkotlin/jvm/functions/Function0;)V
