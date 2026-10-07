@@ -68,10 +68,23 @@ Releases are serialized and are not cancelled by a newer dispatch.
 
 ## Verification after publication
 
-Check the workflow's Pages URL, version POM/AAR/sources and versioned API docs. Build a clean
-application against the public Maven URL rather than a local repository or Gradle cache.
-Confirm the old 1.1.0 files remain available. Update the public README status only after this
-check; the workflow generates the public site's version banner from published metadata.
+After deployment, the workflow runs `scripts/verify-public-release.py`. It compares the
+public release manifest, all preserved Maven version files and version metadata with the
+staged site, and checks versioned API docs. It then builds a copied consumer with an empty
+Gradle user home, the public Maven URL as its only Timeline source and exact release hashes
+in dependency verification. Candidate trust exemptions and local fallback repositories are
+removed from that temporary consumer. R8/resource shrinking and migration tests must pass.
+
+Only then does the workflow create the GitHub Release from its matching changelog section.
+An existing published release is left unchanged on retry; an existing draft fails explicitly.
+Consumer reports are uploaded even when the build fails. No library artifact is rebuilt or
+replaced during these post-deployment steps.
+
+For a read-only replay, run `python3 scripts/verify-public-release.py --tag v2.0.0
+--url https://dmitrypokrasov.github.io/Timeline/ --site <checkout-of-gh-pages>` with the Android
+SDK available. `--artifacts-only` skips the consumer and is for diagnostics, not release approval.
+Update the public README status after verification; the workflow generates the public site's
+version banner from published metadata.
 
 ## Failure and recovery
 
