@@ -10,7 +10,7 @@ On a connected physical Android 10+ device, with JDK 17 and the Android SDK conf
 ./gradlew :timelineview:publishReleasePublicationToBuildRepository
 ./gradlew -p integration/consumer :benchmark:connectedReleaseAndroidTest \
   -PtimelineBenchmarks=true \
-  -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.0.0
+  -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.1.0
 ```
 
 Use the version declared in `timelineview/build.gradle.kts` when it changes. Set
