@@ -12,9 +12,6 @@ object TimelineUiFactory {
         strategy: TimelineUiStrategy,
         config: TimelineUiConfig,
     ): TimelineUiRenderer {
-        return when (strategy) {
-            TimelineUiStrategy.Snake -> SnakeTimelineUi(config)
-            TimelineUiStrategy.Linear -> LinearTimelineUi(config)
-        }
+        return com.dmitrypokrasov.timelineview.strategy.TimelineBuiltIns.ui.getValue(strategy.key)(config)
     }
 }

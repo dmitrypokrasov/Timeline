@@ -12,12 +12,6 @@ object TimelineMathFactory {
         strategy: TimelineMathStrategy,
         config: TimelineMathConfig,
     ): TimelineMathEngine {
-        return when (strategy) {
-            TimelineMathStrategy.Snake -> SnakeTimelineMath(config)
-            TimelineMathStrategy.LinearVertical ->
-                LinearTimelineMath(config, LinearTimelineMath.Orientation.VERTICAL)
-            TimelineMathStrategy.LinearHorizontal ->
-                LinearTimelineMath(config, LinearTimelineMath.Orientation.HORIZONTAL)
-        }
+        return com.dmitrypokrasov.timelineview.strategy.TimelineBuiltIns.math.getValue(strategy.key)(config)
     }
 }

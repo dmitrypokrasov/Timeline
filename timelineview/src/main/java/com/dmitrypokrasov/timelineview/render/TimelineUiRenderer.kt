@@ -24,6 +24,9 @@ interface TimelineUiRenderer {
         context: Context,
     )
 
+    /** Disables paint-only rounding when geometry already includes curves. */
+    fun setGeometryRounded(rounded: Boolean) = Unit
+
     /** Prepares the paint used to draw the line stroke. */
     fun prepareStrokePaint()
 

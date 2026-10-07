@@ -2,17 +2,13 @@ package com.dmitrypokrasov.timelineview.render
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.CornerPathEffect
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Typeface
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.VectorDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
-import androidx.core.graphics.scale
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
@@ -23,13 +19,16 @@ import com.dmitrypokrasov.timelineview.model.TimelineStepData
 open class BaseTimelineUi(
     private var uiConfig: TimelineUiConfig,
 ) : TimelineUiRenderer {
-    private val textLayoutBuilder: TimelineTextLayoutBuilder = StaticTimelineTextLayoutBuilder()
+    private val textLayoutBuilder = CachingTimelineTextLayoutBuilder()
     private val pathEnable = Path()
     private val pathDisable = Path()
     private var iconDisableStep: Bitmap? = null
     private var pathEffect: CornerPathEffect? = null
     private var iconProgressBitmap: Bitmap? = null
-    private val stepIconCache = mutableMapOf<Int, Bitmap>()
+    private val stepIconCache =
+        object : LinkedHashMap<Int, Bitmap>(16, 0.75f, true) {
+            override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Int, Bitmap>): Boolean = size > 64
+        }
     private var stepIconSize: Int = 0
     private val linePaint = Paint()
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -44,23 +43,18 @@ open class BaseTimelineUi(
         stepIconSize = timelineMathConfig.sizes.sizeImageLvl.toInt()
         stepIconCache.clear()
 
-        getBitmap(uiConfig.icons.iconDisableLvl, context)?.let { bitmap ->
-            iconDisableStep =
-                bitmap.scale(
-                    timelineMathConfig.sizes.sizeImageLvl.toInt(),
-                    timelineMathConfig.sizes.sizeImageLvl.toInt(),
-                    false,
-                )
-        }
+        textLayoutBuilder.clear()
+        iconDisableStep = getBitmap(uiConfig.icons.iconDisableLvl, context, stepIconSize)
+        iconProgressBitmap =
+            getBitmap(
+                uiConfig.icons.iconProgress, context, timelineMathConfig.sizes.sizeIconProgress.toInt(),
+            )
+    }
 
-        getBitmap(uiConfig.icons.iconProgress, context)?.let { bitmap ->
-            iconProgressBitmap =
-                bitmap.scale(
-                    timelineMathConfig.sizes.sizeIconProgress.toInt(),
-                    timelineMathConfig.sizes.sizeIconProgress.toInt(),
-                    false,
-                )
-        }
+    private var geometryRounded = false
+
+    override fun setGeometryRounded(rounded: Boolean) {
+        geometryRounded = rounded
     }
 
     override fun prepareStrokePaint() {
@@ -70,7 +64,7 @@ open class BaseTimelineUi(
         linePaint.strokeJoin = Paint.Join.ROUND
         linePaint.style = Paint.Style.STROKE
         linePaint.strokeWidth = uiConfig.stroke.sizeStroke
-        linePaint.pathEffect = pathEffect
+        linePaint.pathEffect = if (geometryRounded) null else pathEffect
     }
 
     override fun prepareTextPaint() {
@@ -212,6 +206,7 @@ open class BaseTimelineUi(
 
     override fun setConfig(config: TimelineUiConfig) {
         uiConfig = config
+        textLayoutBuilder.clear()
     }
 
     override fun getConfig(): TimelineUiConfig = uiConfig
@@ -229,7 +224,7 @@ open class BaseTimelineUi(
         typeface: Typeface,
         color: Int,
     ) {
-        val value = text.toString()
+        val value = text
         if (value.isBlank()) return
 
         val layout =
@@ -262,7 +257,7 @@ open class BaseTimelineUi(
         color: Int,
         align: Paint.Align,
     ): Int {
-        val value = text.toString()
+        val value = text
         if (value.isBlank()) return 0
 
         return textLayoutBuilder.build(
@@ -292,7 +287,7 @@ open class BaseTimelineUi(
         stepIconCache[drawableId]?.let { return it }
 
         val bitmap =
-            getBitmap(drawableId, context)?.scale(stepIconSize, stepIconSize, false)
+            getBitmap(drawableId, context, stepIconSize)
                 ?: return null
         stepIconCache[drawableId] = bitmap
         return bitmap
@@ -301,20 +296,13 @@ open class BaseTimelineUi(
     private fun getBitmap(
         drawableId: Int,
         context: Context,
+        size: Int,
     ): Bitmap? {
-        if (drawableId == 0) return null
-
-        return when (val drawable = ContextCompat.getDrawable(context, drawableId)) {
-            is BitmapDrawable -> BitmapFactory.decodeResource(context.resources, drawableId)
-            is VectorDrawable -> {
-                val bitmap = createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight)
-                val canvas = Canvas(bitmap)
-                drawable.setBounds(0, 0, canvas.width, canvas.height)
-                drawable.draw(canvas)
-                bitmap
-            }
-
-            else -> throw IllegalArgumentException("Unsupported drawable type")
+        if (drawableId == 0 || size <= 0) return null
+        val drawable = ContextCompat.getDrawable(context, drawableId)?.mutate() ?: return null
+        return createBitmap(size, size).also { bitmap ->
+            drawable.setBounds(0, 0, size, size)
+            drawable.draw(Canvas(bitmap))
         }
     }
 }

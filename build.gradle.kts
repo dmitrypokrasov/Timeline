@@ -10,12 +10,17 @@ import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.16.3"
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.ktlint) apply false
+}
+
+apiValidation {
+    ignoredProjects.add("app")
 }
 
 subprojects {
@@ -67,6 +72,7 @@ tasks.register("qualityCheck") {
     description = "Runs formatting checks, static analysis, lint, and unit tests for all modules."
     group = "verification"
     dependsOn(
+        ":timelineview:apiCheck",
         ":app:ktlintCheck",
         ":app:detekt",
         ":app:lintDebug",

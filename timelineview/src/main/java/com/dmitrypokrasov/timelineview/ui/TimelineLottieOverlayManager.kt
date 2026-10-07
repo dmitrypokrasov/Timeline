@@ -1,92 +1,147 @@
 package com.dmitrypokrasov.timelineview.ui
 
-import android.content.Context
 import android.graphics.Canvas
+import android.graphics.drawable.Drawable
+import android.os.SystemClock
 import android.view.View
+import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
+import com.airbnb.lottie.LottieListener
+import com.airbnb.lottie.LottieTask
 import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
-import java.util.IdentityHashMap
+import com.dmitrypokrasov.timelineview.model.TimelineStepData
+import com.dmitrypokrasov.timelineview.model.identity
 import kotlin.math.roundToInt
 
-internal class TimelineLottieOverlayManager(
-    private val ownerView: View,
-) {
-    private data class OverlayEntry(
-        val drawable: LottieDrawable,
-        var autoPlayConsumed: Boolean = false,
-    )
+/** Owns one drawable per overlay occurrence and never loads resources during drawing. */
+internal class TimelineLottieOverlayManager(private val ownerView: View) {
+    internal data class Key(val step: String, val progress: Boolean = false) {
+        constructor(index: Int, progress: Boolean = false) : this("index:$index", progress)
+    }
 
-    private val drawableCache = IdentityHashMap<TimelineLottieSpec, OverlayEntry>()
+    private class Entry(val spec: TimelineLottieSpec) {
+        val drawable = LottieDrawable()
+        var task: LottieTask<LottieComposition>? = null
+        var success: LottieListener<LottieComposition>? = null
+        var failure: LottieListener<Throwable>? = null
+        var started = false
+    }
+
+    private val entries = mutableMapOf<Key, Entry>()
+    private var active = false
+    internal val entryCount: Int get() = entries.size
+    internal val runningAnimationCount: Int get() = entries.values.count { it.drawable.isAnimating }
+
+    private val callback =
+        object : Drawable.Callback {
+            override fun invalidateDrawable(who: Drawable) = ownerView.invalidate()
+
+            override fun scheduleDrawable(
+                who: Drawable,
+                what: Runnable,
+                `when`: Long,
+            ) {
+                ownerView.postDelayed(what, (`when` - SystemClock.uptimeMillis()).coerceAtLeast(0))
+            }
+
+            override fun unscheduleDrawable(
+                who: Drawable,
+                what: Runnable,
+            ) {
+                ownerView.removeCallbacks(what)
+            }
+        }
+
+    fun submit(steps: List<TimelineStepData>) {
+        val desired = mutableMapOf<Key, TimelineLottieSpec>()
+        steps.forEachIndexed { index, step -> step.badgeAnimation?.let { desired[Key(step.identity(index))] = it } }
+        val progressIndex = steps.indexOfFirst { it.progress < 100 }
+        steps.getOrNull(progressIndex)?.progressAnimation?.let { desired[Key(steps[progressIndex].identity(progressIndex), true)] = it }
+        entries.keys.toList().forEach { key ->
+            if (entries[key]?.spec != desired[key]) entries.remove(key)?.let(::dispose)
+        }
+        desired.forEach { (key, spec) ->
+            if (key !in entries) {
+                val entry = Entry(spec)
+                entries[key] = entry
+                load(key, entry)
+            }
+        }
+    }
+
+    private fun load(
+        key: Key,
+        entry: Entry,
+    ) {
+        entry.drawable.callback = callback
+        entry.drawable.repeatCount = if (entry.spec.repeat) LottieDrawable.INFINITE else 0
+        val success =
+            LottieListener<LottieComposition> { composition ->
+                if (entries[key] === entry) {
+                    entry.drawable.composition = composition
+                    updatePlayback(entry)
+                    ownerView.invalidate()
+                }
+            }
+        // An invalid optional overlay must not crash the host application's rendering.
+        val failure = LottieListener<Throwable> { ownerView.invalidate() }
+        entry.success = success
+        entry.failure = failure
+        entry.task =
+            LottieCompositionFactory.fromRawRes(ownerView.context, entry.spec.rawRes)
+                .addListener(success).addFailureListener(failure)
+    }
+
+    fun setActive(active: Boolean) {
+        this.active = active
+        entries.values.forEach(::updatePlayback)
+    }
+
+    private fun updatePlayback(entry: Entry) {
+        val drawable = entry.drawable
+        if (!active || !entry.spec.autoPlay) {
+            drawable.pauseAnimation()
+        } else if (drawable.composition != null && !drawable.isAnimating) {
+            if (!entry.started) {
+                entry.started = true
+                drawable.playAnimation()
+            } else if (entry.spec.repeat || drawable.progress < 1f) {
+                drawable.resumeAnimation()
+            }
+        }
+    }
 
     fun draw(
         canvas: Canvas,
-        context: Context,
-        spec: TimelineLottieSpec?,
+        key: Key,
         left: Float,
         top: Float,
         size: Float,
     ) {
-        if (spec == null) return
-
-        val entry =
-            drawableCache.getOrPut(spec) {
-                OverlayEntry(createDrawable(context, spec))
-            }
-        val drawable = entry.drawable
-
-        val scaledSize = size * spec.scale
+        val entry = entries[key] ?: return
+        if (size <= 0f || entry.drawable.composition == null) return
+        if (!entry.spec.repeat && entry.started && entry.drawable.progress >= 1f) return
+        val scaledSize = size * entry.spec.scale
         val inset = (size - scaledSize) / 2f
-        val drawLeft = left + inset
-        val drawTop = top + inset
-        drawable.setBounds(
-            drawLeft.roundToInt(),
-            drawTop.roundToInt(),
-            (drawLeft + scaledSize).roundToInt(),
-            (drawTop + scaledSize).roundToInt(),
+        entry.drawable.setBounds(
+            (left + inset).roundToInt(),
+            (top + inset).roundToInt(),
+            (left + inset + scaledSize).roundToInt(),
+            (top + inset + scaledSize).roundToInt(),
         )
-
-        if (spec.autoPlay) {
-            if (spec.repeat) {
-                if (!drawable.isAnimating) {
-                    drawable.playAnimation()
-                }
-            } else {
-                if (!entry.autoPlayConsumed) {
-                    drawable.progress = 0f
-                    drawable.playAnimation()
-                    entry.autoPlayConsumed = true
-                } else if (!drawable.isAnimating && drawable.progress >= 1f) {
-                    return
-                }
-            }
-        } else if (drawable.isAnimating) {
-            drawable.pauseAnimation()
-        }
-
-        drawable.draw(canvas)
+        entry.drawable.draw(canvas)
     }
 
     fun clear() {
-        drawableCache.values.forEach { entry ->
-            entry.drawable.cancelAnimation()
-            entry.drawable.callback = null
-        }
-        drawableCache.clear()
+        entries.values.forEach(::dispose)
+        entries.clear()
     }
 
-    private fun createDrawable(
-        context: Context,
-        spec: TimelineLottieSpec,
-    ): LottieDrawable {
-        val composition =
-            LottieCompositionFactory.fromRawResSync(context, spec.rawRes).value
-                ?: throw IllegalArgumentException("Unable to load Lottie animation: ${spec.rawRes}")
-
-        return LottieDrawable().apply {
-            callback = ownerView
-            this.composition = composition
-            repeatCount = if (spec.repeat) LottieDrawable.INFINITE else 0
-        }
+    private fun dispose(entry: Entry) {
+        entry.success?.let { entry.task?.removeListener(it) }
+        entry.failure?.let { entry.task?.removeFailureListener(it) }
+        entry.drawable.cancelAnimation()
+        entry.drawable.callback = null
     }
 }

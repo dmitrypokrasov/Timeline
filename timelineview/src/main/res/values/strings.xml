@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Timeline</string>
-    <string name="title_1_lvl">sadf\n</string>
-    <string name="description_1_9_steps" />
+    <string name="timeline_step">Step %1$d</string>
+    <string name="timeline_percent">Complete: %1$d%%</string>
+    <string name="timeline_progress">Current progress</string>
 </resources>

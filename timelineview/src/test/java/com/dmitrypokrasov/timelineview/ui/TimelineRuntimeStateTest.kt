@@ -97,10 +97,10 @@ class TimelineRuntimeStateTest {
                 ),
             )
 
-        assertNull(updated.mathStrategyKey)
-        assertNull(updated.uiStrategyKey)
-        assertEquals(TimelineMathStrategy.LinearVertical, updated.mathStrategy)
-        assertEquals(TimelineUiStrategy.Snake, updated.uiStrategy)
+        assertNull((updated.math as MathSelection.ByKey).key)
+        assertNull((updated.ui as UiSelection.ByKey).key)
+        assertEquals(TimelineMathStrategy.LinearVertical, updated.math.fallback)
+        assertEquals(TimelineUiStrategy.Snake, updated.ui.fallback)
     }
 }
 

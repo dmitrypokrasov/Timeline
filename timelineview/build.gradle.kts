@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.dmitrypokrasov"
-version = "1.1.0"
+version = "2.0.0"
 
 android {
     namespace = "com.dmitrypokrasov.timelineview"
@@ -33,6 +33,20 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            it.systemProperty("robolectric.dependency.repo.url", "https://repo.maven.apache.org/maven2")
+            it.maxHeapSize = "2g"
+            it.inputs.dir("src/test/golden")
+            it.systemProperty("timeline.updateGoldens", providers.gradleProperty("updateGoldens").orElse("false").get())
+            if (!providers.gradleProperty("includeBenchmarks").isPresent) it.filter.excludeTestsMatching("*TimelinePerformanceTest")
+            if (providers.gradleProperty("skipScreenshots").isPresent) it.filter.excludeTestsMatching("*TimelineScreenshotTest")
+        }
+    }
+    publishing {
+        singleVariant("release") { withSourcesJar() }
+    }
     lint {
         abortOnError = true
         checkReleaseBuilds = false
@@ -54,6 +68,10 @@ publishing {
     }
     repositories {
         maven {
+            name = "Build"
+            url = uri(rootProject.layout.buildDirectory.dir("repository"))
+        }
+        maven {
             name = "GitHubPages"
             url = uri(rootProject.layout.projectDirectory.dir("docs/maven"))
         }
@@ -69,13 +87,14 @@ publishing {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.lottie)
+    implementation(libs.androidx.customview)
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

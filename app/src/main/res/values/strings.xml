@@ -18,4 +18,7 @@
     <string name="tab_linear_horizontal">Linear Horizontal</string>
     <string name="tab_mixed">Mixed</string>
     <string name="tab_custom_registry">Custom Registry</string>
+    <string name="tab_alternating">Central axis</string>
+    <string name="tab_adaptive_grid">Adaptive grid</string>
+    <string name="tab_time_scaled">Time scale</string>
 </resources>

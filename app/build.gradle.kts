@@ -34,6 +34,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            it.systemProperty("robolectric.dependency.repo.url", "https://repo.maven.apache.org/maven2")
+        }
+    }
     lint {
         abortOnError = true
         checkReleaseBuilds = false
@@ -45,7 +51,6 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(project(":timelineview"))
 
     implementation(libs.androidx.core.ktx)
@@ -54,6 +59,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.viewpager2)
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

@@ -7,9 +7,9 @@ import com.google.android.material.R.color
  * Contains default values for timeline configuration.
  */
 internal object TimelineConstants {
-    const val DEFAULT_STEP_Y_SIZE = 150f
+    const val DEFAULT_STEP_Y_SIZE = 80f
     const val DEFAULT_RADIUS_SIZE = 0f
-    const val DEFAULT_STEP_Y_FIRST_SIZE = 0f
+    const val DEFAULT_STEP_Y_FIRST_SIZE = 20f
 
     @ColorRes val DEFAULT_PROGRESS_COLOR = color.design_default_color_secondary
 
@@ -18,15 +18,15 @@ internal object TimelineConstants {
     @ColorRes val DEFAULT_TITLE_COLOR = color.design_default_color_on_secondary
 
     @ColorRes val DEFAULT_DESCRIPTION_COLOR = color.design_default_color_on_secondary
-    const val DEFAULT_MARGIN_TOP_DESCRIPTION = 125f
-    const val DEFAULT_MARGIN_TOP_TITLE = 125f
+    const val DEFAULT_MARGIN_TOP_DESCRIPTION = 8f
+    const val DEFAULT_MARGIN_TOP_TITLE = 20f
     const val DEFAULT_MARGIN_TOP_PROGRESS_ICON = 0f
-    const val DEFAULT_MARGIN_HORIZONTAL_IMAGE = 50f
-    const val DEFAULT_MARGIN_HORIZONTAL_TEXT = 185f
-    const val DEFAULT_MARGIN_HORIZONTAL_STROKE = 0f
-    const val DEFAULT_DESCRIPTION_SIZE = 50f
-    const val DEFAULT_TITLE_SIZE = 150f
-    const val DEFAULT_STROKE_SIZE = 10f
-    const val DEFAULT_IMAGE_LVL_SIZE = 20f
-    const val DEFAULT_ICON_PROGRESS_SIZE = 20f
+    const val DEFAULT_MARGIN_HORIZONTAL_IMAGE = 16f
+    const val DEFAULT_MARGIN_HORIZONTAL_TEXT = 64f
+    const val DEFAULT_MARGIN_HORIZONTAL_STROKE = 28f
+    const val DEFAULT_DESCRIPTION_SIZE = 14f
+    const val DEFAULT_TITLE_SIZE = 16f
+    const val DEFAULT_STROKE_SIZE = 2f
+    const val DEFAULT_IMAGE_LVL_SIZE = 32f
+    const val DEFAULT_ICON_PROGRESS_SIZE = 24f
 }
