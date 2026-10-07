@@ -85,8 +85,11 @@ diffs and the migration documentation before accepting baselines. CI never updat
 
 The wrapper distribution has a pinned SHA-256. Gradle dependency verification records hashes
 for externally resolved build/test dependencies. To update them after a deliberate dependency
-change, use `--write-verification-metadata sha256` on the affected root/integration tasks,
+change, use `--refresh-dependencies --write-verification-metadata sha256` on the affected root/integration tasks,
 review the resulting metadata against trusted upstream artifacts, then rerun without that flag.
+Refreshing is necessary to include parent POMs and Gradle module metadata hidden by a warm
+dependency cache. Validate the root and consumer builds with an empty Gradle user home before
+accepting the update; never treat a cached local build as proof of clean-runner verification.
 Include Linux AAPT2 when refreshing hashes on macOS with
 `./gradlew -I scripts/verification.init.gradle --write-verification-metadata sha256 verificationDependencies`;
 run the equivalent task in `integration/consumer` with its repository/version properties.
