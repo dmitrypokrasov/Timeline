@@ -58,6 +58,12 @@ jobs:
         with:
           ref: ${{ inputs.tag }}
           fetch-depth: 0
+      - name: Restore workflow-version publication verification tools
+        env:
+          WORKFLOW_SHA: ${{ github.workflow_sha }}
+        run: |
+          git show "$WORKFLOW_SHA:scripts/verify-public-release.py" > scripts/verify-public-release.py
+          git show "$WORKFLOW_SHA:scripts/release-notes.py" > scripts/release-notes.py
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: tested-maven-repository

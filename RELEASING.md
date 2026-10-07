@@ -68,6 +68,11 @@ Releases are serialized and are not cancelled by a newer dispatch.
 
 ## Verification after publication
 
+Publication verification tools come from the immutable workflow commit (`github.workflow_sha`).
+They are restored immediately after checkout so a historical tag such as `v2.0.0` can be
+replayed even though it predates these tools. Artifacts, consumer sources, changelog and
+release provenance still come from the selected tag; no library artifact is rebuilt.
+
 After deployment, the workflow runs `scripts/verify-public-release.py`. It compares the
 public release manifest, all preserved Maven version files and version metadata with the
 staged site, and checks versioned API docs. It then builds a copied consumer with an empty
