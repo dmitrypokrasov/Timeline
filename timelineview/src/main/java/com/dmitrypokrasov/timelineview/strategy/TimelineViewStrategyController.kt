@@ -39,12 +39,14 @@ class TimelineViewStrategyController(
         uiStrategyKey: StrategyKey?,
         fallbackMath: TimelineMathStrategy,
         fallbackUi: TimelineUiStrategy,
+        explicitMath: com.dmitrypokrasov.timelineview.math.TimelineMathEngine? = null,
+        explicitUi: com.dmitrypokrasov.timelineview.render.TimelineUiRenderer? = null,
         mathConfig: TimelineMathConfig,
         uiConfig: TimelineUiConfig,
     ): TimelineViewStrategiesData {
         return TimelineViewStrategiesData(
-            math = resolver.resolveMath(mathStrategyKey, fallbackMath, mathConfig),
-            ui = resolver.resolveUi(uiStrategyKey, fallbackUi, uiConfig),
+            math = explicitMath ?: resolver.resolveMath(mathStrategyKey, fallbackMath, mathConfig),
+            ui = explicitUi ?: resolver.resolveUi(uiStrategyKey, fallbackUi, uiConfig),
         )
     }
 }

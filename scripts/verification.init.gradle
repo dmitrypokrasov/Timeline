@@ -1,0 +1,11 @@
+// Maintenance only: include the Linux AAPT2 binary used by CI while generating hashes on macOS.
+// Keep this coordinate aligned with the pinned AGP version. No verification mode is weakened.
+gradle.projectsEvaluated {
+    rootProject.tasks.register('verificationDependencies') {
+        doLast {
+            rootProject.configurations.detachedConfiguration(
+                rootProject.dependencies.create('com.android.tools.build:aapt2:8.4.0-11315950:linux')
+            ).resolve()
+        }
+    }
+}

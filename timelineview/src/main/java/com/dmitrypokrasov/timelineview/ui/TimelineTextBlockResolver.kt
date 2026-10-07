@@ -1,6 +1,5 @@
 package com.dmitrypokrasov.timelineview.ui
 
-import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
@@ -14,7 +13,6 @@ internal data class TimelineResolvedTextBlock(
 
 internal object TimelineTextBlockResolver {
     private const val MIN_GAP_BETWEEN_TITLE_AND_DESCRIPTION = 4f
-    private const val MIN_GAP_BETWEEN_LINEAR_STEPS = 4f
 
     fun resolve(
         layout: TimelineLayout?,
@@ -22,11 +20,6 @@ internal object TimelineTextBlockResolver {
         uiRenderer: TimelineUiRenderer,
     ): List<TimelineResolvedTextBlock> {
         if (layout == null) return emptyList()
-
-        val isLinearVertical =
-            mathEngine is LinearTimelineMath &&
-                mathEngine.orientation == LinearTimelineMath.Orientation.VERTICAL
-        var previousBottom = Float.NEGATIVE_INFINITY
 
         return layout.steps.map { stepLayout ->
             val titleHeight =
@@ -42,23 +35,22 @@ internal object TimelineTextBlockResolver {
                     stepLayout.textAlign,
                 )
 
-            var titleTop = stepLayout.titleY - uiRenderer.getTitleBaselineOffset()
+            val requestedTop = stepLayout.titleY - uiRenderer.getTitleBaselineOffset()
+            val horizontal = mathEngine.textBelowBadge
+            val badgeSize = mathEngine.getConfig().sizes.sizeImageLvl
+            val overlayInset = badgeSize * ((stepLayout.step.badgeAnimation?.scale ?: 1f).coerceAtLeast(1f) - 1f) / 2f
+            val titleTop =
+                if (horizontal) {
+                    maxOf(requestedTop, stepLayout.iconY + badgeSize + overlayInset + MIN_GAP_BETWEEN_TITLE_AND_DESCRIPTION)
+                } else {
+                    requestedTop
+                }
             var descriptionTop = stepLayout.descriptionY - uiRenderer.getDescriptionBaselineOffset()
             descriptionTop =
                 maxOf(
                     descriptionTop,
                     titleTop + titleHeight + MIN_GAP_BETWEEN_TITLE_AND_DESCRIPTION,
                 )
-
-            if (isLinearVertical) {
-                val shiftDown = (previousBottom + MIN_GAP_BETWEEN_LINEAR_STEPS) - titleTop
-                if (shiftDown > 0f) {
-                    titleTop += shiftDown
-                    descriptionTop += shiftDown
-                }
-            }
-
-            previousBottom = maxOf(previousBottom, descriptionTop + descriptionHeight)
 
             TimelineResolvedTextBlock(
                 titleTop = titleTop,

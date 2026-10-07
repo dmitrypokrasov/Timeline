@@ -20,6 +20,13 @@ import com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider
 import com.dmitrypokrasov.timelineview.ui.TimelineView
 
 class TimelineSampleFragment : Fragment() {
+    private var steps: List<TimelineStepData> = emptyList()
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putIntArray("timeline_progress", steps.map { it.progress }.toIntArray())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,7 +40,11 @@ class TimelineSampleFragment : Fragment() {
         val timelineView = view.findViewById<TimelineView>(R.id.timeline)
         val sample = requireSample()
 
-        var steps = TimelineSampleData.buildSteps(requireContext())
+        val savedProgress = savedInstanceState?.getIntArray("timeline_progress")
+        steps =
+            TimelineSampleData.buildSteps(requireContext()).mapIndexed { index, step ->
+                step.copy(id = "sample-$index", timestampMillis = index.toLong() * index * 60_000L, progress = savedProgress?.getOrNull(index)?.coerceIn(0, 100) ?: step.progress)
+            }
         val mathConfig = TimelineSampleData.buildMathConfig(requireContext(), steps)
         val uiConfig = TimelineSampleData.buildUiConfig(requireContext())
 
@@ -67,6 +78,17 @@ class TimelineSampleFragment : Fragment() {
         }
 
         when (sample) {
+            TimelineSample.ALTERNATING, TimelineSample.ADAPTIVE_GRID, TimelineSample.TIME_SCALED -> {
+                val strategy =
+                    when (sample) {
+                        TimelineSample.ALTERNATING -> com.dmitrypokrasov.timelineview.config.TimelineMathStrategy.Alternating
+                        TimelineSample.ADAPTIVE_GRID -> com.dmitrypokrasov.timelineview.config.TimelineMathStrategy.AdaptiveGrid
+                        else -> com.dmitrypokrasov.timelineview.config.TimelineMathStrategy.TimeScaled
+                    }
+                timelineView.setConfig(mathConfig.copy(minCellWidth = 160f * resources.displayMetrics.density), uiConfig)
+                timelineView.setStrategy(strategy, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy.Linear)
+            }
+
             TimelineSample.SNAKE -> {
                 timelineView.setMathEngine(SnakeTimelineMath(mathConfig))
                 timelineView.setUiRenderer(SnakeTimelineUi(uiConfig))
@@ -81,7 +103,7 @@ class TimelineSampleFragment : Fragment() {
 
             TimelineSample.LINEAR_HORIZONTAL -> {
                 timelineView.setMathEngine(
-                    LinearTimelineMath(mathConfig, LinearTimelineMath.Orientation.HORIZONTAL),
+                    LinearTimelineMath(mathConfig.copy(horizontalLayout = TimelineMathConfig.HorizontalLayout.WRAP, minCellWidth = 160f * resources.displayMetrics.density), LinearTimelineMath.Orientation.HORIZONTAL),
                 )
                 timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
             }
@@ -108,11 +130,7 @@ class TimelineSampleFragment : Fragment() {
     }
 
     private fun resolveProgressStepIndex(steps: List<TimelineStepData>): Int {
-        return steps.indexOfFirst { it.progress in 1..99 }
-            .takeIf { it >= 0 }
-            ?: steps.indexOfLast { it.progress == 100 }
-                .takeIf { it >= 0 }
-            ?: 0
+        return steps.indexOfFirst { it.progress < 100 }
     }
 
     private fun registerCustomStrategies(registry: TimelineStrategyRegistryContract) {

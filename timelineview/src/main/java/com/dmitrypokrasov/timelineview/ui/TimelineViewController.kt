@@ -2,6 +2,9 @@ package com.dmitrypokrasov.timelineview.ui
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import com.dmitrypokrasov.timelineview.config.StrategyKey
@@ -12,24 +15,41 @@ import com.dmitrypokrasov.timelineview.config.TimelineStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
-import com.dmitrypokrasov.timelineview.math.data.TimelineProgressIcon
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
+import com.dmitrypokrasov.timelineview.model.identity
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
 import com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController
 
+@Suppress("TooManyFunctions") // Includes compatibility entry points retained for existing callers.
 class TimelineViewController(
     private val ownerView: View,
     private val context: Context,
     attrs: AttributeSet?,
     registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry,
+    defStyleAttr: Int = 0,
 ) {
-    private val initialConfig = TimelineConfigParser(context).parse(attrs)
+    companion object {
+        internal const val PROGRESS_ID = Int.MAX_VALUE
+    }
+
+    internal data class Target(val id: Int, val bounds: RectF, val description: String, val clickable: Boolean)
+
+    private var frame: TimelineFrame? = null
+    private val layout get() = frame?.layout
+    private val textBlocks get() = frame?.blocks.orEmpty()
+    private val topInset get() = frame?.topInset ?: 0f
+    private val measuredWidth get() = frame?.width ?: 0
+    private val rtl get() = frame?.rtl ?: false
+    private val origin get() = frame?.origin ?: 0f
+
+    private val initialConfig = TimelineConfigParser(context).parse(attrs, defStyleAttr)
     private var state = TimelineRuntimeState.from(initialConfig)
     private var timelineMath: TimelineMathEngine
     private var timelineUi: TimelineUiRenderer
-    private var layout: TimelineLayout? = null
+    private val virtualIds = mutableMapOf<String, Int>()
+    private var nextVirtualId = 0
     private var strategyController = TimelineViewStrategyController(registry)
     private val heightCalculator = TimelineHeightCalculator()
     private val lottieOverlayManager = TimelineLottieOverlayManager(ownerView)
@@ -43,65 +63,53 @@ class TimelineViewController(
         initTools()
     }
 
-    fun getConfig(): TimelineConfig = state.config
+    fun getConfig(): TimelineConfig = state.toConfig()
 
-    fun setConfig(config: TimelineConfig) {
-        state = state.withConfig(config)
-        applyResolvedState()
+    fun setConfig(config: TimelineConfig) = transition(state.withConfig(config))
+
+    fun setConfig(
+        math: com.dmitrypokrasov.timelineview.config.TimelineMathConfig,
+        ui: com.dmitrypokrasov.timelineview.config.TimelineUiConfig,
+    ) {
+        transition(state.copy(mathConfig = math.copy(steps = math.steps.toList()), uiConfig = ui))
     }
 
+    @Suppress("TooGenericExceptionCaught") // Roll back and rethrow any exception from a custom engine.
     fun replaceSteps(steps: List<TimelineStepData>) {
-        timelineMath.replaceSteps(steps)
-        state = state.withSteps(steps).withMathEngine(timelineMath)
+        val candidate = state.withSteps(steps)
+        val previous = timelineMath.getConfig()
+        try {
+            timelineMath.replaceSteps(candidate.mathConfig.steps)
+        } catch (failure: Exception) {
+            runCatching { timelineMath.setConfig(previous) }.exceptionOrNull()?.let(failure::addSuppressed)
+            throw failure
+        }
+        state = candidate.copy(mathConfig = timelineMath.getConfig())
+        invalidateGeometry()
     }
 
-    fun setMathEngine(engine: TimelineMathEngine) {
-        timelineMath = engine
-        state = state.withMathEngine(engine)
-        initTools()
-    }
+    fun setMathEngine(engine: TimelineMathEngine) = transition(state.withMathEngine(engine))
 
-    fun setUiRenderer(renderer: TimelineUiRenderer) {
-        timelineUi = renderer
-        state = state.withUiRenderer(renderer)
-        initTools()
-    }
+    fun setUiRenderer(renderer: TimelineUiRenderer) = transition(state.withUiRenderer(renderer))
 
     fun setStrategy(
         mathStrategy: TimelineMathStrategy,
         uiStrategy: TimelineUiStrategy,
-    ) {
-        state = state.withStrategy(TimelineStrategy(mathStrategy, uiStrategy))
-        applyResolvedState()
-    }
+    ) = setStrategy(TimelineStrategy(mathStrategy, uiStrategy))
 
-    fun setStrategy(strategy: TimelineStrategy) {
-        state = state.withStrategy(strategy)
-        applyResolvedState()
-    }
+    fun setStrategy(strategy: TimelineStrategy) = transition(state.withStrategy(strategy))
 
     fun setStrategy(
         mathStrategyKey: StrategyKey?,
         uiStrategyKey: StrategyKey?,
-    ) {
-        state = state.withStrategyKeys(mathStrategyKey, uiStrategyKey)
-        applyResolvedState()
-    }
+    ) = transition(state.withStrategyKeys(mathStrategyKey, uiStrategyKey))
 
     fun setStrategies(
         mathEngine: TimelineMathEngine,
         uiRenderer: TimelineUiRenderer,
-    ) {
-        timelineMath = mathEngine
-        timelineUi = uiRenderer
-        state = state.withMathEngine(mathEngine).withUiRenderer(uiRenderer)
-        initTools()
-    }
+    ) = transition(state.withMathEngine(mathEngine).withUiRenderer(uiRenderer))
 
-    fun setStrategyRegistry(registry: TimelineStrategyRegistryContract) {
-        strategyController = TimelineViewStrategyController(registry)
-        applyResolvedState()
-    }
+    fun setStrategyRegistry(registry: TimelineStrategyRegistryContract) = transition(state, TimelineViewStrategyController(registry))
 
     fun setStrategyRegistry(configure: TimelineStrategyRegistryContract.() -> Unit) {
         val registry = TimelineStrategyRegistry.createLocalRegistry()
@@ -119,102 +127,194 @@ class TimelineViewController(
 
     fun isInteractive(): Boolean = onStepClickListener != null || onProgressIconClickListener != null
 
-    fun handleClick(
+    fun performStepClick(index: Int): Boolean {
+        val step = layout?.steps?.getOrNull(index)?.step ?: return false
+        val id = virtualIds[step.identity(index)] ?: return false
+        return clickTarget(id)
+    }
+
+    fun performProgressIconClick(): Boolean = clickTarget(PROGRESS_ID)
+
+    internal fun targets(): List<Target> =
+        frame?.targets().orEmpty().map {
+            it.copy(clickable = if (it.id == PROGRESS_ID) onProgressIconClickListener != null else onStepClickListener != null)
+        }
+
+    private fun buildTargets(
+        current: TimelineLayout,
+        config: com.dmitrypokrasov.timelineview.config.TimelineMathConfig,
+        origin: Float,
+        measuredWidth: Int,
+        rtl: Boolean,
+        topInset: Float,
+        ids: Map<String, Int>,
+    ): List<Target> {
+        val minSize = 48f * context.resources.displayMetrics.density
+
+        fun bounds(
+            x: Float,
+            y: Float,
+            size: Float,
+        ): RectF {
+            val extra = (minSize - size).coerceAtLeast(0f) / 2f
+            val left = if (rtl) measuredWidth - origin - x - size else origin + x
+            return RectF(
+                (left - extra).coerceAtLeast(0f),
+                (y + topInset - extra).coerceAtLeast(0f),
+                (left + size + extra).coerceAtMost(measuredWidth.toFloat()),
+                y + topInset + size + extra,
+            )
+        }
+        val result =
+            current.steps.mapIndexed { index, step ->
+                val title =
+                    step.step.title?.toString()?.takeIf { it.isNotBlank() }
+                        ?: context.getString(com.dmitrypokrasov.timelineview.R.string.timeline_step, index + 1)
+                val description =
+                    listOfNotNull(
+                        title,
+                        step.step.description?.toString()?.takeIf { it.isNotBlank() },
+                        context.getString(com.dmitrypokrasov.timelineview.R.string.timeline_percent, step.step.progress),
+                    ).joinToString(". ")
+                Target(ids.getValue(step.step.identity(index)), bounds(step.iconX, step.iconY, config.sizes.sizeImageLvl), description, onStepClickListener != null)
+            }.toMutableList()
+        current.progressIcon?.let { progress ->
+            result +=
+                Target(
+                    PROGRESS_ID, bounds(progress.left, progress.top, config.sizes.sizeIconProgress),
+                    context.getString(com.dmitrypokrasov.timelineview.R.string.timeline_progress), onProgressIconClickListener != null,
+                )
+        }
+        return result.filter { !it.bounds.isEmpty }
+    }
+
+    internal fun targetAt(
         x: Float,
         y: Float,
-    ): Boolean {
-        val sizes = timelineMath.getConfig().sizes
-        val minimumTouchTargetPx = 48f * context.resources.displayMetrics.density
-        val translatedX = x - timelineMath.getStartPosition()
-        return when (
-            val hit =
-                TimelineHitTestHelper.findHit(
-                    layout = layout,
-                    stepIconSize = sizes.sizeImageLvl,
-                    progressIconSize = sizes.sizeIconProgress,
-                    x = translatedX,
-                    y = y,
-                    minStepTouchSize = minimumTouchTargetPx,
-                    minProgressTouchSize = minimumTouchTargetPx,
-                )
-        ) {
-            is TimelineHitTestHelper.HitResult.Step -> {
-                onStepClickListener?.invoke(hit.index, hit.step)
-                onStepClickListener != null
-            }
+        clickableOnly: Boolean = true,
+    ): Int? =
+        targets().filter { (!clickableOnly || it.clickable) && it.bounds.contains(x, y) }
+            .minByOrNull {
+                val dx = x - it.bounds.centerX()
+                val dy = y - it.bounds.centerY()
+                dx * dx + dy * dy
+            }?.id
 
-            TimelineHitTestHelper.HitResult.ProgressIcon -> {
-                onProgressIconClickListener?.invoke()
-                onProgressIconClickListener != null
-            }
-
-            null -> false
+    internal fun clickTarget(id: Int): Boolean {
+        if (id == PROGRESS_ID && layout?.progressIcon != null) {
+            return onProgressIconClickListener?.let {
+                it()
+                true
+            } ?: false
+        }
+        val steps = layout?.steps.orEmpty()
+        val index = steps.indices.firstOrNull { virtualIds[steps[it].step.identity(it)] == id }
+        val listener = onStepClickListener
+        return if (index != null && listener != null) {
+            listener(index, steps[index].step)
+            true
+        } else {
+            false
         }
     }
 
+    fun handleClick(
+        x: Float,
+        y: Float,
+    ): Boolean = targetAt(x, y)?.let(::clickTarget) ?: false
+
+    fun getAccessibilityDescription(): String? = targets().map { it.description }.takeIf { it.isNotEmpty() }?.joinToString(". ")
+
+    fun desiredWidth(): Int = timelineMath.getDesiredWidth()
+
     fun measure(width: Int): Int {
-        timelineMath.setMeasuredWidth(width)
-        timelineMath.buildPath(timelineUi.getCompletedPath(), timelineUi.getRemainingPath())
-        layout = timelineMath.buildLayout()
-        return heightCalculator.calculateHeight(layout, timelineMath, timelineUi)
+        val direction = ownerView.layoutDirection == View.LAYOUT_DIRECTION_RTL
+        val resolved = TimelineLayoutResolver.resolve(timelineMath, timelineUi, width, 4f * context.resources.displayMetrics.density)
+        val completed = Path()
+        val remaining = Path()
+        timelineMath.buildPath(completed, remaining)
+        val identities = resolved.steps.mapIndexed { index, step -> step.step.identity(index) }.toSet()
+        val ids = virtualIds.filterKeys { it in identities }.toMutableMap()
+        var nextId = nextVirtualId
+        identities.forEach { ids.getOrPut(it) { nextId++ } }
+        val blocks = TimelineTextBlockResolver.resolve(resolved, timelineMath, timelineUi)
+        val bounds = heightCalculator.calculateBounds(resolved, timelineMath, timelineUi, blocks, listOf(completed, remaining))
+        val math = timelineMath.getConfig()
+        val start = timelineMath.getStartPosition()
+        val targets = buildTargets(resolved, math, start, width, direction, bounds.topInset, ids)
+        val candidate = TimelineFrame(resolved, blocks, math, start, width, direction, bounds.topInset, bounds.height, completed, remaining, targets)
+        lottieOverlayManager.submit(math.steps)
+        virtualIds.clear()
+        virtualIds.putAll(ids)
+        nextVirtualId = nextId
+        frame = candidate
+        return candidate.height
     }
 
     fun draw(canvas: Canvas) {
+        val current = frame ?: return
+        current.restorePaths(timelineUi)
         timelineUi.prepareStrokePaint()
 
         canvas.save()
-        canvas.translate(timelineMath.getStartPosition(), 0f)
+        canvas.translate(0f, topInset)
+        canvas.save()
+        if (rtl) {
+            canvas.translate(measuredWidth.toFloat(), 0f)
+            canvas.scale(-1f, 1f)
+        }
+        canvas.translate(origin, 0f)
         timelineUi.drawCompletedPath(canvas)
         timelineUi.drawRemainingPath(canvas)
+        canvas.restore()
+        canvas.translate(origin, 0f)
 
         timelineUi.prepareTextPaint()
         timelineUi.prepareIconPaint()
 
         drawProgressIcon(canvas, layout)
 
-        val resolvedTextBlocks =
-            TimelineTextBlockResolver.resolve(
-                layout = layout,
-                mathEngine = timelineMath,
-                uiRenderer = timelineUi,
-            )
-
+        val clip = canvas.clipBounds
         layout?.steps?.forEachIndexed { index, stepLayout ->
-            val textBlock = resolvedTextBlocks.getOrNull(index) ?: return@forEachIndexed
+            val textBlock = textBlocks.getOrNull(index) ?: return@forEachIndexed
+            val size = current.config.sizes.sizeImageLvl
+            val overlayInset = size * ((stepLayout.step.badgeAnimation?.scale ?: 1f).coerceAtLeast(1f) - 1f) / 2f
+            val top = minOf(stepLayout.iconY - overlayInset, textBlock.titleTop, textBlock.descriptionTop)
+            val bottom = maxOf(stepLayout.iconY + size + overlayInset, textBlock.titleTop + textBlock.titleHeight, textBlock.descriptionTop + textBlock.descriptionHeight)
+            if (bottom < clip.top || top > clip.bottom) return@forEachIndexed
             val title = stepLayout.step.title ?: ""
             val description = stepLayout.step.description ?: ""
 
             timelineUi.drawTitle(
                 canvas,
                 title,
-                stepLayout.titleX,
+                textX(stepLayout.titleX),
                 textBlock.titleTop,
-                stepLayout.textAlign,
+                textAlign(stepLayout.textAlign),
                 stepLayout.titleWidth,
             )
             timelineUi.drawDescription(
                 canvas,
                 description,
-                stepLayout.descriptionX,
+                textX(stepLayout.descriptionX),
                 textBlock.descriptionTop,
-                stepLayout.textAlign,
+                textAlign(stepLayout.textAlign),
                 stepLayout.descriptionWidth,
             )
             timelineUi.drawStepIcon(
                 stepLayout.step,
                 canvas,
-                stepLayout.textAlign,
+                textAlign(stepLayout.textAlign),
                 context,
-                stepLayout.iconX,
+                iconX(stepLayout.iconX, size),
                 stepLayout.iconY,
             )
             lottieOverlayManager.draw(
                 canvas = canvas,
-                context = context,
-                spec = stepLayout.step.badgeAnimation,
-                left = stepLayout.iconX,
+                key = TimelineLottieOverlayManager.Key(stepLayout.step.identity(index)),
+                left = iconX(stepLayout.iconX, size),
                 top = stepLayout.iconY,
-                size = timelineMath.getConfig().sizes.sizeImageLvl,
+                size = size,
             )
         }
 
@@ -225,65 +325,92 @@ class TimelineViewController(
         lottieOverlayManager.clear()
     }
 
-    internal fun buildAccessibilitySnapshot(
-        paddingLeft: Int,
-        paddingTop: Int,
-    ): TimelineAccessibilitySnapshot {
-        val density = context.resources.displayMetrics.density
-        return TimelineAccessibilitySnapshotBuilder.build(
-            layout = layout,
-            stepIconSize = timelineMath.getConfig().sizes.sizeImageLvl,
-            progressIconSize = timelineMath.getConfig().sizes.sizeIconProgress,
-            density = density,
-            paddingLeft = paddingLeft,
-            paddingTop = paddingTop,
-            stepClickable = onStepClickListener != null,
-            progressClickable = onProgressIconClickListener != null,
-        )
-    }
-
-    fun performStepClick(index: Int): Boolean {
-        val step = timelineMath.getSteps().getOrNull(index) ?: return false
-        onStepClickListener?.invoke(index, step)
-        return onStepClickListener != null
-    }
-
-    fun performProgressIconClick(): Boolean {
-        onProgressIconClickListener?.invoke()
-        return onProgressIconClickListener != null && hasProgressIcon(layout?.progressIcon)
-    }
-
     private fun drawProgressIcon(
         canvas: Canvas,
         layout: TimelineLayout?,
     ) {
         val progress = layout?.progressIcon ?: return
-        timelineUi.drawProgressIcon(canvas, progress.left, progress.top)
-        val progressStep =
-            layout.progressStepIndex?.let { index ->
-                timelineMath.getSteps().getOrNull(index)
-            }
+        val size = frame?.config?.sizes?.sizeIconProgress ?: return
+        timelineUi.drawProgressIcon(canvas, iconX(progress.left, size), progress.top)
+        val index = layout.progressStepIndex ?: return
+        val step = layout.steps.getOrNull(index)?.step ?: return
         lottieOverlayManager.draw(
             canvas = canvas,
-            context = context,
-            spec = progressStep?.progressAnimation,
-            left = progress.left,
+            key = TimelineLottieOverlayManager.Key(step.identity(index), true),
+            left = iconX(progress.left, size),
             top = progress.top,
-            size = timelineMath.getConfig().sizes.sizeIconProgress,
+            size = size,
         )
     }
 
-    private fun applyResolvedState() {
-        val resolved = state.resolve(strategyController)
+    @Suppress("TooGenericExceptionCaught") // Transaction boundary: restore reused instances, then rethrow.
+    private fun transition(
+        candidate: TimelineRuntimeState,
+        resolver: TimelineViewStrategyController = strategyController,
+    ) {
+        // Factories may reject input. Do not change the installed selection or registry yet.
+        val resolved = candidate.resolve(resolver)
+        val oldMath = timelineMath.getConfig()
+        val oldUi = timelineUi.getConfig()
+        try {
+            if (resolved.math.getConfig() != candidate.mathConfig) resolved.math.setConfig(candidate.mathConfig)
+            if (resolved.ui.getConfig() != candidate.uiConfig) resolved.ui.setConfig(candidate.uiConfig)
+            prepareTools(resolved.math, resolved.ui)
+        } catch (failure: Exception) {
+            // Direct instances can be reused by a candidate; restore their previous configuration.
+            runCatching {
+                timelineMath.setConfig(oldMath)
+                timelineUi.setConfig(oldUi)
+                prepareTools(timelineMath, timelineUi)
+            }.exceptionOrNull()?.let(failure::addSuppressed)
+            throw failure
+        }
         timelineMath = resolved.math
         timelineUi = resolved.ui
-        state = state.withMathEngine(timelineMath).withUiRenderer(timelineUi)
-        initTools()
+        state = candidate.copy(mathConfig = timelineMath.getConfig(), uiConfig = timelineUi.getConfig())
+        strategyController = resolver
+        invalidateGeometry()
     }
 
-    private fun hasProgressIcon(progressIcon: TimelineProgressIcon?): Boolean = progressIcon != null
+    private fun prepareTools(
+        math: TimelineMathEngine,
+        ui: TimelineUiRenderer,
+    ) {
+        math.setCornerRadius(ui.getConfig().stroke.radius)
+        ui.setGeometryRounded(math.hasRoundedGeometry)
+        ui.initTools(math.getConfig(), context)
+    }
+
+    internal fun setActive(active: Boolean) {
+        if (active) lottieOverlayManager.submit(timelineMath.getSteps())
+        lottieOverlayManager.setActive(active)
+    }
+
+    private fun textX(x: Float): Float = if (rtl) measuredWidth - 2f * origin - x else x
+
+    private fun iconX(
+        x: Float,
+        size: Float,
+    ): Float = if (rtl) textX(x) - size else x
+
+    private fun textAlign(align: Paint.Align): Paint.Align =
+        if (!rtl) {
+            align
+        } else {
+            when (align) {
+                Paint.Align.LEFT -> Paint.Align.RIGHT
+                Paint.Align.RIGHT -> Paint.Align.LEFT
+                Paint.Align.CENTER -> Paint.Align.CENTER
+            }
+        }
+
+    private fun invalidateGeometry() {
+        frame = null
+        lottieOverlayManager.submit(timelineMath.getSteps())
+    }
 
     private fun initTools() {
-        timelineUi.initTools(timelineMath.getConfig(), context)
+        prepareTools(timelineMath, timelineUi)
+        invalidateGeometry()
     }
 }

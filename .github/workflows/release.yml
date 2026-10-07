@@ -1,0 +1,100 @@
+name: Publish tested release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing stable release tag, for example v2.0.0
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: timeline-pages-release
+  cancel-in-progress: false
+jobs:
+  validate:
+    permissions:
+      contents: read
+      pages: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate tag input
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          if not re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', os.environ['RELEASE_TAG']):
+              raise SystemExit('Expected a stable vx.y.z tag')
+          PY
+      - name: Verify Pages deployment configuration
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          source=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.build_type')
+          if [ "$source" != "workflow" ]; then
+            echo '::error::Set Settings > Pages > Source to GitHub Actions before publishing. See RELEASING.md.'
+            exit 1
+          fi
+  verify:
+    needs: validate
+    uses: ./.github/workflows/quality.yml
+    with:
+      release: true
+      ref: ${{ inputs.tag }}
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: tested-maven-repository
+          path: build/repository
+      - uses: actions/download-artifact@v4
+        with:
+          name: documentation
+          path: build/release-docs
+      - name: Stage immutable Maven history and tested artifacts
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          mkdir -p build/site
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            git worktree add build/pages-history origin/gh-pages
+            cp -a build/pages-history/. build/site/
+            rm -f build/site/.git
+          else
+            cp -a docs/. build/site/
+            git worktree add --detach build/pages-history HEAD
+            git -C build/pages-history checkout --orphan pages-initial
+            git -C build/pages-history rm -rf .
+          fi
+          python3 scripts/release-artifact.py stage --tag "$RELEASE_TAG"
+          mkdir -p "build/site/api/${RELEASE_TAG#v}"
+          cp -a build/release-docs/. "build/site/api/${RELEASE_TAG#v}/"
+          rsync -a --delete --exclude=.git build/site/ build/pages-history/
+          git -C build/pages-history config user.name github-actions[bot]
+          git -C build/pages-history config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git -C build/pages-history add .
+          if ! git -C build/pages-history diff --cached --quiet; then
+            git -C build/pages-history commit -m "Publish tested $RELEASE_TAG"
+            git -C build/pages-history push origin HEAD:gh-pages
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/site
+      - name: Deploy verified site
+        id: deploy
+        uses: actions/deploy-pages@v4

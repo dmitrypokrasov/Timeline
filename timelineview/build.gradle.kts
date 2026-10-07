@@ -1,12 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.binary.compatibility.validator)
     id("maven-publish")
 }
 
 group = "com.github.dmitrypokrasov"
-version = "1.1.0"
+version = "2.0.0"
 
 android {
     namespace = "com.dmitrypokrasov.timelineview"
@@ -27,6 +26,20 @@ android {
             )
         }
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            it.systemProperty("robolectric.dependency.repo.url", "https://repo.maven.apache.org/maven2")
+            it.maxHeapSize = "2g"
+            it.inputs.dir("src/test/golden")
+            it.systemProperty("timeline.updateGoldens", providers.gradleProperty("updateGoldens").orElse("false").get())
+            if (!providers.gradleProperty("includeBenchmarks").isPresent) it.filter.excludeTestsMatching("*TimelinePerformanceTest")
+            if (providers.gradleProperty("skipScreenshots").isPresent) it.filter.excludeTestsMatching("*TimelineScreenshotTest")
+        }
+    }
+    publishing {
+        singleVariant("release") { withSourcesJar() }
+    }
 }
 
 publishing {
@@ -36,9 +49,28 @@ publishing {
                 from(components["release"])
             }
             artifactId = "timelineview"
+            pom {
+                name.set("Timeline")
+                description.set("Android timeline widget with pluggable layout and rendering strategies")
+                url.set("https://github.com/dmitrypokrasov/Timeline")
+                licenses {
+                    license {
+                        name.set("Apache License, Version 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/dmitrypokrasov/Timeline")
+                    connection.set("scm:git:https://github.com/dmitrypokrasov/Timeline.git")
+                }
+            }
         }
     }
     repositories {
+        maven {
+            name = "Build"
+            url = uri(rootProject.layout.buildDirectory.dir("repository"))
+        }
         maven {
             name = "GitHubPages"
             url = uri(rootProject.layout.projectDirectory.dir("docs/maven"))
@@ -55,14 +87,14 @@ publishing {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     implementation(libs.androidx.core.ktx)
+    // Lottie uses AppCompat; retain the verified version instead of its older transitive default.
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.customview)
-    implementation(libs.material)
     implementation(libs.lottie)
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

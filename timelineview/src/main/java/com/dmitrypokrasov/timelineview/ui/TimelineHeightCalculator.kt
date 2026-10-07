@@ -1,39 +1,60 @@
 package com.dmitrypokrasov.timelineview.ui
 
+import android.graphics.Path
+import android.graphics.RectF
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
-import kotlin.math.ceil
-import kotlin.math.max
 
+internal data class TimelineVerticalBounds(val topInset: Float, val height: Int)
+
+/** Measures content bounds, including overlays and optional stroked paths. */
 class TimelineHeightCalculator {
     fun calculateHeight(
         layout: TimelineLayout?,
         mathEngine: TimelineMathEngine,
         uiRenderer: TimelineUiRenderer,
-    ): Int {
-        if (layout == null) return 0
+    ): Int =
+        calculateBounds(layout, mathEngine, uiRenderer, TimelineTextBlockResolver.resolve(layout, mathEngine, uiRenderer)).height
 
-        val mathConfig = mathEngine.getConfig()
-        val resolvedTextBlocks =
-            TimelineTextBlockResolver.resolve(
-                layout = layout,
-                mathEngine = mathEngine,
-                uiRenderer = uiRenderer,
-            )
-        var maxBottom = 0f
+    internal fun calculateBounds(
+        layout: TimelineLayout?,
+        mathEngine: TimelineMathEngine,
+        uiRenderer: TimelineUiRenderer,
+        textBlocks: List<TimelineResolvedTextBlock>,
+        paths: List<Path> = emptyList(),
+    ): TimelineVerticalBounds {
+        var top = 0f
+        var bottom = 0f
 
-        layout.steps.forEachIndexed { index, stepLayout ->
-            val textBlock = resolvedTextBlocks.getOrNull(index) ?: return@forEachIndexed
-            maxBottom = max(maxBottom, stepLayout.iconY + mathConfig.sizes.sizeImageLvl)
-            maxBottom = max(maxBottom, textBlock.titleTop + textBlock.titleHeight)
-            maxBottom = max(maxBottom, textBlock.descriptionTop + textBlock.descriptionHeight)
+        fun include(
+            y: Float,
+            height: Float,
+        ) {
+            top = minOf(top, y)
+            bottom = maxOf(bottom, y + height)
         }
-
-        layout.progressIcon?.let { progressIcon ->
-            maxBottom = max(maxBottom, progressIcon.top + mathConfig.sizes.sizeIconProgress)
+        val stroke = uiRenderer.getConfig().stroke.sizeStroke / 2f
+        paths.forEach { path ->
+            if (!path.isEmpty) {
+                val bounds = RectF()
+                path.computeBounds(bounds, true)
+                include(bounds.top - stroke, bounds.height() + 2f * stroke)
+            }
         }
-
-        return ceil(maxBottom).toInt().coerceAtLeast(0)
+        val sizes = mathEngine.getConfig().sizes
+        layout?.steps?.forEachIndexed { index, step ->
+            val scale = (step.step.badgeAnimation?.scale ?: 1f).coerceAtLeast(1f)
+            include(step.iconY - sizes.sizeImageLvl * (scale - 1f) / 2f, sizes.sizeImageLvl * scale)
+            val block = textBlocks[index]
+            if (block.titleHeight > 0) include(block.titleTop, block.titleHeight.toFloat())
+            if (block.descriptionHeight > 0) include(block.descriptionTop, block.descriptionHeight.toFloat())
+        }
+        layout?.progressIcon?.let { progress ->
+            val scale = layout.progressStepIndex?.let { layout.steps.getOrNull(it)?.step?.progressAnimation?.scale } ?: 1f
+            val scaled = sizes.sizeIconProgress * scale.coerceAtLeast(1f)
+            include(progress.top - (scaled - sizes.sizeIconProgress) / 2f, scaled)
+        }
+        return TimelineVerticalBounds(-top, kotlin.math.ceil(bottom - top).toInt())
     }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="timeline_step">Шаг %1$d</string>
+    <string name="timeline_percent">Выполнено: %1$d%%</string>
+    <string name="timeline_progress">Текущий прогресс</string>
+</resources>

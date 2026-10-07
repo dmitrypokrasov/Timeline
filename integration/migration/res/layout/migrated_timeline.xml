@@ -1,0 +1,8 @@
+<com.dmitrypokrasov.timelineview.ui.TimelineView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:timeline_math_strategy="LINEAR_HORIZONTAL"
+    app:timeline_horizontal_layout="WRAP"
+    app:timeline_min_cell_width="160dp"
+    app:timeline_progress_mode="INDEPENDENT" />

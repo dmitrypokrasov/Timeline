@@ -40,9 +40,10 @@ class LinearTimelineMathTest {
         val config = progressConfig(progresses = listOf(0, 100, 100))
         val math = LinearTimelineMath(config, LinearTimelineMath.Orientation.HORIZONTAL)
 
+        math.setMeasuredWidth(320)
         val layout = math.buildLayout()
 
-        val expectedLeft = -(config.sizes.sizeImageLvl / 2f) - config.sizes.sizeIconProgress / 2f
+        val expectedLeft = -config.sizes.sizeIconProgress / 2f
         assertEquals(expectedLeft, requireNotNull(layout.progressIcon).left, 0.01f)
     }
 
@@ -51,10 +52,11 @@ class LinearTimelineMathTest {
         val config = progressConfig(progresses = listOf(100, 100, 100))
         val math = LinearTimelineMath(config, LinearTimelineMath.Orientation.HORIZONTAL)
 
+        math.setMeasuredWidth(300)
         val lastIndex = config.steps.lastIndex
         val lastAnchor = math.getHorizontalIconOffset(lastIndex) + config.sizes.sizeIconProgress / 2f
         val expectedAnchor =
-            config.spacing.stepYFirst + config.spacing.stepY * lastIndex -
+            (300f - 2f * config.spacing.marginHorizontalStroke) / config.steps.size * (lastIndex + 0.5f) -
                 (config.sizes.sizeImageLvl / 2f - 2f)
 
         assertEquals(expectedAnchor, lastAnchor, 0.01f)
@@ -136,6 +138,23 @@ class LinearTimelineMathTest {
         layout.steps.forEach { step ->
             assertTrue(step.titleWidth in 1..220)
             assertTrue(step.descriptionWidth in 1..220)
+        }
+    }
+
+    @Test
+    fun `vertical badges stay on the line and labels clear it at every origin`() {
+        TimelineMathConfig.StartPosition.entries.forEach { origin ->
+            val config = progressConfig(listOf(50, 0)).copy(startPosition = origin)
+            val engine = LinearTimelineMath(config)
+            engine.setMeasuredWidth(320)
+            engine.buildLayout().steps.forEach { step ->
+                assertEquals(0f, step.iconX + config.sizes.sizeImageLvl / 2f, 0.01f)
+                if (origin == TimelineMathConfig.StartPosition.START) {
+                    assertTrue(step.titleX >= config.sizes.sizeImageLvl / 2f + 4f)
+                } else {
+                    assertTrue(step.titleX <= -config.sizes.sizeImageLvl / 2f - 4f)
+                }
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import com.dmitrypokrasov.timelineview.model.TimelineStepData
 /**
  * Renderer contract for drawing a timeline once the math engine has produced its geometry.
  */
+@Suppress("TooManyFunctions") // Public renderer contract; splitting it would break existing implementations.
 interface TimelineUiRenderer {
     /** Replaces the current renderer configuration. */
     fun setConfig(config: TimelineUiConfig)
@@ -23,6 +24,9 @@ interface TimelineUiRenderer {
         timelineMathConfig: TimelineMathConfig,
         context: Context,
     )
+
+    /** Disables paint-only rounding when geometry already includes curves. */
+    fun setGeometryRounded(rounded: Boolean) = Unit
 
     /** Prepares the paint used to draw the line stroke. */
     fun prepareStrokePaint()
