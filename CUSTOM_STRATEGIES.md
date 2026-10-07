@@ -54,6 +54,10 @@ a fresh instance. The [README registry example](README.md#custom-registries) sho
   Cells in a row share its number. `setStepExtents` receives distances between row origins;
   an empty list resets custom expansion. Implement both to opt in.
 - `textBelowBadge` requests vertical clearance beneath the badge.
+- Engines with a connector above their labels can additionally implement `TimelineTextBoundary`.
+  Return the local Y boundary per step; the text resolver adds stroke clearance and uses
+  actual font metrics, so large system fonts cannot cross that connector. Existing engines
+  do not need to implement this optional capability.
 - Paths must be reset before rebuilding. Return `hasRoundedGeometry = true` only if the
   actual path already includes curves; accept the radius via `setCornerRadius` if applicable.
 
@@ -70,3 +74,9 @@ to APIs currently accepting `TimelineMathEngine`.
 Test at least empty/single lists, narrow widths, long labels, RTL, 0/100% progress and repeated
 configuration changes. Use the [project geometry tests](timelineview/src/test/java/com/dmitrypokrasov/timelineview/ui/TimelineStrategyPropertiesTest.kt)
 as examples of invariants, and include the strategy in your host's screenshot suite.
+The [shared path contract suite](timelineview/src/test/java/com/dmitrypokrasov/timelineview/ui/TimelinePathContractTest.kt)
+checks all built-ins at zero/narrow widths in both progress modes: completed plus remaining
+arc length must equal the full path, and the active marker must meet the drawn color boundary.
+Reuse those checks when adding a custom engine; they iterate every path contour, including
+independently colored segments. Time-scaled tests also cover equal/pre-epoch timestamps and
+atomic rejection of unsorted or unrepresentable ranges.

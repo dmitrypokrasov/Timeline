@@ -1,9 +1,11 @@
 package com.dmitrypokrasov.timelineview.math
 
 import android.graphics.Paint
+import androidx.annotation.MainThread
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 
 /** Compatibility surface for existing engines. New engines can extend [TimelineMathAdapter]. */
+@MainThread
 interface TimelineMathEngine : TimelineLayoutEngine {
     /** Returns the horizontal progress-icon offset for step [i]. */
     @Deprecated("Use buildLayout() coordinates; new engines can extend TimelineMathAdapter")

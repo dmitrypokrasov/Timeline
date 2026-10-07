@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing stable release tag, for example v2.0.0
+        description: Existing stable release tag, for example v2.1.0
         required: true
         type: string
 permissions:
@@ -43,6 +43,7 @@ jobs:
       release: true
       ref: ${{ inputs.tag }}
   publish:
+    timeout-minutes: 45
     needs: verify
     runs-on: ubuntu-latest
     permissions:
@@ -53,15 +54,21 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ inputs.tag }}
           fetch-depth: 0
-      - uses: actions/download-artifact@v4
+      - name: Restore workflow-version publication verification tools
+        env:
+          WORKFLOW_SHA: ${{ github.workflow_sha }}
+        run: |
+          git show "$WORKFLOW_SHA:scripts/verify-public-release.py" > scripts/verify-public-release.py
+          git show "$WORKFLOW_SHA:scripts/release-notes.py" > scripts/release-notes.py
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: tested-maven-repository
           path: build/repository
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: documentation
           path: build/release-docs
@@ -91,10 +98,40 @@ jobs:
             git -C build/pages-history commit -m "Publish tested $RELEASE_TAG"
             git -C build/pages-history push origin HEAD:gh-pages
           fi
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: build/site
       - name: Deploy verified site
         id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - uses: ./.github/actions/setup-project
+      - name: Verify public artifacts and a clean consumer
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          SITE_URL: ${{ steps.deploy.outputs.page_url }}
+        run: python3 scripts/verify-public-release.py --tag "$RELEASE_TAG" --url "$SITE_URL" --site build/site
+      - name: Publish GitHub Release after consumer verification
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          SITE_URL: ${{ steps.deploy.outputs.page_url }}
+        run: |
+          python3 scripts/release-notes.py --tag "$RELEASE_TAG" --url "$SITE_URL" > build/release-notes.md
+          if gh release view "$RELEASE_TAG" --json isDraft,tagName > build/existing-release.json; then
+            python3 - <<'PY'
+          import json, os
+          with open('build/existing-release.json') as source:
+              release = json.load(source)
+          if release['isDraft'] or release['tagName'] != os.environ['RELEASE_TAG']:
+              raise SystemExit('Existing release is not the requested published release')
+          print('Published release already exists; leaving its notes unchanged.')
+          PY
+          else
+            gh release create "$RELEASE_TAG" --verify-tag --title "Timeline ${RELEASE_TAG#v}" --notes-file build/release-notes.md
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: public-consumer-reports
+          path: build/reports/public-consumer/

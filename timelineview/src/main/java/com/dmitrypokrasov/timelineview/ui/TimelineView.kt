@@ -8,6 +8,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import androidx.annotation.MainThread
 import androidx.core.view.ViewCompat
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineConfig
@@ -25,6 +26,7 @@ import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
 /**
  * Custom View for rendering a timeline.
  */
+@MainThread
 class TimelineView
     @JvmOverloads
     constructor(
@@ -166,7 +168,7 @@ class TimelineView
             val desiredHeight = controller.measure(contentWidth) + paddingTop + paddingBottom
             val resolvedHeight = resolveSizeAndState(desiredHeight, heightMeasureSpec, 0)
             setMeasuredDimension(resolvedWidth, resolvedHeight)
-            accessibility.invalidateRoot()
+            accessibility.onLayoutChanged()
         }
 
         override fun onDraw(canvas: Canvas) {

@@ -10,7 +10,7 @@ import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.model.indexOfStep
 
 /** Serpentine rows whose paths, progress and badges share the same measured geometry. */
-class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMathEngine {
+class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMathEngine, TimelineTextBoundary {
     init {
         mathConfig = mathConfig.copy(steps = mathConfig.steps.toList())
     }
@@ -127,6 +127,8 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
     override fun getIconYCoordinates(i: Int): Float = anchor(i).y - mathConfig.sizes.sizeImageLvl / 2f
 
     override fun getTitleYCoordinates(i: Int): Float = rowTop(i) + mathConfig.spacing.marginTopTitle
+
+    override fun getTextTopBoundary(index: Int): Float = rowTop(index)
 
     override fun getDescriptionYCoordinates(i: Int): Float = getTitleYCoordinates(i) + mathConfig.spacing.marginTopDescription
 
