@@ -1,8 +1,8 @@
 # Migrating from 1.1.0 to 2.0
 
-**2.0.0 is not published yet.** Keep the public dependency at 1.1.0 until a release is
-announced. To try this checkout, run `bash scripts/check-release.sh` and use the Maven
-repository under `build/repository`. [Release instructions](RELEASING.md) describe publication.
+**2.0.0 is published.** Use `com.github.dmitrypokrasov:timelineview:2.0.0` from the public
+Maven repository shown in the [installation guide](README.md#installation). To verify a
+local checkout, run `bash scripts/check-release.sh`; see the [release guide](RELEASING.md).
 
 ## Compatibility policy
 
@@ -40,7 +40,7 @@ fun legacyTimeline(context: Context): TimelineView {
 }
 ```
 
-### After: staged 2.0
+### After: 2.0
 
 <!-- source: integration/migration/after/MigratedTimeline.kt -->
 ```kotlin

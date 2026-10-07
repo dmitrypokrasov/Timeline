@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes the unreleased 2.0 implementation. See [migration](MIGRATION_1_TO_2.md)
+This document describes the 2.0 implementation. See [migration](MIGRATION_1_TO_2.md)
 for changes from the published 1.1.0 artifact.
 
 ## Data flow
