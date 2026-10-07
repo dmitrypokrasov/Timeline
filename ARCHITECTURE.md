@@ -82,7 +82,9 @@ incoming segment separately. Both modes expose one active progress marker.
 - A successful state update invalidates the frame; a successful measure installs a new one.
 - Renderer text and bitmap caches are bounded and reset on renderer initialization.
 - Lottie drawables are keyed by stable step identity and overlay role, paused while hidden,
-  evicted when removed, and released on detach. The frame does not own animation playback.
+  paused outside the drawn viewport, evicted when removed, and released on detach.
+  Viewport culling includes scaled overlay bounds; returning overlays resume playback.
+  The frame does not own animation playback.
 - Offscreen steps are skipped during drawing. Layout still measures the complete dataset;
   an unbounded feed needs a recycling container.
 

@@ -26,6 +26,7 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
         var success: LottieListener<LottieComposition>? = null
         var failure: LottieListener<Throwable>? = null
         var started = false
+        var visible = false
     }
 
     private val entries = mutableMapOf<Key, Entry>()
@@ -98,9 +99,17 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
         entries.values.forEach(::updatePlayback)
     }
 
+    fun beginFrame() {
+        entries.values.forEach { it.visible = false }
+    }
+
+    fun endFrame() {
+        entries.values.filter { !it.visible }.forEach(::updatePlayback)
+    }
+
     private fun updatePlayback(entry: Entry) {
         val drawable = entry.drawable
-        if (!active || !entry.spec.autoPlay) {
+        if (!active || !entry.visible || !entry.spec.autoPlay) {
             drawable.pauseAnimation()
         } else if (drawable.composition != null && !drawable.isAnimating) {
             if (!entry.started) {
@@ -120,10 +129,15 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
         size: Float,
     ) {
         val entry = entries[key] ?: return
-        if (size <= 0f || entry.drawable.composition == null) return
-        if (!entry.spec.repeat && entry.started && entry.drawable.progress >= 1f) return
+        if (size <= 0f) return
         val scaledSize = size * entry.spec.scale
         val inset = (size - scaledSize) / 2f
+        val clip = canvas.clipBounds
+        entry.visible = left + inset < clip.right && top + inset < clip.bottom &&
+            left + inset + scaledSize > clip.left && top + inset + scaledSize > clip.top
+        updatePlayback(entry)
+        if (!entry.visible || entry.drawable.composition == null) return
+        if (!entry.spec.repeat && entry.started && entry.drawable.progress >= 1f) return
         entry.drawable.setBounds(
             (left + inset).roundToInt(),
             (top + inset).roundToInt(),

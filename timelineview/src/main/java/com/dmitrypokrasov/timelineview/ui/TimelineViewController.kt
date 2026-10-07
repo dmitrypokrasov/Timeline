@@ -253,72 +253,77 @@ class TimelineViewController(
 
     fun draw(canvas: Canvas) {
         val current = frame ?: return
-        current.restorePaths(timelineUi)
-        timelineUi.prepareStrokePaint()
+        lottieOverlayManager.beginFrame()
+        try {
+            current.restorePaths(timelineUi)
+            timelineUi.prepareStrokePaint()
 
-        canvas.save()
-        canvas.translate(0f, topInset)
-        canvas.save()
-        if (rtl) {
-            canvas.translate(measuredWidth.toFloat(), 0f)
-            canvas.scale(-1f, 1f)
+            canvas.save()
+            canvas.translate(0f, topInset)
+            canvas.save()
+            if (rtl) {
+                canvas.translate(measuredWidth.toFloat(), 0f)
+                canvas.scale(-1f, 1f)
+            }
+            canvas.translate(origin, 0f)
+            timelineUi.drawCompletedPath(canvas)
+            timelineUi.drawRemainingPath(canvas)
+            canvas.restore()
+            canvas.translate(origin, 0f)
+
+            timelineUi.prepareTextPaint()
+            timelineUi.prepareIconPaint()
+
+            drawProgressIcon(canvas, layout)
+
+            val clip = canvas.clipBounds
+            layout?.steps?.forEachIndexed { index, stepLayout ->
+                val textBlock = textBlocks.getOrNull(index) ?: return@forEachIndexed
+                val size = current.config.sizes.sizeImageLvl
+                val overlayInset = size * ((stepLayout.step.badgeAnimation?.scale ?: 1f).coerceAtLeast(1f) - 1f) / 2f
+                val top = minOf(stepLayout.iconY - overlayInset, textBlock.titleTop, textBlock.descriptionTop)
+                val bottom = maxOf(stepLayout.iconY + size + overlayInset, textBlock.titleTop + textBlock.titleHeight, textBlock.descriptionTop + textBlock.descriptionHeight)
+                if (bottom < clip.top || top > clip.bottom) return@forEachIndexed
+                val title = stepLayout.step.title ?: ""
+                val description = stepLayout.step.description ?: ""
+
+                timelineUi.drawTitle(
+                    canvas,
+                    title,
+                    textX(stepLayout.titleX),
+                    textBlock.titleTop,
+                    textAlign(stepLayout.textAlign),
+                    stepLayout.titleWidth,
+                )
+                timelineUi.drawDescription(
+                    canvas,
+                    description,
+                    textX(stepLayout.descriptionX),
+                    textBlock.descriptionTop,
+                    textAlign(stepLayout.textAlign),
+                    stepLayout.descriptionWidth,
+                )
+                timelineUi.drawStepIcon(
+                    stepLayout.step,
+                    canvas,
+                    textAlign(stepLayout.textAlign),
+                    context,
+                    iconX(stepLayout.iconX, size),
+                    stepLayout.iconY,
+                )
+                lottieOverlayManager.draw(
+                    canvas = canvas,
+                    key = TimelineLottieOverlayManager.Key(stepLayout.step.identity(index)),
+                    left = iconX(stepLayout.iconX, size),
+                    top = stepLayout.iconY,
+                    size = size,
+                )
+            }
+
+            canvas.restore()
+        } finally {
+            lottieOverlayManager.endFrame()
         }
-        canvas.translate(origin, 0f)
-        timelineUi.drawCompletedPath(canvas)
-        timelineUi.drawRemainingPath(canvas)
-        canvas.restore()
-        canvas.translate(origin, 0f)
-
-        timelineUi.prepareTextPaint()
-        timelineUi.prepareIconPaint()
-
-        drawProgressIcon(canvas, layout)
-
-        val clip = canvas.clipBounds
-        layout?.steps?.forEachIndexed { index, stepLayout ->
-            val textBlock = textBlocks.getOrNull(index) ?: return@forEachIndexed
-            val size = current.config.sizes.sizeImageLvl
-            val overlayInset = size * ((stepLayout.step.badgeAnimation?.scale ?: 1f).coerceAtLeast(1f) - 1f) / 2f
-            val top = minOf(stepLayout.iconY - overlayInset, textBlock.titleTop, textBlock.descriptionTop)
-            val bottom = maxOf(stepLayout.iconY + size + overlayInset, textBlock.titleTop + textBlock.titleHeight, textBlock.descriptionTop + textBlock.descriptionHeight)
-            if (bottom < clip.top || top > clip.bottom) return@forEachIndexed
-            val title = stepLayout.step.title ?: ""
-            val description = stepLayout.step.description ?: ""
-
-            timelineUi.drawTitle(
-                canvas,
-                title,
-                textX(stepLayout.titleX),
-                textBlock.titleTop,
-                textAlign(stepLayout.textAlign),
-                stepLayout.titleWidth,
-            )
-            timelineUi.drawDescription(
-                canvas,
-                description,
-                textX(stepLayout.descriptionX),
-                textBlock.descriptionTop,
-                textAlign(stepLayout.textAlign),
-                stepLayout.descriptionWidth,
-            )
-            timelineUi.drawStepIcon(
-                stepLayout.step,
-                canvas,
-                textAlign(stepLayout.textAlign),
-                context,
-                iconX(stepLayout.iconX, size),
-                stepLayout.iconY,
-            )
-            lottieOverlayManager.draw(
-                canvas = canvas,
-                key = TimelineLottieOverlayManager.Key(stepLayout.step.identity(index)),
-                left = iconX(stepLayout.iconX, size),
-                top = stepLayout.iconY,
-                size = size,
-            )
-        }
-
-        canvas.restore()
     }
 
     fun release() {

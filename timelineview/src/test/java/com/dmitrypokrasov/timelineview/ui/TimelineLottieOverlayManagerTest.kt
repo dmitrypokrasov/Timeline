@@ -1,5 +1,7 @@
 package com.dmitrypokrasov.timelineview.ui
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.view.View
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieTask
@@ -61,10 +63,12 @@ class TimelineLottieOverlayManagerTest {
             manager.submit(listOf(TimelineStepData(progress = 20, badgeAnimation = spec)))
             assertEquals(0, manager.runningAnimationCount)
             manager.setActive(true)
+            drawVisible(manager, listOf(0))
             assertEquals(1, manager.runningAnimationCount)
             manager.setActive(false)
             assertEquals(0, manager.runningAnimationCount)
             manager.setActive(true)
+            drawVisible(manager, listOf(0))
             assertEquals(1, manager.runningAnimationCount)
             manager.submit(emptyList())
             assertEquals(0, manager.runningAnimationCount)
@@ -73,5 +77,42 @@ class TimelineLottieOverlayManagerTest {
         } finally {
             manager.clear()
         }
+    }
+
+    @Test
+    fun `only overlays intersecting the scrolled viewport play and reentry resumes`() {
+        val manager = TimelineLottieOverlayManager(View(RuntimeEnvironment.getApplication()))
+        try {
+            val spec = TimelineLottieSpec(R.raw.timeline_test_animation)
+            manager.submit(List(100) { TimelineStepData(progress = 100, badgeAnimation = spec) })
+            manager.setActive(true)
+            assertEquals(0, manager.runningAnimationCount)
+            drawVisible(manager, (0 until 100).toList())
+            assertEquals(2, manager.runningAnimationCount)
+            drawVisible(manager, (0 until 100).toList(), scrollY = 2500f)
+            assertEquals(2, manager.runningAnimationCount)
+            drawVisible(manager, emptyList())
+            assertEquals(0, manager.runningAnimationCount)
+            drawVisible(manager, listOf(0))
+            assertEquals(1, manager.runningAnimationCount)
+            manager.setActive(false)
+            assertEquals(0, manager.runningAnimationCount)
+        } finally {
+            manager.clear()
+        }
+    }
+
+    private fun drawVisible(
+        manager: TimelineLottieOverlayManager,
+        indices: List<Int>,
+        scrollY: Float = 0f,
+    ) {
+        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        canvas.translate(0f, -scrollY)
+        manager.beginFrame()
+        indices.forEach { manager.draw(canvas, TimelineLottieOverlayManager.Key(it), 0f, it * 50f, 24f) }
+        manager.endFrame()
+        bitmap.recycle()
     }
 }
