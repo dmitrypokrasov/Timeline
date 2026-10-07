@@ -8,6 +8,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import androidx.annotation.MainThread
 import androidx.core.view.ViewCompat
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineConfig
@@ -25,6 +26,7 @@ import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
 /**
  * Custom View for rendering a timeline.
  */
+@MainThread
 class TimelineView
     @JvmOverloads
     constructor(

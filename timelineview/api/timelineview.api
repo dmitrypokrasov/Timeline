@@ -40,6 +40,13 @@ public final class com/dmitrypokrasov/timelineview/config/TimelineConfigParser {
 	public static synthetic fun parse$default (Lcom/dmitrypokrasov/timelineview/config/TimelineConfigParser;Landroid/util/AttributeSet;IILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
 }
 
+public final class com/dmitrypokrasov/timelineview/config/TimelineDefaults {
+	public static final field INSTANCE Lcom/dmitrypokrasov/timelineview/config/TimelineDefaults;
+	public static final fun config (Landroid/content/Context;)Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
+	public static final fun dp (Landroid/content/Context;F)F
+	public static final fun sp (Landroid/content/Context;F)F
+}
+
 public final class com/dmitrypokrasov/timelineview/config/TimelineMathConfig {
 	public fun <init> ()V
 	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;Ljava/util/List;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$ProgressMode;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$HorizontalLayout;FD)V

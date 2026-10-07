@@ -40,6 +40,13 @@ public final class com.dmitrypokrasov.timelineview.config.TimelineConfigParser {
   public static com.dmitrypokrasov.timelineview.config.TimelineConfig parse$default(com.dmitrypokrasov.timelineview.config.TimelineConfigParser, android.util.AttributeSet, int, int, java.lang.Object);
 }
 
+public final class com.dmitrypokrasov.timelineview.config.TimelineDefaults {
+  public static final com.dmitrypokrasov.timelineview.config.TimelineConfig config(android.content.Context);
+  public static final com.dmitrypokrasov.timelineview.config.TimelineDefaults INSTANCE;
+  public static final float dp(android.content.Context, float);
+  public static final float sp(android.content.Context, float);
+}
+
 public final class com.dmitrypokrasov.timelineview.config.TimelineMathConfig {
   public boolean equals(java.lang.Object);
   public com.dmitrypokrasov.timelineview.config.TimelineMathConfig();
