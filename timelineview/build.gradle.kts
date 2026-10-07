@@ -49,6 +49,21 @@ publishing {
                 from(components["release"])
             }
             artifactId = "timelineview"
+            pom {
+                name.set("Timeline")
+                description.set("Android timeline widget with pluggable layout and rendering strategies")
+                url.set("https://github.com/dmitrypokrasov/Timeline")
+                licenses {
+                    license {
+                        name.set("Apache License, Version 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/dmitrypokrasov/Timeline")
+                    connection.set("scm:git:https://github.com/dmitrypokrasov/Timeline.git")
+                }
+            }
         }
     }
     repositories {
@@ -74,9 +89,9 @@ publishing {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
+    // Lottie uses AppCompat; retain the verified version instead of its older transitive default.
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.customview)
-    implementation(libs.material)
     implementation(libs.lottie)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)

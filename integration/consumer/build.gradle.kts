@@ -10,7 +10,18 @@ android {
         applicationId = "com.example.consumer"
         minSdk = 27
         targetSdk = 34
+        testInstrumentationRunner = "com.example.consumer.MinifiedConsumerInstrumentation"
     }
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            // Test-only consumer APK; never distributed as a production application.
+            signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+        }
+    }
+    testBuildType = "release"
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

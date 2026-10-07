@@ -13,6 +13,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   validate:
+    permissions:
+      contents: read
+      pages: read
     runs-on: ubuntu-latest
     steps:
       - name: Validate tag input
@@ -24,6 +27,15 @@ jobs:
           if not re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', os.environ['RELEASE_TAG']):
               raise SystemExit('Expected a stable vx.y.z tag')
           PY
+      - name: Verify Pages deployment configuration
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          source=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.build_type')
+          if [ "$source" != "workflow" ]; then
+            echo '::error::Set Settings > Pages > Source to GitHub Actions before publishing. See RELEASING.md.'
+            exit 1
+          fi
   verify:
     needs: validate
     uses: ./.github/workflows/quality.yml

@@ -20,6 +20,12 @@ The workflow builds/tests that tag and publishes the exact staged Maven bytes it
 No personal access token is required by the prepared workflow. These repository settings
 must be applied by a maintainer; changing local YAML does not change repository settings.
 
+At the 2026-10-07 audit, Pages still used `main:/docs` (legacy branch deployment),
+and `dev` had no branch protection. These are outstanding repository settings, not changes
+made by this patch. Switch Pages to GitHub Actions when preparing publication and require
+`Required checks` on `dev`. The release workflow now rejects legacy Pages configuration
+before building or modifying Maven history.
+
 ## Prepare a version
 
 - Commit the intended library, tests, docs and API baselines together. Use a stable `x.y.z`
@@ -27,10 +33,12 @@ must be applied by a maintainer; changing local YAML does not change repository 
 - Update [CHANGELOG.md](CHANGELOG.md), the [migration guide](MIGRATION_1_TO_2.md), and the
   installation examples when the version is actually published. Keep 1.1.0 artifacts unchanged.
 - Run `bash scripts/check-release.sh`. It runs lint/tests/docs, stages the AAR/sources/POM,
-  compiles old and migrated consumers, exercises migration scenarios, checks JVM signatures
+  compiles old and migrated consumers, builds an R8/resource-shrunk release consumer and its
+  instrumentation APK, exercises migration scenarios, checks JVM signatures
   and records SHA-256 hashes with the source commit in `build/repository/release-manifest.json`.
 - Run the instrumented tests on a connected emulator. CI checks API 27 and 34 for releases;
-  diagnostic performance runs are informational timings rather than frame-rate thresholds.
+  device jobs also run the minified consumer against the staged Maven AAR. Release/tag
+  verification includes diagnostic performance runs (informational timings, not frame-rate thresholds).
 
 Create and push the release tag only after reviewing the change. For example, after committing
 version 2.0.0: `git tag -a v2.0.0 -m "Timeline 2.0.0"`, then `git push origin v2.0.0`.
@@ -40,7 +48,7 @@ from a trusted branch containing this workflow and provide `v2.0.0`.
 ## Publication flow
 
 The reusable quality workflow runs quality/API checks, screenshots, packaging/migration,
-documentation and device tests. Its aggregate gate rejects failed/cancelled required jobs.
+documentation, device tests and diagnostic performance. Its aggregate gate rejects failed/cancelled required jobs.
 Only then does `publish` download the tested Maven repository and generated documentation.
 It performs **no Gradle rebuild**.
 
@@ -103,3 +111,23 @@ consumer verification metadata when preparing the next release.
 See [Gradle verification guidance](https://docs.gradle.org/8.6/userguide/dependency_verification.html)
 and [Kotlin binary compatibility validator](https://github.com/Kotlin/binary-compatibility-validator/tree/0.16.3)
 for the tools' scope and limitations.
+
+## Candidate rehearsal without publication
+
+Follow [Gitflow](AGENTS.md#gitflow): ordinary fixes target `dev`; create a release branch
+from `dev` only when preparing the actual release. Do not tag or publish during an audit.
+
+1. Run `bash scripts/check-release.sh` and review the candidate manifest and consumer APKs.
+2. Run the quality workflow manually for the candidate branch to include both device APIs
+   and diagnostics. Require its aggregate status to succeed before approving a release.
+3. For a local device run, use `./gradlew -p integration/consumer connectedReleaseAndroidTest
+   -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.0.0` after staging.
+   The release consumer uses a debug signing key solely to install the test APK.
+4. Confirm the repository's actual Pages source, environment rules and protected-branch
+   checks using the repository settings. A successful local build cannot confirm these.
+5. `check-release.sh` runs `python3 scripts/release-artifact.py rehearse`: it stages the actual
+   candidate in a disposable copy of the public repository, checks identical retry and
+   verifies old artifacts retain their checksums. It creates no tag and publishes nothing.
+
+Consumer runtime tests address the minified app only through Android framework APIs;
+they do not add keep-all rules that would hide missing library consumer rules.

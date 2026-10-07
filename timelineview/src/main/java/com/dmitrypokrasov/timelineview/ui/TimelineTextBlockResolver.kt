@@ -37,9 +37,11 @@ internal object TimelineTextBlockResolver {
 
             val requestedTop = stepLayout.titleY - uiRenderer.getTitleBaselineOffset()
             val horizontal = mathEngine.textBelowBadge
+            val badgeSize = mathEngine.getConfig().sizes.sizeImageLvl
+            val overlayInset = badgeSize * ((stepLayout.step.badgeAnimation?.scale ?: 1f).coerceAtLeast(1f) - 1f) / 2f
             val titleTop =
                 if (horizontal) {
-                    maxOf(requestedTop, stepLayout.iconY + mathEngine.getConfig().sizes.sizeImageLvl + MIN_GAP_BETWEEN_TITLE_AND_DESCRIPTION)
+                    maxOf(requestedTop, stepLayout.iconY + badgeSize + overlayInset + MIN_GAP_BETWEEN_TITLE_AND_DESCRIPTION)
                 } else {
                     requestedTop
                 }

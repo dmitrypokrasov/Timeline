@@ -42,6 +42,17 @@
 
 ### Fixes
 
+- Give XML and Kotlin configurations shared visible defaults; remove the direct Material
+  dependency used only for default colors. Explicit color configuration is unchanged.
+- Share path progress splitting with linear strategies so an unfinished zero-length segment
+  still stops sequential completion. Cache the resulting path geometry.
+- Clear scaled badge animations when placing horizontal/grid labels, including wrapped rows.
+- Ship a narrowly scoped consumer rule for Okio’s optional `javax.annotation.Nullable`
+  metadata so R8 consumers build without suppressing other missing-class diagnostics.
+- Remove obsolete text-paint state while retaining the renderer compatibility methods.
+- Render the migration example in tests, build a minified/shrunk consumer and exercise it on
+  devices. Include diagnostic performance in release/tag gates and document all XML inputs.
+
 - Measure badges, descriptions, progress, paths and overlay bounds together before drawing.
 - Preserve badge/text alignment for long descriptions; avoid horizontal text-cell overlap.
 - Bound and reuse text layouts across measurement and animation frames.

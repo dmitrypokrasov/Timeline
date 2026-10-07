@@ -70,6 +70,7 @@ class LinearTimelineMath(
     private var startPositionX = 0f
     private var measuredWidth = 0
     private var cachedSegments: List<SegmentInfo> = emptyList()
+    private var cachedPaths: List<TimelinePathGeometry>? = null
     private var segmentsValid = false
 
     override fun setConfig(config: TimelineMathConfig) {
@@ -100,49 +101,15 @@ class LinearTimelineMath(
             it.buildPath(pathEnable, pathDisable)
             return
         }
-        pathEnable.reset()
-        pathDisable.reset()
-
         val segments = getSegments()
-        val crossAxis = if (orientation == Orientation.VERTICAL) 0f else getHorizontalBaseline()
-        val pathStart = segments.firstOrNull()?.start ?: 0f
-        pathEnable.moveTo(
-            if (orientation == Orientation.VERTICAL) 0f else pathStart,
-            if (orientation == Orientation.VERTICAL) pathStart else crossAxis,
-        )
-        pathDisable.moveTo(
-            if (orientation == Orientation.VERTICAL) 0f else pathStart,
-            if (orientation == Orientation.VERTICAL) pathStart else crossAxis,
-        )
+        val paths =
+            cachedPaths ?: segments.map { segment ->
+                val crossAxis = getHorizontalBaseline()
 
-        if (mathConfig.progressMode == TimelineMathConfig.ProgressMode.INDEPENDENT) {
-            segments.forEachIndexed { index, segment ->
-                val split = segment.start + segment.length * mathConfig.steps[index].progress / 100f
-                if (split > segment.start) {
-                    moveTo(pathEnable, segment.start, crossAxis)
-                    lineTo(pathEnable, split, crossAxis)
-                }
-                if (split < segment.end) {
-                    moveTo(pathDisable, split, crossAxis)
-                    lineTo(pathDisable, segment.end, crossAxis)
-                }
-            }
-            return
-        }
-        var drawEnable = true
-        segments.forEachIndexed { index, segment ->
-            val progressPosition = segment.start + segment.length * mathConfig.steps[index].progress / 100f
-            if (drawEnable) {
-                lineTo(pathEnable, progressPosition, crossAxis)
-                if (progressPosition < segment.end) {
-                    moveTo(pathDisable, progressPosition, crossAxis)
-                    lineTo(pathDisable, segment.end, crossAxis)
-                    drawEnable = false
-                }
-            } else {
-                lineTo(pathDisable, segment.end, crossAxis)
-            }
-        }
+                fun point(value: Float) = if (orientation == Orientation.VERTICAL) TimelinePoint(0f, value) else TimelinePoint(value, crossAxis)
+                TimelinePathGeometry(listOf(point(segment.start), point(segment.end)), 0f)
+            }.also { cachedPaths = it }
+        drawTimelineSegments(paths, mathConfig.steps, mathConfig.progressMode, pathEnable, pathDisable)
     }
 
     override fun getStartPosition(): Float = wrapped?.getStartPosition() ?: startPositionX
@@ -369,6 +336,7 @@ class LinearTimelineMath(
     private fun getSegments(): List<SegmentInfo> {
         if (!segmentsValid) {
             cachedSegments = buildSegments()
+            cachedPaths = null
             segmentsValid = true
         }
         return cachedSegments
@@ -399,28 +367,4 @@ class LinearTimelineMath(
 
     private fun getHorizontalTerminalInset(): Float =
         (mathConfig.sizes.sizeImageLvl / 2f - 2f).coerceAtLeast(0f)
-
-    private fun moveTo(
-        path: Path,
-        value: Float,
-        crossAxis: Float,
-    ) {
-        if (orientation == Orientation.VERTICAL) {
-            path.moveTo(0f, value)
-        } else {
-            path.moveTo(value, crossAxis)
-        }
-    }
-
-    private fun lineTo(
-        path: Path,
-        value: Float,
-        crossAxis: Float,
-    ) {
-        if (orientation == Orientation.VERTICAL) {
-            path.lineTo(0f, value)
-        } else {
-            path.lineTo(value, crossAxis)
-        }
-    }
 }

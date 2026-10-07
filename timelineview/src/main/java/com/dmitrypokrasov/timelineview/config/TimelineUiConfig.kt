@@ -27,12 +27,12 @@ data class TimelineUiConfig(
         @DrawableRes val iconProgress: Int = 0,
     )
 
-    /** Colors used to draw the timeline line and text. */
+    /** Opaque defaults for light surfaces, shared with XML. Supply colors for dark/custom themes. */
     data class Colors(
-        @ColorInt val colorProgress: Int = 0,
-        @ColorInt val colorStroke: Int = 0,
-        @ColorInt val colorTitle: Int = 0,
-        @ColorInt val colorDescription: Int = 0,
+        @ColorInt val colorProgress: Int = TimelineConstants.DEFAULT_PROGRESS_COLOR,
+        @ColorInt val colorStroke: Int = TimelineConstants.DEFAULT_STROKE_COLOR,
+        @ColorInt val colorTitle: Int = TimelineConstants.DEFAULT_TITLE_COLOR,
+        @ColorInt val colorDescription: Int = TimelineConstants.DEFAULT_DESCRIPTION_COLOR,
     )
 
     /** Text sizes for title and description blocks in pixels. */

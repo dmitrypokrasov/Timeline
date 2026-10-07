@@ -5,7 +5,7 @@ import re
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCS = [ROOT / name for name in ['README.md', 'CHANGELOG.md', 'ARCHITECTURE.md', 'MIGRATION_1_TO_2.md', 'CUSTOM_STRATEGIES.md', 'RELEASING.md']]
+DOCS = [ROOT / name for name in ['README.md', 'CHANGELOG.md', 'ARCHITECTURE.md', 'MIGRATION_1_TO_2.md', 'CUSTOM_STRATEGIES.md', 'RELEASING.md', 'AGENTS.md']]
 
 def headings(path):
     result = set()
