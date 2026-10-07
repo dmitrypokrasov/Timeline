@@ -20,11 +20,16 @@ The workflow builds/tests that tag and publishes the exact staged Maven bytes it
 No personal access token is required by the prepared workflow. These repository settings
 must be applied by a maintainer; changing local YAML does not change repository settings.
 
-At the 2026-10-07 audit, Pages still used `main:/docs` (legacy branch deployment),
-and `dev` had no branch protection. These are outstanding repository settings, not changes
-made by this patch. Switch Pages to GitHub Actions when preparing publication and require
-`Required checks` on `dev`. The release workflow now rejects legacy Pages configuration
-before building or modifying Maven history.
+Repository setup was verified on 2026-10-07: Pages uses **GitHub Actions** and the
+`github-pages` environment permits deployments from `main`. The `dev` branch requires
+pull requests, an up-to-date branch and the GitHub Actions **Required checks** gate;
+force pushes and deletion are disabled, and administrators are subject to these rules.
+The release workflow rejects legacy Pages configuration before modifying Maven history.
+
+Prepare releases on `codex/release/<version>` from current `dev`, merge the release MR
+into `main`, and tag that reviewed merge commit. Dispatch publication from `main` with
+the release tag as input. Merge release/documentation changes back into `dev` through a
+checked MR. Never retag or replace an already published version.
 
 ## Prepare a version
 
