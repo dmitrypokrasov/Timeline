@@ -396,7 +396,7 @@ public final class com/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orien
 	public static fun values ()[Lcom/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation;
 }
 
-public final class com/dmitrypokrasov/timelineview/math/SnakeTimelineMath : com/dmitrypokrasov/timelineview/math/TimelineMathEngine {
+public final class com/dmitrypokrasov/timelineview/math/SnakeTimelineMath : com/dmitrypokrasov/timelineview/math/TimelineMathEngine, com/dmitrypokrasov/timelineview/math/TimelineTextBoundary {
 	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)V
 	public fun buildLayout ()Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;
 	public fun buildPath (Landroid/graphics/Path;Landroid/graphics/Path;)V
@@ -412,6 +412,7 @@ public final class com/dmitrypokrasov/timelineview/math/SnakeTimelineMath : com/
 	public fun getStartPosition ()F
 	public fun getSteps ()Ljava/util/List;
 	public fun getTextBelowBadge ()Z
+	public fun getTextTopBoundary (I)F
 	public fun getTitleXCoordinates (Landroid/graphics/Paint$Align;)F
 	public fun getTitleYCoordinates (I)F
 	public fun getTopCoordinates (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;)F
@@ -506,6 +507,10 @@ public final class com/dmitrypokrasov/timelineview/math/TimelineMathEngine$Defau
 public final class com/dmitrypokrasov/timelineview/math/TimelineMathFactory {
 	public static final field INSTANCE Lcom/dmitrypokrasov/timelineview/math/TimelineMathFactory;
 	public final fun create (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;
+}
+
+public abstract interface class com/dmitrypokrasov/timelineview/math/TimelineTextBoundary {
+	public abstract fun getTextTopBoundary (I)F
 }
 
 public final class com/dmitrypokrasov/timelineview/math/data/TimelineLayout {

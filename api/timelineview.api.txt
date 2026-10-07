@@ -393,7 +393,7 @@ public final class com.dmitrypokrasov.timelineview.math.LinearTimelineMath$WhenM
   public static final int[] $EnumSwitchMapping$1;
 }
 
-public final class com.dmitrypokrasov.timelineview.math.SnakeTimelineMath implements com.dmitrypokrasov.timelineview.math.TimelineMathEngine {
+public final class com.dmitrypokrasov.timelineview.math.SnakeTimelineMath implements com.dmitrypokrasov.timelineview.math.TimelineMathEngine,com.dmitrypokrasov.timelineview.math.TimelineTextBoundary {
   public boolean getHasRoundedGeometry();
   public boolean getTextBelowBadge();
   public com.dmitrypokrasov.timelineview.config.TimelineMathConfig getConfig();
@@ -405,6 +405,7 @@ public final class com.dmitrypokrasov.timelineview.math.SnakeTimelineMath implem
   public float getIconYCoordinates(int);
   public float getLeftCoordinates(com.dmitrypokrasov.timelineview.model.TimelineStepData);
   public float getStartPosition();
+  public float getTextTopBoundary(int);
   public float getTitleXCoordinates(android.graphics.Paint$Align);
   public float getTitleYCoordinates(int);
   public float getTopCoordinates(com.dmitrypokrasov.timelineview.model.TimelineStepData);
@@ -529,6 +530,10 @@ public final class com.dmitrypokrasov.timelineview.math.TimelinePoint {
   public int hashCode();
   public java.lang.String toString();
   public static com.dmitrypokrasov.timelineview.math.TimelinePoint copy$default(com.dmitrypokrasov.timelineview.math.TimelinePoint, float, float, int, java.lang.Object);
+}
+
+public interface com.dmitrypokrasov.timelineview.math.TimelineTextBoundary {
+  public abstract float getTextTopBoundary(int);
 }
 
 public final class com.dmitrypokrasov.timelineview.math.TimelineTextWidthResolver {
@@ -952,6 +957,7 @@ public final class com.dmitrypokrasov.timelineview.ui.MathSelection$Instance imp
 
 public final class com.dmitrypokrasov.timelineview.ui.TimelineAccessibilityHelper extends androidx.customview.widget.ExploreByTouchHelper {
   public com.dmitrypokrasov.timelineview.ui.TimelineAccessibilityHelper(com.dmitrypokrasov.timelineview.ui.TimelineView, com.dmitrypokrasov.timelineview.ui.TimelineViewController);
+  public final void onLayoutChanged();
 }
 
 public final class com.dmitrypokrasov.timelineview.ui.TimelineFrame {

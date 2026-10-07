@@ -54,6 +54,10 @@ a fresh instance. The [README registry example](README.md#custom-registries) sho
   Cells in a row share its number. `setStepExtents` receives distances between row origins;
   an empty list resets custom expansion. Implement both to opt in.
 - `textBelowBadge` requests vertical clearance beneath the badge.
+- Engines with a connector above their labels can additionally implement `TimelineTextBoundary`.
+  Return the local Y boundary per step; the text resolver adds stroke clearance and uses
+  actual font metrics, so large system fonts cannot cross that connector. Existing engines
+  do not need to implement this optional capability.
 - Paths must be reset before rebuilding. Return `hasRoundedGeometry = true` only if the
   actual path already includes curves; accept the radius via `setCornerRadius` if applicable.
 
