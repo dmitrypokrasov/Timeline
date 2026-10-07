@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import tempfile
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -80,7 +81,7 @@ def stage(repository, site, manifest, release, commit):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('operation', choices=['record', 'stage'])
+    parser.add_argument('operation', choices=['record', 'stage', 'rehearse'])
     parser.add_argument('--repository', type=Path, default=ROOT / 'build/repository')
     parser.add_argument('--site', type=Path, default=ROOT / 'build/site')
     parser.add_argument('--tag')
@@ -92,6 +93,18 @@ def main():
         manifest = {'version': release, 'commit': commit, 'files': inventory(args.repository, release)}
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + '\n')
         print('Recorded hashes for tested release artifacts.')
+    elif args.operation == 'rehearse':
+        # Exercise the real staging path without a tag, push, or changes to public history.
+        with tempfile.TemporaryDirectory(prefix='timeline-release-') as directory:
+            site = Path(directory) / 'site'
+            shutil.copytree(ROOT / 'docs', site)
+            preserved = {p.relative_to(site): digest(p) for p in (site / 'maven' / MODULE).glob('*/*') if p.is_file()}
+            manifest = json.loads(manifest_path.read_text())
+            stage(args.repository, site, manifest, release, commit)
+            stage(args.repository, site, manifest, release, commit)
+            if any(digest(site / path) != checksum for path, checksum in preserved.items()):
+                raise ValueError('Rehearsal changed a previously published artifact')
+            print(f'Rehearsed staging and identical retry; preserved {len(preserved)} existing artifact files. Nothing published.')
     else:
         if args.tag != f'v{release}':
             raise ValueError('Release tag does not match the project version')

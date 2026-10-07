@@ -22,9 +22,10 @@ if [[ "${1:-}" != "--package-only" ]]; then
 fi
 ./gradlew :app:assembleDebug :timelineview:assembleRelease \
   :timelineview:publishReleasePublicationToBuildRepository --stacktrace
-./gradlew -p integration/consumer assembleDebug testDebugUnitTest \
+./gradlew -p integration/consumer assembleDebug assembleRelease assembleReleaseAndroidTest testDebugUnitTest \
   -PtimelineRepository="$PROJECT_ROOT/build/repository" -PtimelineVersion="$VERSION" --stacktrace
 
 python3 scripts/check-api.py
 python3 scripts/check-docs.py
 python3 scripts/release-artifact.py record
+python3 scripts/release-artifact.py rehearse

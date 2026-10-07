@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.util.TypedValue
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.model.TimelineConstants
@@ -111,34 +110,22 @@ class TimelineConfigParser(private val context: Context) {
                             colorProgress =
                                 typedArray.getColor(
                                     R.styleable.TimelineView_timeline_progress_color,
-                                    ContextCompat.getColor(
-                                        context,
-                                        TimelineConstants.DEFAULT_PROGRESS_COLOR,
-                                    ),
+                                    TimelineConstants.DEFAULT_PROGRESS_COLOR,
                                 ),
                             colorStroke =
                                 typedArray.getColor(
                                     R.styleable.TimelineView_timeline_stroke_color,
-                                    ContextCompat.getColor(
-                                        context,
-                                        TimelineConstants.DEFAULT_STROKE_COLOR,
-                                    ),
+                                    TimelineConstants.DEFAULT_STROKE_COLOR,
                                 ),
                             colorTitle =
                                 typedArray.getColor(
                                     R.styleable.TimelineView_timeline_title_color,
-                                    ContextCompat.getColor(
-                                        context,
-                                        TimelineConstants.DEFAULT_TITLE_COLOR,
-                                    ),
+                                    TimelineConstants.DEFAULT_TITLE_COLOR,
                                 ),
                             colorDescription =
                                 typedArray.getColor(
                                     R.styleable.TimelineView_timeline_description_color,
-                                    ContextCompat.getColor(
-                                        context,
-                                        TimelineConstants.DEFAULT_DESCRIPTION_COLOR,
-                                    ),
+                                    TimelineConstants.DEFAULT_DESCRIPTION_COLOR,
                                 ),
                         ),
                     textSizes =

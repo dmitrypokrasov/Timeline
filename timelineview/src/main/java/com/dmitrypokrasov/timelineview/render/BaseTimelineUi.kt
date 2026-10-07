@@ -31,7 +31,6 @@ open class BaseTimelineUi(
         }
     private var stepIconSize: Int = 0
     private val linePaint = Paint()
-    private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val iconPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val baselineProbePaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
@@ -67,10 +66,8 @@ open class BaseTimelineUi(
         linePaint.pathEffect = if (geometryRounded) null else pathEffect
     }
 
-    override fun prepareTextPaint() {
-        textPaint.reset()
-        textPaint.isAntiAlias = true
-    }
+    // Retained for renderer compatibility; each text layout owns its configured paint.
+    override fun prepareTextPaint() = Unit
 
     override fun prepareIconPaint() {
         iconPaint.reset()
@@ -211,7 +208,7 @@ open class BaseTimelineUi(
 
     override fun getConfig(): TimelineUiConfig = uiConfig
 
-    override fun getTextAlignment(): Paint.Align = textPaint.textAlign
+    override fun getTextAlignment(): Paint.Align = Paint.Align.LEFT
 
     private fun drawTextBlock(
         canvas: Canvas,

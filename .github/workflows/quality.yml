@@ -96,6 +96,7 @@ jobs:
           path: timelineview/build/dokka/html/
           if-no-files-found: error
   devices:
+    needs: package
     if: inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     timeout-minutes: 35
@@ -112,6 +113,10 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.ref }}
       - uses: ./.github/actions/setup-project
+      - uses: actions/download-artifact@v4
+        with:
+          name: tested-maven-repository
+          path: build/repository/
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -123,7 +128,9 @@ jobs:
           arch: ${{ matrix.arch }}
           target: default
           disable-animations: true
-          script: ./gradlew :timelineview:connectedDebugAndroidTest :app:connectedDebugAndroidTest --stacktrace
+          script: |
+            ./gradlew :timelineview:connectedDebugAndroidTest :app:connectedDebugAndroidTest --stacktrace
+            ./gradlew -p integration/consumer connectedReleaseAndroidTest -PtimelineRepository="$PWD/build/repository" -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)" --stacktrace
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -132,7 +139,7 @@ jobs:
             **/build/reports/androidTests/
             **/build/outputs/androidTest-results/
   performance:
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -156,7 +163,7 @@ jobs:
         env:
           RESULTS: ${{ toJSON(needs) }}
           DEVICES_REQUIRED: ${{ inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
-          PERFORMANCE_REQUIRED: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+          PERFORMANCE_REQUIRED: ${{ inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
         run: |
           python3 - <<'PY'
           import json, os

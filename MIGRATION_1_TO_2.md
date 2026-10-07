@@ -141,3 +141,20 @@ updates, the adapter and XML inflation. No source-project dependency is used.
 For an application migration, also compare your actual themes, custom drawables, large text,
 RTL, animations and saved-state behavior before releasing to users. To roll back, restore
 both the 1.1.0 dependency and the pre-migration application/custom-engine source together.
+
+## Visible defaults and configuration updates
+
+2.0 now uses the same opaque teal/gray palette with dark text for `TimelineUiConfig()` and
+XML inflation. This replaces transparent Kotlin defaults and Material resource defaults.
+Set explicit colors when preserving a branded appearance or using a dark background.
+The default config intentionally has no drawable icons; the line and text remain visible.
+
+`setConfig(math, ui)` retains the selected engine/renderer instances. In contrast,
+`setConfig(TimelineConfig)` applies declarative strategy keys/enums through the registry.
+Use `getConfig()` for a snapshot and `replaceSteps` for data-only updates. The
+[configuration reference](README.md#xml-attribute-reference-20) lists defaults and the
+[strategy matrix](README.md#strategy-configuration-matrix-20) identifies applicable inputs.
+
+Migration tests compile the examples and render the minimal host against the staged AAR.
+The consumer also builds a minified release APK; device verification exercises XML,
+Lottie rendering and click callbacks after R8 and resource shrinking.

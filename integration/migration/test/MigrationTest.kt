@@ -1,5 +1,8 @@
 package com.example.migration
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.accessibility.AccessibilityNodeInfo
@@ -23,6 +26,16 @@ class MigrationTest {
     private fun measure(view: TimelineView) {
         view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
         view.layout(0, 0, 320, view.measuredHeight)
+    }
+    @Test fun `migration quickstart draws visible content with default colors`() {
+        val view = MigratedTimeline(RuntimeEnvironment.getApplication()).view
+        measure(view)
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        bitmap.eraseColor(Color.WHITE)
+        view.draw(Canvas(bitmap))
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+        assertTrue("The documented migration sample must draw more than its background", pixels.any { it != Color.WHITE })
     }
     @Test fun `migrated host updates configuration and preserves identity on reorder`() {
         val host = MigratedTimeline(RuntimeEnvironment.getApplication())

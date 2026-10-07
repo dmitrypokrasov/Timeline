@@ -1,7 +1,6 @@
 package com.dmitrypokrasov.timelineview.model
 
-import androidx.annotation.ColorRes
-import com.google.android.material.R.color
+import androidx.annotation.ColorInt
 
 /**
  * Contains default values for timeline configuration.
@@ -11,13 +10,13 @@ internal object TimelineConstants {
     const val DEFAULT_RADIUS_SIZE = 0f
     const val DEFAULT_STEP_Y_FIRST_SIZE = 20f
 
-    @ColorRes val DEFAULT_PROGRESS_COLOR = color.design_default_color_secondary
+    @ColorInt val DEFAULT_PROGRESS_COLOR = 0xFF00695C.toInt()
 
-    @ColorRes val DEFAULT_STROKE_COLOR = color.design_default_color_secondary_variant
+    @ColorInt val DEFAULT_STROKE_COLOR = 0xFFB0BEC5.toInt()
 
-    @ColorRes val DEFAULT_TITLE_COLOR = color.design_default_color_on_secondary
+    @ColorInt val DEFAULT_TITLE_COLOR = 0xFF212121.toInt()
 
-    @ColorRes val DEFAULT_DESCRIPTION_COLOR = color.design_default_color_on_secondary
+    @ColorInt val DEFAULT_DESCRIPTION_COLOR = 0xFF616161.toInt()
     const val DEFAULT_MARGIN_TOP_DESCRIPTION = 8f
     const val DEFAULT_MARGIN_TOP_TITLE = 20f
     const val DEFAULT_MARGIN_TOP_PROGRESS_ICON = 0f
