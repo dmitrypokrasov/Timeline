@@ -1,57 +1,42 @@
 package com.dmitrypokrasov.timelineview.ui
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
-import android.widget.Button
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.customview.widget.ExploreByTouchHelper
 
+/** Exposes every canvas step as a readable, focusable virtual child. */
 internal class TimelineAccessibilityHelper(
-    private val ownerView: View,
+    private val host: TimelineView,
     private val controller: TimelineViewController,
-) : ExploreByTouchHelper(ownerView) {
+) : ExploreByTouchHelper(host) {
     override fun getVirtualViewAt(
         x: Float,
         y: Float,
     ): Int =
-        controller
-            .buildAccessibilitySnapshot(ownerView.paddingLeft, ownerView.paddingTop)
-            .findAt(x, y)
-            ?.virtualId
-            ?: INVALID_ID
+        controller.targetAt(x - host.paddingLeft, y - host.paddingTop, false) ?: INVALID_ID
 
     override fun getVisibleVirtualViews(virtualViewIds: MutableList<Int>) {
-        controller
-            .buildAccessibilitySnapshot(ownerView.paddingLeft, ownerView.paddingTop)
-            .nodes
-            .mapTo(virtualViewIds) { it.virtualId }
+        virtualViewIds += controller.targets().map { it.id }
     }
 
     override fun onPopulateNodeForVirtualView(
         virtualViewId: Int,
         node: AccessibilityNodeInfoCompat,
     ) {
-        val item =
-            controller
-                .buildAccessibilitySnapshot(ownerView.paddingLeft, ownerView.paddingTop)
-                .findById(virtualViewId)
-                ?: return
-
-        node.contentDescription = item.contentDescription
-        node.setBoundsInParent(item.boundsInParent.toRect())
-        node.className =
-            if (item.isClickable) {
-                Button::class.java.name
-            } else {
-                View::class.java.name
-            }
+        val target = controller.targets().firstOrNull { it.id == virtualViewId }
+        node.contentDescription = target?.description.orEmpty()
+        val bounds = Rect()
+        target?.bounds?.roundOut(bounds)
+        bounds.offset(host.paddingLeft, host.paddingTop)
+        node.setBoundsInParent(bounds)
+        node.className = if (target?.clickable == true) "android.widget.Button" else View::class.java.name
+        node.isEnabled = host.isEnabled
         node.isFocusable = true
-        node.isVisibleToUser = true
-        node.isClickable = item.isClickable
-        if (item.isClickable) {
-            node.addAction(AccessibilityNodeInfoCompat.ACTION_CLICK)
-        }
+        node.isClickable = target?.clickable == true && host.isEnabled
+        if (node.isClickable) node.addAction(AccessibilityNodeInfoCompat.ACTION_CLICK)
     }
 
     override fun onPerformActionForVirtualView(
@@ -59,27 +44,12 @@ internal class TimelineAccessibilityHelper(
         action: Int,
         arguments: Bundle?,
     ): Boolean {
-        if (action != AccessibilityNodeInfoCompat.ACTION_CLICK) return false
-
-        val item =
-            controller
-                .buildAccessibilitySnapshot(ownerView.paddingLeft, ownerView.paddingTop)
-                .findById(virtualViewId)
-                ?: return false
-
-        val handled =
-            when (item) {
-                is TimelineAccessibilityNode.ProgressIcon -> controller.performProgressIconClick()
-                is TimelineAccessibilityNode.Step -> controller.performStepClick(item.index)
-            }
-
+        if (action != AccessibilityNodeInfoCompat.ACTION_CLICK || !host.isEnabled) return false
+        val handled = controller.clickTarget(virtualViewId)
         if (handled) {
+            host.performClick()
             sendEventForVirtualView(virtualViewId, AccessibilityEvent.TYPE_VIEW_CLICKED)
         }
         return handled
-    }
-
-    fun invalidateTimeline() {
-        invalidateRoot()
     }
 }

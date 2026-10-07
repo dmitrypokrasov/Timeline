@@ -97,10 +97,10 @@ class TimelineRuntimeStateTest {
                 ),
             )
 
-        assertNull(updated.mathStrategyKey)
-        assertNull(updated.uiStrategyKey)
-        assertEquals(TimelineMathStrategy.LinearVertical, updated.mathStrategy)
-        assertEquals(TimelineUiStrategy.Snake, updated.uiStrategy)
+        assertNull((updated.math as MathSelection.ByKey).key)
+        assertNull((updated.ui as UiSelection.ByKey).key)
+        assertEquals(TimelineMathStrategy.LinearVertical, updated.math.fallback)
+        assertEquals(TimelineUiStrategy.Snake, updated.ui.fallback)
     }
 
     @Test
@@ -123,11 +123,11 @@ class TimelineRuntimeStateTest {
                 ),
             ).withConfig(replacement)
 
-        assertEquals(replacement, updated.config)
-        assertEquals(TimelineMathStrategy.LinearHorizontal, updated.mathStrategy)
-        assertEquals(TimelineUiStrategy.Linear, updated.uiStrategy)
-        assertEquals(StrategyKey("math_key"), updated.mathStrategyKey)
-        assertEquals(StrategyKey("ui_key"), updated.uiStrategyKey)
+        assertEquals(replacement, updated.toConfig())
+        assertEquals(TimelineMathStrategy.LinearHorizontal, updated.math.fallback)
+        assertEquals(TimelineUiStrategy.Linear, updated.ui.fallback)
+        assertEquals(StrategyKey("math_key"), (updated.math as MathSelection.ByKey).key)
+        assertEquals(StrategyKey("ui_key"), (updated.ui as UiSelection.ByKey).key)
     }
 }
 

@@ -1,0 +1,18 @@
+name: Set up Timeline build
+description: Configure the pinned JDK, Android SDK and Gradle cache
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - uses: android-actions/setup-android@v3
+      with:
+        # Override the action's obsolete default "tools platform-tools" package list.
+        packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+        log-accepted-android-sdk-licenses: false
+    - uses: gradle/actions/setup-gradle@v4
+    - name: Validate wrapper distribution checksum
+      shell: bash
+      run: python3 scripts/check-wrapper.py

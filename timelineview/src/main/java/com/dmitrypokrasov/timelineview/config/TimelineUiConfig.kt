@@ -16,49 +16,44 @@ import com.dmitrypokrasov.timelineview.model.TimelineConstants
  * @property stroke line width and corner radius in pixels.
  */
 data class TimelineUiConfig(
-    var icons: Icons = Icons(),
-    var colors: Colors = Colors(),
-    var textSizes: TextSizes = TextSizes(),
-    var stroke: Stroke = Stroke(),
+    val icons: Icons = Icons(),
+    val colors: Colors = Colors(),
+    val textSizes: TextSizes = TextSizes(),
+    val stroke: Stroke = Stroke(),
 ) {
     /** Drawable resources used for fallback badge and active progress icons. */
     data class Icons(
-        @DrawableRes var iconDisableLvl: Int = 0,
-        @DrawableRes var iconProgress: Int = 0,
-    ) {
-        init {
-            iconDisableLvl = iconDisableLvl.coerceAtLeast(0)
-            iconProgress = iconProgress.coerceAtLeast(0)
-        }
-    }
+        @DrawableRes val iconDisableLvl: Int = 0,
+        @DrawableRes val iconProgress: Int = 0,
+    )
 
     /** Colors used to draw the timeline line and text. */
     data class Colors(
-        @ColorInt var colorProgress: Int = 0,
-        @ColorInt var colorStroke: Int = 0,
-        @ColorInt var colorTitle: Int = 0,
-        @ColorInt var colorDescription: Int = 0,
+        @ColorInt val colorProgress: Int = 0,
+        @ColorInt val colorStroke: Int = 0,
+        @ColorInt val colorTitle: Int = 0,
+        @ColorInt val colorDescription: Int = 0,
     )
 
     /** Text sizes for title and description blocks in pixels. */
     data class TextSizes(
-        var sizeDescription: Float = TimelineConstants.DEFAULT_DESCRIPTION_SIZE,
-        var sizeTitle: Float = TimelineConstants.DEFAULT_TITLE_SIZE,
+        val sizeDescription: Float = TimelineConstants.DEFAULT_DESCRIPTION_SIZE,
+        val sizeTitle: Float = TimelineConstants.DEFAULT_TITLE_SIZE,
     ) {
         init {
-            sizeDescription = sizeDescription.coerceAtLeast(0f)
-            sizeTitle = sizeTitle.coerceAtLeast(0f)
+            require(sizeDescription.isFinite() && sizeDescription >= 0f) { "sizeDescription must be finite and non-negative" }
+            require(sizeTitle.isFinite() && sizeTitle >= 0f) { "sizeTitle must be finite and non-negative" }
         }
     }
 
     /** Stroke width and corner radius in pixels. */
     data class Stroke(
-        var radius: Float = TimelineConstants.DEFAULT_RADIUS_SIZE,
-        var sizeStroke: Float = TimelineConstants.DEFAULT_STROKE_SIZE,
+        val radius: Float = TimelineConstants.DEFAULT_RADIUS_SIZE,
+        val sizeStroke: Float = TimelineConstants.DEFAULT_STROKE_SIZE,
     ) {
         init {
-            radius = radius.coerceAtLeast(0f)
-            sizeStroke = sizeStroke.coerceAtLeast(0f)
+            require(radius.isFinite() && radius >= 0f) { "radius must be finite and non-negative" }
+            require(sizeStroke.isFinite() && sizeStroke >= 0f) { "sizeStroke must be finite and non-negative" }
         }
     }
 }

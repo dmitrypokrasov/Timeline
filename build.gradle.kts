@@ -16,10 +16,14 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
-    alias(libs.plugins.binary.compatibility.validator) apply false
+    alias(libs.plugins.binary.compatibility.validator)
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.ktlint) apply false
+}
+
+apiValidation {
+    ignoredProjects.add("app")
 }
 
 fun Project.configureAndroidQuality() {
@@ -102,6 +106,7 @@ tasks.register("qualityCheck") {
     description = "Runs formatting checks, static analysis, lint, and unit tests for all modules."
     group = "verification"
     dependsOn(
+        ":timelineview:apiCheck",
         ":app:ktlintCheck",
         ":app:detekt",
         ":app:lintDebug",
@@ -109,8 +114,7 @@ tasks.register("qualityCheck") {
         ":timelineview:ktlintCheck",
         ":timelineview:detekt",
         ":timelineview:lintDebug",
-        ":timelineview:testDebugUnitTest",
-        ":timelineview:apiCheck"
+        ":timelineview:testDebugUnitTest"
     )
 }
 

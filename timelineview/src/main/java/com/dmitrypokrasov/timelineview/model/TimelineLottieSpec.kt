@@ -13,6 +13,6 @@ data class TimelineLottieSpec(
 ) {
     init {
         require(rawRes != 0) { "rawRes must be a valid raw resource id" }
-        require(scale > 0f) { "scale must be greater than 0" }
+        require(scale.isFinite() && scale > 0f) { "scale must be greater than 0" }
     }
 }
