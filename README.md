@@ -199,10 +199,10 @@ timelineView.setUiRenderer(LinearTimelineUi(uiConfig))
 
 Overlays support only local `@RawRes` animations.
 
-## Grouped events (development preview)
+## Grouped events (2.1)
 
-`GroupedTimelineView` and `TimelineSection` are additions for the next release; they are not
-in the published 2.0.0 AAR. Test this example against `build/repository` after running
+`GroupedTimelineView` and `TimelineSection` are included in the 2.1.0 release candidate;
+the latest published version remains 2.0.0 until publication completes. Test this example against `build/repository` after running
 `bash scripts/check-release.sh`. The example is compiled by the independent consumer.
 
 Each section has an accessible heading and an independent timeline. Section order and date
@@ -280,8 +280,7 @@ public 2.0 APIs and is compiled/tested as part of the independent AAR consumer. 
 not a transitive dependency of the library. Its fixture compiler version is paired with the
 repository's Kotlin 1.9.0 toolchain; your app keeps its own compatible Compose toolchain.
 
-**Development preview:** `TimelineDefaults` is an additive API for the next release, not part
-of the published 2.0.0 AAR. It provides XML-equivalent defaults and explicit `dp`/`sp`
+`TimelineDefaults` is an additive API in the 2.1.0 release candidate. It provides XML-equivalent defaults and explicit `dp`/`sp`
 conversion using the current context. Recreate these values after density/font configuration
 changes; Kotlin configuration values continue to mean pixels. Test the following compiled
 example against the local staged artifact with `bash scripts/check-release.sh`.
@@ -294,7 +293,7 @@ import android.content.Context
 import com.dmitrypokrasov.timelineview.config.TimelineDefaults
 import com.dmitrypokrasov.timelineview.ui.TimelineView
 
-/** Development API: convert dp/sp at the host boundary; configuration still stores pixels. */
+/** Timeline 2.1: convert dp/sp at the host boundary; configuration still stores pixels. */
 fun densityAwareTimeline(context: Context): TimelineView {
     val defaults = TimelineDefaults.config(context)
     val math = defaults.math.copy(spacing = defaults.math.spacing.copy(stepY = TimelineDefaults.dp(context, 80f)))

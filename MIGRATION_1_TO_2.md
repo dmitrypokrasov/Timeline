@@ -158,3 +158,11 @@ Use `getConfig()` for a snapshot and `replaceSteps` for data-only updates. The
 Migration tests compile the examples and render the minimal host against the staged AAR.
 The consumer also builds a minified release APK; device verification exercises XML,
 Lottie rendering and click callbacks after R8 and resource shrinking.
+
+## Updating from 2.0 to 2.1
+
+Version 2.1.0 preserves the existing 2.0 API. Once published, update the dependency to
+`com.github.dmitrypokrasov:timelineview:2.1.0`; no configuration rewrite is required.
+The new grouping and density conversion APIs are optional. Dimensions still use pixels,
+and Compose remains an optional host integration. See [the changelog](CHANGELOG.md#210--2026-10-07)
+for the fixes and additions.
