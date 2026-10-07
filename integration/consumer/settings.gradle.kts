@@ -24,5 +24,8 @@ dependencyResolutionManagement {
     }
 }
 
+// Device benchmarks are opt-in and require API 29+; ordinary migration checks stay API 27 compatible.
+if (providers.gradleProperty("timelineBenchmarks").orNull == "true") include(":benchmark")
+
 rootProject.name = "TimelinePublishedConsumer"
 include(":legacy")
