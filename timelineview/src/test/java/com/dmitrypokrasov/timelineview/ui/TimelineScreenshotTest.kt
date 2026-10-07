@@ -1,6 +1,7 @@
 package com.dmitrypokrasov.timelineview.ui
 
 import android.content.pm.ApplicationInfo
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -27,6 +28,53 @@ import kotlin.math.abs
 @Config(sdk = [28], qualifiers = "en-rUS-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class TimelineScreenshotTest {
+    @Test
+    @Config(sdk = [34])
+    fun `multilingual text respects system font scale and explicit night palettes`() {
+        val cases =
+            TimelineMathStrategy.entries.flatMap { strategy ->
+                listOf(1f, 2f).flatMap { scale -> listOf(false, true).map { night -> Triple(strategy, scale, night) } }
+            }
+        cases.forEach { (strategy, scale, night) ->
+            val application = RuntimeEnvironment.getApplication()
+            application.applicationInfo.flags = application.applicationInfo.flags or ApplicationInfo.FLAG_SUPPORTS_RTL
+            val configuration =
+                Configuration(application.resources.configuration).apply {
+                    fontScale = scale
+                    uiMode = if (night) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
+                }
+            val context = application.createConfigurationContext(configuration)
+            val view = TimelineView(context)
+            val initial = view.getConfig()
+            val steps =
+                List(3) { index ->
+                    TimelineStepData(
+                        id = "$index",
+                        timestampMillis = index * 60_000L,
+                        title = if (night) "الطلب جاهز $index" else "Delivery 🚚 配送 $index",
+                        description = if (night) "تحديث حالة الطلب والتوصيل" else "LongUnbrokenTrackingIdentifier1234567890",
+                        progress = if (index == 0) 100 else 25,
+                    )
+                }
+            view.setConfig(
+                initial.math.copy(steps = steps, horizontalLayout = TimelineMathConfig.HorizontalLayout.WRAP),
+                initial.ui.copy(
+                    colors = if (night) TimelineUiConfig.Colors(Color.CYAN, Color.GRAY, Color.WHITE, Color.LTGRAY) else initial.ui.colors,
+                ),
+            )
+            view.setStrategy(strategy, TimelineUiStrategy.Linear)
+            view.layoutDirection = if (night) View.LAYOUT_DIRECTION_RTL else View.LAYOUT_DIRECTION_LTR
+            view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+            view.layout(0, 0, 320, view.measuredHeight)
+            assertEquals(scale, context.resources.configuration.fontScale)
+            val bitmap = Bitmap.createBitmap(320, view.height, Bitmap.Config.ARGB_8888)
+            bitmap.eraseColor(if (night) Color.BLACK else Color.WHITE)
+            view.draw(Canvas(bitmap))
+            compare("accessible-${strategy.key.value}-${scale.toInt()}-$night", bitmap)
+            bitmap.recycle()
+        }
+    }
+
     @Test
     fun `strategies match reviewed images at narrow and wide sizes in both directions`() {
         val context = RuntimeEnvironment.getApplication()

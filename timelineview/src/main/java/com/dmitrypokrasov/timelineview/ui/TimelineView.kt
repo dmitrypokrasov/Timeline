@@ -166,7 +166,7 @@ class TimelineView
             val desiredHeight = controller.measure(contentWidth) + paddingTop + paddingBottom
             val resolvedHeight = resolveSizeAndState(desiredHeight, heightMeasureSpec, 0)
             setMeasuredDimension(resolvedWidth, resolvedHeight)
-            accessibility.invalidateRoot()
+            accessibility.onLayoutChanged()
         }
 
         override fun onDraw(canvas: Canvas) {
