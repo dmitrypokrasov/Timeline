@@ -4,7 +4,7 @@
       <verify-metadata>true</verify-metadata>
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
-         <trust group="com.github.dmitrypokrasov" name="timelineview" version="2.0.0" reason="Locally built candidate, restricted to file repositories in settings.gradle.kts and recorded in the release manifest" />
+         <trust group="com.github.dmitrypokrasov" name="timelineview" version="2.1.0" reason="Locally built candidate, restricted to file repositories in settings.gradle.kts and recorded in the release manifest" />
       </trusted-artifacts>
    </configuration>
    <components>

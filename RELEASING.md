@@ -1,6 +1,6 @@
 # Releasing Timeline
 
-The checkout targets **2.0.0**. Local verification never publishes. Publishing
+The checkout targets **2.1.0**. Local verification never publishes. Publishing
 requires explicitly dispatching **Publish tested release** for an existing stable tag.
 The workflow builds/tests that tag and publishes the exact staged Maven bytes it tested.
 
@@ -46,9 +46,9 @@ checked MR. Never retag or replace an already published version.
   verification includes diagnostic performance runs (informational timings, not frame-rate thresholds).
 
 Create and push the release tag only after reviewing the change. For example, after committing
-version 2.0.0: `git tag -a v2.0.0 -m "Timeline 2.0.0"`, then `git push origin v2.0.0`.
+version 2.1.0: `git tag -a v2.1.0 -m "Timeline 2.1.0"`, then `git push origin v2.1.0`.
 A tag push verifies the release but does not publish it. Dispatch **Publish tested release**
-from a trusted branch containing this workflow and provide `v2.0.0`.
+from a trusted branch containing this workflow and provide `v2.1.0`.
 
 ## Publication flow
 
@@ -153,7 +153,7 @@ from `dev` only when preparing the actual release. Do not tag or publish during 
 2. Run the quality workflow manually for the candidate branch to include both device APIs
    and diagnostics. Require its aggregate status to succeed before approving a release.
 3. For a local device run, use `./gradlew -p integration/consumer connectedReleaseAndroidTest
-   -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.0.0` after staging.
+   -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.1.0` after staging.
    The release consumer uses a debug signing key solely to install the test APK.
 4. Confirm the repository's actual Pages source, environment rules and protected-branch
    checks using the repository settings. A successful local build cannot confirm these.
