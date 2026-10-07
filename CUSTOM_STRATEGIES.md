@@ -70,3 +70,9 @@ to APIs currently accepting `TimelineMathEngine`.
 Test at least empty/single lists, narrow widths, long labels, RTL, 0/100% progress and repeated
 configuration changes. Use the [project geometry tests](timelineview/src/test/java/com/dmitrypokrasov/timelineview/ui/TimelineStrategyPropertiesTest.kt)
 as examples of invariants, and include the strategy in your host's screenshot suite.
+The [shared path contract suite](timelineview/src/test/java/com/dmitrypokrasov/timelineview/ui/TimelinePathContractTest.kt)
+checks all built-ins at zero/narrow widths in both progress modes: completed plus remaining
+arc length must equal the full path, and the active marker must meet the drawn color boundary.
+Reuse those checks when adding a custom engine; they iterate every path contour, including
+independently colored segments. Time-scaled tests also cover equal/pre-epoch timestamps and
+atomic rejection of unsorted or unrepresentable ranges.
