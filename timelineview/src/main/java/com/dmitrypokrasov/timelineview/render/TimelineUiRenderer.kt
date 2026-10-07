@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import androidx.annotation.MainThread
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
@@ -12,6 +13,7 @@ import com.dmitrypokrasov.timelineview.model.TimelineStepData
  * Renderer contract for drawing a timeline once the math engine has produced its geometry.
  */
 @Suppress("TooManyFunctions") // Public renderer contract; splitting it would break existing implementations.
+@MainThread
 interface TimelineUiRenderer {
     /** Replaces the current renderer configuration. */
     fun setConfig(config: TimelineUiConfig)

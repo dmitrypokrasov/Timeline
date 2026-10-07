@@ -40,6 +40,13 @@ public final class com/dmitrypokrasov/timelineview/config/TimelineConfigParser {
 	public static synthetic fun parse$default (Lcom/dmitrypokrasov/timelineview/config/TimelineConfigParser;Landroid/util/AttributeSet;IILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
 }
 
+public final class com/dmitrypokrasov/timelineview/config/TimelineDefaults {
+	public static final field INSTANCE Lcom/dmitrypokrasov/timelineview/config/TimelineDefaults;
+	public static final fun config (Landroid/content/Context;)Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;
+	public static final fun dp (Landroid/content/Context;F)F
+	public static final fun sp (Landroid/content/Context;F)F
+}
+
 public final class com/dmitrypokrasov/timelineview/config/TimelineMathConfig {
 	public fun <init> ()V
 	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$StartPosition;Ljava/util/List;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Spacing;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$Sizes;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$ProgressMode;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig$HorizontalLayout;FD)V
@@ -396,7 +403,7 @@ public final class com/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orien
 	public static fun values ()[Lcom/dmitrypokrasov/timelineview/math/LinearTimelineMath$Orientation;
 }
 
-public final class com/dmitrypokrasov/timelineview/math/SnakeTimelineMath : com/dmitrypokrasov/timelineview/math/TimelineMathEngine {
+public final class com/dmitrypokrasov/timelineview/math/SnakeTimelineMath : com/dmitrypokrasov/timelineview/math/TimelineMathEngine, com/dmitrypokrasov/timelineview/math/TimelineTextBoundary {
 	public fun <init> (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)V
 	public fun buildLayout ()Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;
 	public fun buildPath (Landroid/graphics/Path;Landroid/graphics/Path;)V
@@ -412,6 +419,7 @@ public final class com/dmitrypokrasov/timelineview/math/SnakeTimelineMath : com/
 	public fun getStartPosition ()F
 	public fun getSteps ()Ljava/util/List;
 	public fun getTextBelowBadge ()Z
+	public fun getTextTopBoundary (I)F
 	public fun getTitleXCoordinates (Landroid/graphics/Paint$Align;)F
 	public fun getTitleYCoordinates (I)F
 	public fun getTopCoordinates (Lcom/dmitrypokrasov/timelineview/model/TimelineStepData;)F
@@ -508,6 +516,10 @@ public final class com/dmitrypokrasov/timelineview/math/TimelineMathFactory {
 	public final fun create (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;
 }
 
+public abstract interface class com/dmitrypokrasov/timelineview/math/TimelineTextBoundary {
+	public abstract fun getTextTopBoundary (I)F
+}
+
 public final class com/dmitrypokrasov/timelineview/math/data/TimelineLayout {
 	public fun <init> (Ljava/util/List;Lcom/dmitrypokrasov/timelineview/math/data/TimelineProgressIcon;Ljava/lang/Integer;)V
 	public final fun component1 ()Ljava/util/List;
@@ -579,6 +591,21 @@ public final class com/dmitrypokrasov/timelineview/model/TimelineLottieSpec {
 	public final fun getRawRes ()I
 	public final fun getRepeat ()Z
 	public final fun getScale ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/dmitrypokrasov/timelineview/model/TimelineSection {
+	public fun <init> (Ljava/lang/String;Ljava/lang/CharSequence;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/CharSequence;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/CharSequence;Ljava/util/List;)Lcom/dmitrypokrasov/timelineview/model/TimelineSection;
+	public static synthetic fun copy$default (Lcom/dmitrypokrasov/timelineview/model/TimelineSection;Ljava/lang/String;Ljava/lang/CharSequence;Ljava/util/List;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/model/TimelineSection;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getId ()Ljava/lang/String;
+	public final fun getSteps ()Ljava/util/List;
+	public final fun getTitle ()Ljava/lang/CharSequence;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -755,6 +782,17 @@ public final class com/dmitrypokrasov/timelineview/strategy/TimelineViewStrategy
 	public final fun resolve (Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
 	public final fun resolve-zTCkI4g (Ljava/lang/String;Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
 	public static synthetic fun resolve-zTCkI4g$default (Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategyController;Ljava/lang/String;Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/config/TimelineMathStrategy;Lcom/dmitrypokrasov/timelineview/config/TimelineUiStrategy;Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;Lcom/dmitrypokrasov/timelineview/config/TimelineUiConfig;ILjava/lang/Object;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineViewStrategiesData;
+}
+
+public final class com/dmitrypokrasov/timelineview/ui/GroupedTimelineView : android/widget/LinearLayout {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public synthetic fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getSections ()Ljava/util/List;
+	public final fun replaceSections (Ljava/util/List;)V
+	public final fun setOnStepClickListener (Lkotlin/jvm/functions/Function3;)V
+	public final fun setSections (Ljava/util/List;Lcom/dmitrypokrasov/timelineview/config/TimelineConfig;)V
 }
 
 public final class com/dmitrypokrasov/timelineview/ui/TimelineHeightCalculator {

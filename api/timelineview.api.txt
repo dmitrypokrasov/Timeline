@@ -40,6 +40,13 @@ public final class com.dmitrypokrasov.timelineview.config.TimelineConfigParser {
   public static com.dmitrypokrasov.timelineview.config.TimelineConfig parse$default(com.dmitrypokrasov.timelineview.config.TimelineConfigParser, android.util.AttributeSet, int, int, java.lang.Object);
 }
 
+public final class com.dmitrypokrasov.timelineview.config.TimelineDefaults {
+  public static final com.dmitrypokrasov.timelineview.config.TimelineConfig config(android.content.Context);
+  public static final com.dmitrypokrasov.timelineview.config.TimelineDefaults INSTANCE;
+  public static final float dp(android.content.Context, float);
+  public static final float sp(android.content.Context, float);
+}
+
 public final class com.dmitrypokrasov.timelineview.config.TimelineMathConfig {
   public boolean equals(java.lang.Object);
   public com.dmitrypokrasov.timelineview.config.TimelineMathConfig();
@@ -393,7 +400,7 @@ public final class com.dmitrypokrasov.timelineview.math.LinearTimelineMath$WhenM
   public static final int[] $EnumSwitchMapping$1;
 }
 
-public final class com.dmitrypokrasov.timelineview.math.SnakeTimelineMath implements com.dmitrypokrasov.timelineview.math.TimelineMathEngine {
+public final class com.dmitrypokrasov.timelineview.math.SnakeTimelineMath implements com.dmitrypokrasov.timelineview.math.TimelineMathEngine,com.dmitrypokrasov.timelineview.math.TimelineTextBoundary {
   public boolean getHasRoundedGeometry();
   public boolean getTextBelowBadge();
   public com.dmitrypokrasov.timelineview.config.TimelineMathConfig getConfig();
@@ -405,6 +412,7 @@ public final class com.dmitrypokrasov.timelineview.math.SnakeTimelineMath implem
   public float getIconYCoordinates(int);
   public float getLeftCoordinates(com.dmitrypokrasov.timelineview.model.TimelineStepData);
   public float getStartPosition();
+  public float getTextTopBoundary(int);
   public float getTitleXCoordinates(android.graphics.Paint$Align);
   public float getTitleYCoordinates(int);
   public float getTopCoordinates(com.dmitrypokrasov.timelineview.model.TimelineStepData);
@@ -531,6 +539,10 @@ public final class com.dmitrypokrasov.timelineview.math.TimelinePoint {
   public static com.dmitrypokrasov.timelineview.math.TimelinePoint copy$default(com.dmitrypokrasov.timelineview.math.TimelinePoint, float, float, int, java.lang.Object);
 }
 
+public interface com.dmitrypokrasov.timelineview.math.TimelineTextBoundary {
+  public abstract float getTextTopBoundary(int);
+}
+
 public final class com.dmitrypokrasov.timelineview.math.TimelineTextWidthResolver {
   public final int resolve(int, float, float, android.graphics.Paint$Align);
   public static final com.dmitrypokrasov.timelineview.math.TimelineTextWidthResolver INSTANCE;
@@ -635,6 +647,21 @@ public final class com.dmitrypokrasov.timelineview.model.TimelineLottieSpec {
   public int hashCode();
   public java.lang.String toString();
   public static com.dmitrypokrasov.timelineview.model.TimelineLottieSpec copy$default(com.dmitrypokrasov.timelineview.model.TimelineLottieSpec, int, boolean, boolean, float, int, java.lang.Object);
+}
+
+public final class com.dmitrypokrasov.timelineview.model.TimelineSection {
+  public boolean equals(java.lang.Object);
+  public com.dmitrypokrasov.timelineview.model.TimelineSection(java.lang.String, java.lang.CharSequence, java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData>);
+  public final com.dmitrypokrasov.timelineview.model.TimelineSection copy(java.lang.String, java.lang.CharSequence, java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData>);
+  public final java.lang.CharSequence component2();
+  public final java.lang.CharSequence getTitle();
+  public final java.lang.String component1();
+  public final java.lang.String getId();
+  public final java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData> component3();
+  public final java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData> getSteps();
+  public int hashCode();
+  public java.lang.String toString();
+  public static com.dmitrypokrasov.timelineview.model.TimelineSection copy$default(com.dmitrypokrasov.timelineview.model.TimelineSection, java.lang.String, java.lang.CharSequence, java.util.List, int, java.lang.Object);
 }
 
 public final class com.dmitrypokrasov.timelineview.model.TimelineStepData {
@@ -920,6 +947,18 @@ public final class com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategy
   public static com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategiesData resolve-zTCkI4g$default(com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController, java.lang.String, java.lang.String, com.dmitrypokrasov.timelineview.config.TimelineMathStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, com.dmitrypokrasov.timelineview.config.TimelineMathConfig, com.dmitrypokrasov.timelineview.config.TimelineUiConfig, int, java.lang.Object);
 }
 
+public final class com.dmitrypokrasov.timelineview.ui.GroupedTimelineView extends android.widget.LinearLayout {
+  public com.dmitrypokrasov.timelineview.ui.GroupedTimelineView(android.content.Context);
+  public com.dmitrypokrasov.timelineview.ui.GroupedTimelineView(android.content.Context, android.util.AttributeSet);
+  public com.dmitrypokrasov.timelineview.ui.GroupedTimelineView(android.content.Context, android.util.AttributeSet, int);
+  public com.dmitrypokrasov.timelineview.ui.GroupedTimelineView(android.content.Context, android.util.AttributeSet, int, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.util.List<com.dmitrypokrasov.timelineview.model.TimelineSection> getSections();
+  public final void replaceSections(java.util.List<com.dmitrypokrasov.timelineview.model.TimelineSection>);
+  public final void setOnStepClickListener(kotlin.jvm.functions.Function3<? super java.lang.String, ? super java.lang.Integer, ? super com.dmitrypokrasov.timelineview.model.TimelineStepData, kotlin.Unit>);
+  public final void setSections(java.util.List<com.dmitrypokrasov.timelineview.model.TimelineSection>, com.dmitrypokrasov.timelineview.config.TimelineConfig);
+  public static final kotlin.jvm.functions.Function3 access$getListener$p(com.dmitrypokrasov.timelineview.ui.GroupedTimelineView);
+}
+
 public interface com.dmitrypokrasov.timelineview.ui.MathSelection {
   public abstract com.dmitrypokrasov.timelineview.config.TimelineMathStrategy getFallback();
 }
@@ -952,6 +991,7 @@ public final class com.dmitrypokrasov.timelineview.ui.MathSelection$Instance imp
 
 public final class com.dmitrypokrasov.timelineview.ui.TimelineAccessibilityHelper extends androidx.customview.widget.ExploreByTouchHelper {
   public com.dmitrypokrasov.timelineview.ui.TimelineAccessibilityHelper(com.dmitrypokrasov.timelineview.ui.TimelineView, com.dmitrypokrasov.timelineview.ui.TimelineViewController);
+  public final void onLayoutChanged();
 }
 
 public final class com.dmitrypokrasov.timelineview.ui.TimelineFrame {
@@ -984,8 +1024,10 @@ public final class com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManag
   public com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManager(android.view.View);
   public final int getEntryCount$timelineview_release();
   public final int getRunningAnimationCount$timelineview_release();
+  public final void beginFrame();
   public final void clear();
   public final void draw(android.graphics.Canvas, com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManager$Key, float, float, float);
+  public final void endFrame();
   public final void setActive(boolean);
   public final void submit(java.util.List<com.dmitrypokrasov.timelineview.model.TimelineStepData>);
   public static final android.view.View access$getOwnerView$p(com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManager);

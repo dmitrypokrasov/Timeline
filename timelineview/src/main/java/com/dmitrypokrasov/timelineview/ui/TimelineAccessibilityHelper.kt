@@ -12,6 +12,17 @@ internal class TimelineAccessibilityHelper(
     private val host: TimelineView,
     private val controller: TimelineViewController,
 ) : ExploreByTouchHelper(host) {
+    fun onLayoutChanged() {
+        val ids = controller.targets().map { it.id }.toSet()
+        val keyboard = keyboardFocusedVirtualViewId
+        if (keyboard != INVALID_ID && keyboard !in ids) clearKeyboardFocusForVirtualView(keyboard)
+        val spoken = accessibilityFocusedVirtualViewId
+        if (spoken != INVALID_ID && spoken !in ids) {
+            getAccessibilityNodeProvider(host)?.performAction(spoken, AccessibilityNodeInfoCompat.ACTION_CLEAR_ACCESSIBILITY_FOCUS, null)
+        }
+        invalidateRoot()
+    }
+
     override fun getVirtualViewAt(
         x: Float,
         y: Float,

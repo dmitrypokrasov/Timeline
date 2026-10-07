@@ -1,0 +1,53 @@
+name: Device performance diagnostics
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/device-performance.yml'
+      - 'integration/consumer/benchmark/**'
+      - 'integration/consumer/settings.gradle.kts'
+      - 'integration/consumer/gradle/verification-metadata.xml'
+      - 'integration/consumer/src/main/AndroidManifest.xml'
+      - 'integration/consumer/src/main/java/com/example/consumer/BenchmarkActivity.kt'
+  workflow_dispatch:
+  schedule:
+    - cron: '30 4 * * 1'
+permissions:
+  contents: read
+concurrency:
+  group: device-performance-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: ./.github/actions/setup-project
+      - run: ./gradlew :timelineview:publishReleasePublicationToBuildRepository
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: default
+          disable-animations: false
+          script: >-
+            ./gradlew -p integration/consumer :benchmark:connectedReleaseAndroidTest
+            -PtimelineBenchmarks=true
+            -PtimelineRepository="$PWD/build/repository"
+            -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)"
+            -Pandroid.testInstrumentationRunnerArguments.timelineSmoke=true
+            -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.suppressErrors=EMULATOR
+            --stacktrace
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: device-performance-diagnostics
+          path: |
+            integration/consumer/benchmark/build/reports/androidTests/
+            integration/consumer/benchmark/build/outputs/connected_android_test_additional_output/
+            integration/consumer/benchmark/build/outputs/androidTest-results/

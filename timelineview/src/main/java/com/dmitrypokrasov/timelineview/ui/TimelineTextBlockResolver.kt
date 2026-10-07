@@ -1,6 +1,7 @@
 package com.dmitrypokrasov.timelineview.ui
 
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.math.TimelineTextBoundary
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
@@ -21,7 +22,7 @@ internal object TimelineTextBlockResolver {
     ): List<TimelineResolvedTextBlock> {
         if (layout == null) return emptyList()
 
-        return layout.steps.map { stepLayout ->
+        return layout.steps.mapIndexed { index, stepLayout ->
             val titleHeight =
                 uiRenderer.measureTitleHeight(
                     stepLayout.step.title ?: "",
@@ -35,7 +36,9 @@ internal object TimelineTextBlockResolver {
                     stepLayout.textAlign,
                 )
 
-            val requestedTop = stepLayout.titleY - uiRenderer.getTitleBaselineOffset()
+            val baselineTop = stepLayout.titleY - uiRenderer.getTitleBaselineOffset()
+            val boundary = (mathEngine as? TimelineTextBoundary)?.getTextTopBoundary(index)
+            val requestedTop = if (boundary == null) baselineTop else maxOf(baselineTop, boundary + uiRenderer.getConfig().stroke.sizeStroke / 2f + MIN_GAP_BETWEEN_TITLE_AND_DESCRIPTION)
             val horizontal = mathEngine.textBelowBadge
             val badgeSize = mathEngine.getConfig().sizes.sizeImageLvl
             val overlayInset = badgeSize * ((stepLayout.step.badgeAnimation?.scale ?: 1f).coerceAtLeast(1f) - 1f) / 2f

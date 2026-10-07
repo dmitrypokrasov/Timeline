@@ -68,10 +68,28 @@ Releases are serialized and are not cancelled by a newer dispatch.
 
 ## Verification after publication
 
-Check the workflow's Pages URL, version POM/AAR/sources and versioned API docs. Build a clean
-application against the public Maven URL rather than a local repository or Gradle cache.
-Confirm the old 1.1.0 files remain available. Update the public README status only after this
-check; the workflow generates the public site's version banner from published metadata.
+Publication verification tools come from the immutable workflow commit (`github.workflow_sha`).
+They are restored immediately after checkout so a historical tag such as `v2.0.0` can be
+replayed even though it predates these tools. Artifacts, consumer sources, changelog and
+release provenance still come from the selected tag; no library artifact is rebuilt.
+
+After deployment, the workflow runs `scripts/verify-public-release.py`. It compares the
+public release manifest, all preserved Maven version files and version metadata with the
+staged site, and checks versioned API docs. It then builds a copied consumer with an empty
+Gradle user home, the public Maven URL as its only Timeline source and exact release hashes
+in dependency verification. Candidate trust exemptions and local fallback repositories are
+removed from that temporary consumer. R8/resource shrinking and migration tests must pass.
+
+Only then does the workflow create the GitHub Release from its matching changelog section.
+An existing published release is left unchanged on retry; an existing draft fails explicitly.
+Consumer reports are uploaded even when the build fails. No library artifact is rebuilt or
+replaced during these post-deployment steps.
+
+For a read-only replay, run `python3 scripts/verify-public-release.py --tag v2.0.0
+--url https://dmitrypokrasov.github.io/Timeline/ --site <checkout-of-gh-pages>` with the Android
+SDK available. `--artifacts-only` skips the consumer and is for diagnostics, not release approval.
+Update the public README status after verification; the workflow generates the public site's
+version banner from published metadata.
 
 ## Failure and recovery
 
@@ -85,6 +103,15 @@ check; the workflow generates the public site's version banner from published me
   version; reverting the entire Pages site would remove releases and is not a library rollback.
 
 ## API and dependency maintenance
+
+External GitHub Actions are pinned to full commit SHAs, with their release tags retained
+as comments. Resolve updates from the action's official repository and review its changes.
+Dependabot opens weekly update PRs against `dev` for Actions, the root Gradle build and the
+independent consumer. Its configuration must exist on the repository's default branch
+before GitHub starts scheduling updates; bring it to `main` through the next normal release.
+Updates are not automatically merged. Gradle changes still require reviewed dependency
+verification metadata and green consumer/API checks; a bot PR alone does not establish
+compatibility. Major toolchain upgrades should be reviewed separately from runtime libraries.
 
 `./gradlew :timelineview:apiCheck` checks Kotlin-visible binary API through Kotlin's validator.
 The reviewed baseline is `timelineview/api/timelineview.api`. `python3 scripts/check-api.py`
