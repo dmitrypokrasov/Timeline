@@ -1,0 +1,124 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.github.dmitrypokrasov",
+    "module": "timelineview",
+    "version": "1.1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.6"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.9.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "timelineview-1.1.0.aar",
+          "url": "timelineview-1.1.0.aar",
+          "size": 137277,
+          "sha512": "a8546b8b230f69fe1b04b02930639d8dc04157847840cb2ce352bc63089f5e58d7178f07348d7de1ac2f68ef108d73804bb70434df63558d9ac7c97468a3edf8",
+          "sha256": "5a3fa959e48857bb5dbc377f0dced1597962c6b7314a5dbff1773de3def4ab4a",
+          "sha1": "d2b1fc4987b4fdd427d5fcdff0d57b183fac55ed",
+          "md5": "4aa37b85c63324a9eae4255ed50e39af"
+        }
+      ]
+    },
+    {
+      "name": "releaseRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "dependencies": [
+        {
+          "group": "androidx.core",
+          "module": "core-ktx",
+          "version": {
+            "requires": "1.13.1"
+          }
+        },
+        {
+          "group": "androidx.appcompat",
+          "module": "appcompat",
+          "version": {
+            "requires": "1.7.0"
+          }
+        },
+        {
+          "group": "com.google.android.material",
+          "module": "material",
+          "version": {
+            "requires": "1.12.0"
+          }
+        },
+        {
+          "group": "com.airbnb.android",
+          "module": "lottie",
+          "version": {
+            "requires": "6.6.2"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.9.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "timelineview-1.1.0.aar",
+          "url": "timelineview-1.1.0.aar",
+          "size": 137277,
+          "sha512": "a8546b8b230f69fe1b04b02930639d8dc04157847840cb2ce352bc63089f5e58d7178f07348d7de1ac2f68ef108d73804bb70434df63558d9ac7c97468a3edf8",
+          "sha256": "5a3fa959e48857bb5dbc377f0dced1597962c6b7314a5dbff1773de3def4ab4a",
+          "sha1": "d2b1fc4987b4fdd427d5fcdff0d57b183fac55ed",
+          "md5": "4aa37b85c63324a9eae4255ed50e39af"
+        }
+      ]
+    },
+    {
+      "name": "releaseSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "timelineview-1.1.0-sources.jar",
+          "url": "timelineview-1.1.0-sources.jar",
+          "size": 67965,
+          "sha512": "9036a3fd3dcadaebb057223cc132d03d943f1e7581043e76d199e91cc71343d61b54b4aa70ac1fee149a7c4d1e16aaa27b494a11c31086a66f6fbc05100f6feb",
+          "sha256": "c8060e0f1398092a997b0debf5de90f8e538f929029283100b167d0e44f34a86",
+          "sha1": "6172dce2532fe6ba8507544fe3c1f005dbb0c2db",
+          "md5": "25607922c1ef8391bed9ddd30a21792e"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>TimelineStrategyRegistryImpl</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            timelineview
+                    </a>
+            </div>
+            <div class="library-version">
+2.0.0            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":timelineview:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="timelineview::com.dmitrypokrasov.timelineview.strategy/TimelineStrategyRegistryImpl///PointingToDeclaration//731576088">
+  <div class="breadcrumbs"><a href="../../../index.html">timelineview</a><span class="delimiter">/</span><a href="../index.html">com.dmitrypokrasov.timelineview.strategy</a><span class="delimiter">/</span><span class="current">TimelineStrategyRegistryImpl</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Timeline</span><wbr></wbr><span>Strategy</span><wbr></wbr><span>Registry</span><wbr></wbr><span><span>Impl</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">TimelineStrategyRegistryImpl</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">registerDefaults<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span> : <a href="../-timeline-strategy-registry-contract/index.html">TimelineStrategyRegistryContract</a></div><p class="paragraph">Independent registry instance for custom strategy collections.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1562747758%2FConstructors%2F731576088" anchor-label="TimelineStrategyRegistryImpl" id="1562747758%2FConstructors%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-strategy-registry-impl.html"><span>Timeline</span><wbr></wbr><span>Strategy</span><wbr></wbr><span>Registry</span><wbr></wbr><span><span>Impl</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1562747758%2FConstructors%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">registerDefaults<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-303820048%2FFunctions%2F731576088" anchor-label="getMathProvider" id="-303820048%2FFunctions%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-math-provider.html"><span>get</span><wbr></wbr><span>Math</span><wbr></wbr><span><span>Provider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-303820048%2FFunctions%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-math-provider.html"><span class="token function">getMathProvider</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="../../com.dmitrypokrasov.timelineview.config/-strategy-key/index.html">StrategyKey</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-timeline-math-provider/index.html">TimelineMathProvider</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Returns the math provider registered for <a href="get-math-provider.html">key</a>, or <code class="lang-kotlin">null</code>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-963946716%2FFunctions%2F731576088" anchor-label="getUiProvider" id="-963946716%2FFunctions%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-ui-provider.html"><span>get</span><wbr></wbr><span>Ui</span><wbr></wbr><span><span>Provider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-963946716%2FFunctions%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-ui-provider.html"><span class="token function">getUiProvider</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="../../com.dmitrypokrasov.timelineview.config/-strategy-key/index.html">StrategyKey</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-timeline-ui-provider/index.html">TimelineUiProvider</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Returns the UI provider registered for <a href="get-ui-provider.html">key</a>, or <code class="lang-kotlin">null</code>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-993688577%2FFunctions%2F731576088" anchor-label="registerMath" id="-993688577%2FFunctions%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="register-math.html"><span>register</span><wbr></wbr><span><span>Math</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-993688577%2FFunctions%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="register-math.html"><span class="token function">registerMath</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">provider<span class="token operator">: </span><a href="../-timeline-math-provider/index.html">TimelineMathProvider</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Registers a math provider under its <a href="../-timeline-math-provider/key.html">TimelineMathProvider.key</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1394361409%2FFunctions%2F731576088" anchor-label="registerUi" id="-1394361409%2FFunctions%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="register-ui.html"><span>register</span><wbr></wbr><span><span>Ui</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1394361409%2FFunctions%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="register-ui.html"><span class="token function">registerUi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">provider<span class="token operator">: </span><a href="../-timeline-ui-provider/index.html">TimelineUiProvider</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Registers a UI provider under its <a href="../-timeline-ui-provider/key.html">TimelineUiProvider.key</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1126186389%2FFunctions%2F731576088" anchor-label="unregisterMath" id="1126186389%2FFunctions%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unregister-math.html"><span>unregister</span><wbr></wbr><span><span>Math</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1126186389%2FFunctions%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="unregister-math.html"><span class="token function">unregisterMath</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="../../com.dmitrypokrasov.timelineview.config/-strategy-key/index.html">StrategyKey</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-timeline-math-provider/index.html">TimelineMathProvider</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Unregisters a math provider and returns the removed entry, if any.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-508550455%2FFunctions%2F731576088" anchor-label="unregisterUi" id="-508550455%2FFunctions%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unregister-ui.html"><span>unregister</span><wbr></wbr><span><span>Ui</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-508550455%2FFunctions%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="unregister-ui.html"><span class="token function">unregisterUi</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="../../com.dmitrypokrasov.timelineview.config/-strategy-key/index.html">StrategyKey</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-timeline-ui-provider/index.html">TimelineUiProvider</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Unregisters a UI provider and returns the removed entry, if any.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

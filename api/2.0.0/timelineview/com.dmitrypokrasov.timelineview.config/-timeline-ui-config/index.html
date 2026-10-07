@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>TimelineUiConfig</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            timelineview
+                    </a>
+            </div>
+            <div class="library-version">
+2.0.0            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":timelineview:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="timelineview::com.dmitrypokrasov.timelineview.config/TimelineUiConfig///PointingToDeclaration//731576088">
+  <div class="breadcrumbs"><a href="../../../index.html">timelineview</a><span class="delimiter">/</span><a href="../index.html">com.dmitrypokrasov.timelineview.config</a><span class="delimiter">/</span><span class="current">TimelineUiConfig</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Timeline</span><wbr></wbr><span>Ui</span><wbr></wbr><span><span>Config</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">TimelineUiConfig</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>icons<span class="token operator">: </span><a href="-icons/index.html">TimelineUiConfig.Icons</a><span class="token operator"> = </span>Icons()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>colors<span class="token operator">: </span><a href="-colors/index.html">TimelineUiConfig.Colors</a><span class="token operator"> = </span>Colors()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>textSizes<span class="token operator">: </span><a href="-text-sizes/index.html">TimelineUiConfig.TextSizes</a><span class="token operator"> = </span>TextSizes()<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>stroke<span class="token operator">: </span><a href="-stroke/index.html">TimelineUiConfig.Stroke</a><span class="token operator"> = </span>Stroke()</span></span><span class="token punctuation">)</span></div><p class="paragraph">Visual configuration consumed by timeline renderers.</p><p class="paragraph">This object stores renderer input only. Drawing behavior lives in <a href="../../com.dmitrypokrasov.timelineview.render/-timeline-ui-renderer/index.html">com.dmitrypokrasov.timelineview.render.TimelineUiRenderer</a> implementations.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-777824344%2FConstructors%2F731576088" anchor-label="TimelineUiConfig" id="-777824344%2FConstructors%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-ui-config.html"><span>Timeline</span><wbr></wbr><span>Ui</span><wbr></wbr><span><span>Config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-777824344%2FConstructors%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">icons<span class="token operator">: </span><a href="-icons/index.html">TimelineUiConfig.Icons</a><span class="token operator"> = </span>Icons()<span class="token punctuation">, </span></span><span class="parameter ">colors<span class="token operator">: </span><a href="-colors/index.html">TimelineUiConfig.Colors</a><span class="token operator"> = </span>Colors()<span class="token punctuation">, </span></span><span class="parameter ">textSizes<span class="token operator">: </span><a href="-text-sizes/index.html">TimelineUiConfig.TextSizes</a><span class="token operator"> = </span>TextSizes()<span class="token punctuation">, </span></span><span class="parameter ">stroke<span class="token operator">: </span><a href="-stroke/index.html">TimelineUiConfig.Stroke</a><span class="token operator"> = </span>Stroke()</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-1679975338%2FClasslikes%2F731576088" anchor-label="Colors" id="-1679975338%2FClasslikes%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-colors/index.html"><span><span>Colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1679975338%2FClasslikes%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-colors/index.html">Colors</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a> </span><span class="token keyword">val </span>colorProgress<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>TimelineConstants.DEFAULT_PROGRESS_COLOR<span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a> </span><span class="token keyword">val </span>colorStroke<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>TimelineConstants.DEFAULT_STROKE_COLOR<span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a> </span><span class="token keyword">val </span>colorTitle<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>TimelineConstants.DEFAULT_TITLE_COLOR<span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a> </span><span class="token keyword">val </span>colorDescription<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>TimelineConstants.DEFAULT_DESCRIPTION_COLOR</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Opaque defaults for light surfaces, shared with XML. Supply colors for dark/custom themes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2057914402%2FClasslikes%2F731576088" anchor-label="Icons" id="2057914402%2FClasslikes%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-icons/index.html"><span><span>Icons</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2057914402%2FClasslikes%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-icons/index.html">Icons</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/DrawableRes.html"><span class="token annotation builtin">DrawableRes</span></a> </span><span class="token keyword">val </span>iconDisableLvl<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/DrawableRes.html"><span class="token annotation builtin">DrawableRes</span></a> </span><span class="token keyword">val </span>iconProgress<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">0</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Drawable resources used for fallback badge and active progress icons.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="982439054%2FClasslikes%2F731576088" anchor-label="Stroke" id="982439054%2FClasslikes%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-stroke/index.html"><span><span>Stroke</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="982439054%2FClasslikes%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-stroke/index.html">Stroke</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>radius<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>TimelineConstants.DEFAULT_RADIUS_SIZE<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>sizeStroke<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>TimelineConstants.DEFAULT_STROKE_SIZE</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Stroke width and corner radius in pixels.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="833190071%2FClasslikes%2F731576088" anchor-label="TextSizes" id="833190071%2FClasslikes%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-text-sizes/index.html"><span>Text</span><wbr></wbr><span><span>Sizes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="833190071%2FClasslikes%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-text-sizes/index.html">TextSizes</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>sizeDescription<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>TimelineConstants.DEFAULT_DESCRIPTION_SIZE<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>sizeTitle<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>TimelineConstants.DEFAULT_TITLE_SIZE</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Text sizes for title and description blocks in pixels.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-250334751%2FProperties%2F731576088" anchor-label="colors" id="-250334751%2FProperties%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="colors.html"><span><span>colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-250334751%2FProperties%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="colors.html">colors</a><span class="token operator">: </span><a href="-colors/index.html">TimelineUiConfig.Colors</a></div><div class="brief "><p class="paragraph">line and text colors.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-720055857%2FProperties%2F731576088" anchor-label="icons" id="-720055857%2FProperties%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="icons.html"><span><span>icons</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-720055857%2FProperties%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="icons.html">icons</a><span class="token operator">: </span><a href="-icons/index.html">TimelineUiConfig.Icons</a></div><div class="brief "><p class="paragraph">default icons used by the renderer.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1882887655%2FProperties%2F731576088" anchor-label="stroke" id="-1882887655%2FProperties%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stroke.html"><span><span>stroke</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1882887655%2FProperties%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="stroke.html">stroke</a><span class="token operator">: </span><a href="-stroke/index.html">TimelineUiConfig.Stroke</a></div><div class="brief "><p class="paragraph">line width and corner radius in pixels.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1818757604%2FProperties%2F731576088" anchor-label="textSizes" id="1818757604%2FProperties%2F731576088" data-filterable-set=":timelineview:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":timelineview:dokkaHtml/release" data-filterable-set=":timelineview:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="text-sizes.html"><span>text</span><wbr></wbr><span><span>Sizes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1818757604%2FProperties%2F731576088"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="text-sizes.html">textSizes</a><span class="token operator">: </span><a href="-text-sizes/index.html">TimelineUiConfig.TextSizes</a></div><div class="brief "><p class="paragraph">title and description text sizes in pixels.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
