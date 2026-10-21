@@ -2,6 +2,7 @@ package com.dmitrypokrasov.timelineview.ui
 
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
 import android.view.View
@@ -35,6 +36,9 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
     private var active = false
     private var ownerVisible = true
     private val ownerBounds = Rect()
+    private val viewport = RectF()
+    private val overlayBounds = RectF()
+    private val damageBounds = RectF()
     private var observedTree: ViewTreeObserver? = null
     private val preDrawListener =
         ViewTreeObserver.OnPreDrawListener {
@@ -121,7 +125,8 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
         entries.values.forEach(::updatePlayback)
     }
 
-    fun beginFrame() {
+    fun beginFrame(visibleBounds: RectF) {
+        viewport.set(visibleBounds)
         entries.values.forEach { it.visible = false }
     }
 
@@ -155,20 +160,24 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
         if (size <= 0f) return
         val scaledSize = size * entry.spec.scale
         val inset = (size - scaledSize) / 2f
-        val clip = canvas.clipBounds
-        entry.visible = left + inset < clip.right && top + inset < clip.bottom &&
-            left + inset + scaledSize > clip.left && top + inset + scaledSize > clip.top
+        overlayBounds.set(left + inset, top + inset, left + inset + scaledSize, top + inset + scaledSize)
+        // Damage clipping says what needs repainting, not what is visible to the user.
+        entry.visible = !viewport.isEmpty && RectF.intersects(viewport, overlayBounds)
         updatePlayback(entry)
         if (!entry.visible || entry.drawable.composition == null) return
-        if (!entry.spec.repeat && entry.started && entry.drawable.progress >= 1f) return
-        entry.drawable.setBounds(
-            (left + inset).roundToInt(),
-            (top + inset).roundToInt(),
-            (left + inset + scaledSize).roundToInt(),
-            (top + inset + scaledSize).roundToInt(),
-        )
-        entry.drawable.draw(canvas)
+        damageBounds.set(canvas.clipBounds)
+        if (RectF.intersects(damageBounds, overlayBounds) && !isFinished(entry)) {
+            entry.drawable.setBounds(
+                overlayBounds.left.roundToInt(),
+                overlayBounds.top.roundToInt(),
+                overlayBounds.right.roundToInt(),
+                overlayBounds.bottom.roundToInt(),
+            )
+            entry.drawable.draw(canvas)
+        }
     }
+
+    private fun isFinished(entry: Entry): Boolean = !entry.spec.repeat && entry.started && entry.drawable.progress >= 1f
 
     fun clear() {
         setActive(false)

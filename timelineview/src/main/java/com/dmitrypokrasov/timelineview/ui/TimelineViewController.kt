@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
@@ -53,6 +54,8 @@ class TimelineViewController(
     private var strategyController = TimelineViewStrategyController(registry)
     private val heightCalculator = TimelineHeightCalculator()
     private val lottieOverlayManager = TimelineLottieOverlayManager(ownerView)
+    private val visibleBounds = Rect()
+    private val overlayViewport = RectF()
     private var onStepClickListener: ((index: Int, step: TimelineStepData) -> Unit)? = null
     private var onProgressIconClickListener: (() -> Unit)? = null
 
@@ -253,7 +256,12 @@ class TimelineViewController(
 
     fun draw(canvas: Canvas) {
         val current = frame ?: return
-        lottieOverlayManager.beginFrame()
+        visibleBounds.setEmpty()
+        ownerView.getLocalVisibleRect(visibleBounds)
+        overlayViewport.set(visibleBounds)
+        // Overlay coordinates include the controller origin and content/padding translations.
+        overlayViewport.offset(-ownerView.paddingLeft - origin, -ownerView.paddingTop - topInset)
+        lottieOverlayManager.beginFrame(overlayViewport)
         try {
             current.restorePaths(timelineUi)
             timelineUi.prepareStrokePaint()
@@ -283,34 +291,35 @@ class TimelineViewController(
                 val overlayInset = size * ((stepLayout.step.badgeAnimation?.scale ?: 1f).coerceAtLeast(1f) - 1f) / 2f
                 val top = minOf(stepLayout.iconY - overlayInset, textBlock.titleTop, textBlock.descriptionTop)
                 val bottom = maxOf(stepLayout.iconY + size + overlayInset, textBlock.titleTop + textBlock.titleHeight, textBlock.descriptionTop + textBlock.descriptionHeight)
-                if (bottom < clip.top || top > clip.bottom) return@forEachIndexed
-                val title = stepLayout.step.title ?: ""
-                val description = stepLayout.step.description ?: ""
+                if (bottom >= clip.top && top <= clip.bottom) {
+                    val title = stepLayout.step.title ?: ""
+                    val description = stepLayout.step.description ?: ""
 
-                timelineUi.drawTitle(
-                    canvas,
-                    title,
-                    textX(stepLayout.titleX),
-                    textBlock.titleTop,
-                    textAlign(stepLayout.textAlign),
-                    stepLayout.titleWidth,
-                )
-                timelineUi.drawDescription(
-                    canvas,
-                    description,
-                    textX(stepLayout.descriptionX),
-                    textBlock.descriptionTop,
-                    textAlign(stepLayout.textAlign),
-                    stepLayout.descriptionWidth,
-                )
-                timelineUi.drawStepIcon(
-                    stepLayout.step,
-                    canvas,
-                    textAlign(stepLayout.textAlign),
-                    context,
-                    iconX(stepLayout.iconX, size),
-                    stepLayout.iconY,
-                )
+                    timelineUi.drawTitle(
+                        canvas,
+                        title,
+                        textX(stepLayout.titleX),
+                        textBlock.titleTop,
+                        textAlign(stepLayout.textAlign),
+                        stepLayout.titleWidth,
+                    )
+                    timelineUi.drawDescription(
+                        canvas,
+                        description,
+                        textX(stepLayout.descriptionX),
+                        textBlock.descriptionTop,
+                        textAlign(stepLayout.textAlign),
+                        stepLayout.descriptionWidth,
+                    )
+                    timelineUi.drawStepIcon(
+                        stepLayout.step,
+                        canvas,
+                        textAlign(stepLayout.textAlign),
+                        context,
+                        iconX(stepLayout.iconX, size),
+                        stepLayout.iconY,
+                    )
+                }
                 lottieOverlayManager.draw(
                     canvas = canvas,
                     key = TimelineLottieOverlayManager.Key(stepLayout.step.identity(index)),
