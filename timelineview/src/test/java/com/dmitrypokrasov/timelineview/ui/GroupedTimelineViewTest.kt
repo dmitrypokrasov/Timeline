@@ -81,6 +81,22 @@ class GroupedTimelineViewTest {
         assertEquals(0, view.childCount)
     }
 
+    @Test
+    fun `blank headings are rejected including mutated text before replacing sections`() {
+        listOf("", "  ", "\t\n").forEach { title ->
+            assertThrows(IllegalArgumentException::class.java) { TimelineSection("id", title, emptyList()) }
+        }
+        val view = GroupedTimelineView(RuntimeEnvironment.getApplication())
+        view.setSections(listOf(section("today")), config)
+        val original = view.getChildAt(0)
+        val title = StringBuilder("Tomorrow")
+        val candidate = TimelineSection("tomorrow", title, emptyList())
+        title.clear()
+        assertThrows(IllegalArgumentException::class.java) { view.replaceSections(listOf(candidate)) }
+        assertSame(original, view.getChildAt(0))
+        assertEquals("today", view.getSections().single().id)
+    }
+
     private fun measure(view: View) {
         view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
         view.layout(0, 0, 320, view.measuredHeight)

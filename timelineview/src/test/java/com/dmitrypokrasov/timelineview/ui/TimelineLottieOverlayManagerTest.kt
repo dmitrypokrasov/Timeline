@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.graphics.RectF
 import android.view.View
 import android.widget.FrameLayout
 import com.airbnb.lottie.LottieCompositionFactory
@@ -23,10 +24,12 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import java.util.concurrent.Executor
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 class TimelineLottieOverlayManagerTest {
     private val originalExecutor = LottieTask.EXECUTOR
 
@@ -144,15 +147,33 @@ class TimelineLottieOverlayManagerTest {
         }
     }
 
+    @Test
+    fun `partial damage must not pause overlays elsewhere in the visible viewport`() {
+        val manager = TimelineLottieOverlayManager(View(RuntimeEnvironment.getApplication()))
+        try {
+            val spec = TimelineLottieSpec(R.raw.timeline_test_animation)
+            manager.submit(List(3) { TimelineStepData(progress = 100, badgeAnimation = spec) })
+            manager.setActive(true)
+            drawVisible(manager, listOf(0, 1, 2))
+            assertEquals(2, manager.runningAnimationCount)
+            drawVisible(manager, listOf(0, 1, 2), damage = Rect(0, 30, 100, 40))
+            assertEquals(2, manager.runningAnimationCount)
+        } finally {
+            manager.clear()
+        }
+    }
+
     private fun drawVisible(
         manager: TimelineLottieOverlayManager,
         indices: List<Int>,
         scrollY: Float = 0f,
+        damage: Rect? = null,
     ) {
         val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
+        damage?.let { canvas.clipRect(it) }
         canvas.translate(0f, -scrollY)
-        manager.beginFrame()
+        manager.beginFrame(RectF(0f, scrollY, 100f, scrollY + 100f))
         indices.forEach { manager.draw(canvas, TimelineLottieOverlayManager.Key(it), 0f, it * 50f, 24f) }
         manager.endFrame()
         bitmap.recycle()
