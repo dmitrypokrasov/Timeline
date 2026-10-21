@@ -8,7 +8,7 @@ On a connected physical Android 10+ device, with JDK 17 and the Android SDK conf
 
 ```bash
 ./gradlew :timelineview:publishReleasePublicationToBuildRepository
-./gradlew -p integration/consumer :benchmark:connectedReleaseAndroidTest \
+./integration/consumer/gradlew -p integration/consumer :benchmark:connectedReleaseAndroidTest \
   -PtimelineBenchmarks=true \
   -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.1.1
 ```

@@ -42,6 +42,8 @@ Java 8. Kotlin consumers of a future release built from this branch must use a c
 that understands Kotlin 2.4 metadata; the integration fixtures verify Kotlin 2.4.21.
 The compiler migration does not change already published artifacts. Kotlin and Java
 consumers are compiled against the AAR, and existing interface `DefaultImpls` are preserved.
+The independent consumer fixture additionally verifies AGP 9.4.1, Gradle 9.6.0 and Kotlin 2.4.21
+using its own wrapper; see the [consumer toolchain](RELEASING.md#independent-consumer-toolchain).
 The library uses Android Views; the [compiled Compose wrapper](integration/consumer/compose/src/main/java/com/example/timelinecompose/Timeline.kt) demonstrates `AndroidView` integration.
 View, engine and renderer updates run on the Android UI thread.
 

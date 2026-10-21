@@ -3,10 +3,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.test")
-    id("org.jetbrains.kotlin.android")
 }
 
-android {
+extensions.configure<com.android.build.api.dsl.TestExtension> {
     namespace = "com.example.benchmark"
     compileSdk = 34
     defaultConfig {

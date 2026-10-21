@@ -3,9 +3,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
 }
-android {
+extensions.configure<com.android.build.api.dsl.LibraryExtension> {
     namespace = "com.example.migration.legacy"
     compileSdk = 34
     defaultConfig { minSdk = 27 }
@@ -13,7 +12,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    sourceSets["main"].java.srcDir("../../migration/before")
+    sourceSets.named("main") { kotlin.directories.add("../../migration/before") }
 }
 dependencies { implementation("com.github.dmitrypokrasov:timelineview:1.1.0") }
 

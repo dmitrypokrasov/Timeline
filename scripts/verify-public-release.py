@@ -66,7 +66,7 @@ def verify_site(base, site, release, commit, download=fetch):
 
 
 def prepare_consumer(destination, manifest):
-    shutil.copytree(ROOT / 'integration', destination / 'integration', ignore=shutil.ignore_patterns('build', '.gradle', 'local.properties'))
+    shutil.copytree(ROOT / 'integration', destination / 'integration', ignore=shutil.ignore_patterns('build', '.gradle', '.kotlin', 'local.properties'))
     consumer = destination / 'integration/consumer'
     settings = consumer / 'settings.gradle.kts'
     # Keep every ordinary integration module (for example Compose) in public verification.
@@ -110,6 +110,12 @@ rootProject.name = "TimelinePublicReleaseConsumer"
     return consumer
 
 
+def consumer_wrapper(consumer):
+    # Historical release tags predate the independent AGP 9 consumer wrapper.
+    wrapper = consumer / 'gradlew'
+    return wrapper if wrapper.is_file() else ROOT / 'gradlew'
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--url', required=True)
@@ -128,7 +134,7 @@ def main():
             destination = Path(temp)
             consumer = prepare_consumer(destination, manifest)
             try:
-                subprocess.run([str(ROOT / 'gradlew'), '--gradle-user-home', str(destination / 'gradle-home'),
+                subprocess.run([str(consumer_wrapper(consumer)), '--gradle-user-home', str(destination / 'gradle-home'),
                                 '-p', str(consumer), 'assembleRelease', 'testDebugUnitTest',
                                 '-PtimelineVersion=' + manifest['version'],
                                 '-PtimelineRepository=' + args.url.rstrip('/') + '/maven'], check=True)
