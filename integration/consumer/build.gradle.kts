@@ -1,9 +1,13 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    id("com.android.application") version "8.4.0"
-    id("org.jetbrains.kotlin.android") version "1.9.0"
+    id("com.android.application") version "9.4.1"
+    id("org.jetbrains.kotlin.android") version "2.4.21" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.4.21" apply false
 }
 
-android {
+extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
     namespace = "com.example.consumer"
     compileSdk = 34
     defaultConfig {
@@ -26,10 +30,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions { jvmTarget = "1.8" }
-    sourceSets["main"].java.srcDir("../migration/after")
-    sourceSets["main"].res.srcDir("../migration/res")
-    sourceSets["test"].java.srcDir("../migration/test")
+    sourceSets.named("main") {
+        java.directories.add("../migration/after")
+        kotlin.directories.add("../migration/after")
+    }
+    sourceSets.named("main") { res.directories.add("../migration/res") }
+    sourceSets.named("test") { kotlin.directories.add("../migration/test") }
     testOptions {
         unitTests.isIncludeAndroidResources = true
         unitTests.all { it.systemProperty("robolectric.dependency.repo.url", "https://repo.maven.apache.org/maven2") }
@@ -40,4 +46,11 @@ dependencies {
     implementation("com.github.dmitrypokrasov:timelineview:${providers.gradleProperty("timelineVersion").get()}")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.17")
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
+        jvmDefault.set(JvmDefaultMode.DISABLE)
+    }
 }

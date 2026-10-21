@@ -4,6 +4,17 @@ The checkout targets **2.1.1**. Local verification never publishes. Publishing
 requires explicitly dispatching **Publish tested release** for an existing stable tag.
 The workflow builds/tests that tag and publishes the exact staged Maven bytes it tested.
 
+## Independent consumer toolchain
+
+The library build uses the root `./gradlew`. The AAR consumer uses
+`./integration/consumer/gradlew -p integration/consumer` with Gradle 9.6.0,
+AGP 9.4.1, built-in Kotlin and the Kotlin 2.4.21 Compose compiler plugin.
+Both builds use JDK 17; install Android SDK platform 34 and build tools 34.0.0
+and 36.0.0. `scripts/check-wrapper.py` verifies both distribution checksums.
+`scripts/check-release.sh` runs both builds and validates the minified consumer.
+Device and public-release verification select the consumer wrapper when present;
+historical tags that predate it continue to use their root wrapper.
+
 ## One-time repository setup
 
 1. Enable GitHub Pages with **GitHub Actions** as its source. The publishing job uses the
@@ -132,7 +143,9 @@ dependency cache. Validate the root and consumer builds with an empty Gradle use
 accepting the update; never treat a cached local build as proof of clean-runner verification.
 Include Linux AAPT2 when refreshing hashes on macOS with
 `./gradlew -I scripts/verification.init.gradle --write-verification-metadata sha256 verificationDependencies`;
-run the equivalent task in `integration/consumer` with its repository/version properties.
+run the equivalent task with `./integration/consumer/gradlew -p integration/consumer`,
+`-PverificationAapt2Version=9.4.1-15978811`, `--no-configuration-cache`, and its
+repository/version properties. Pass the root init script with an absolute path.
 Instrumented test tasks also resolve Android Test Platform dependencies and must be included.
 SDK/emulator downloads and Robolectric's own runtime downloads are outside Gradle verification.
 Do not use lenient/off verification modes in CI. The integration build trusts only the locally
@@ -152,7 +165,7 @@ from `dev` only when preparing the actual release. Do not tag or publish during 
 1. Run `bash scripts/check-release.sh` and review the candidate manifest and consumer APKs.
 2. Run the quality workflow manually for the candidate branch to include both device APIs
    and diagnostics. Require its aggregate status to succeed before approving a release.
-3. For a local device run, use `./gradlew -p integration/consumer connectedReleaseAndroidTest
+3. For a local device run, use `./integration/consumer/gradlew -p integration/consumer connectedReleaseAndroidTest
    -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.1.1` after staging.
    The release consumer uses a debug signing key solely to install the test APK.
 4. Confirm the repository's actual Pages source, environment rules and protected-branch

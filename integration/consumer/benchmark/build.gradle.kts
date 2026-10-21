@@ -1,9 +1,11 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.test")
-    id("org.jetbrains.kotlin.android")
 }
 
-android {
+extensions.configure<com.android.build.api.dsl.TestExtension> {
     namespace = "com.example.benchmark"
     compileSdk = 34
     defaultConfig {
@@ -23,7 +25,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions { jvmTarget = "1.8" }
 }
 
 androidComponents { beforeVariants(selector().all()) { it.enable = it.buildType == "release" } }
@@ -33,4 +34,11 @@ dependencies {
     implementation("androidx.test:runner:1.7.0")
     implementation("androidx.test.ext:junit:1.2.1")
     implementation("androidx.test.uiautomator:uiautomator:2.3.0")
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
+        jvmDefault.set(JvmDefaultMode.DISABLE)
+    }
 }
