@@ -10,7 +10,7 @@ runs:
     - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
       with:
         # Override the action's obsolete default "tools platform-tools" package list.
-        packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+        packages: 'platform-tools platforms;android-34 build-tools;34.0.0 build-tools;36.0.0'
         log-accepted-android-sdk-licenses: false
     - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
     - name: Validate wrapper distribution checksum

@@ -117,6 +117,11 @@ jobs:
         with:
           name: tested-maven-repository
           path: build/repository/
+      - name: Select consumer Gradle wrapper
+        run: |
+          wrapper=./gradlew
+          if [ -f integration/consumer/gradlew ]; then wrapper=./integration/consumer/gradlew; fi
+          echo "CONSUMER_GRADLE=$wrapper" >> "$GITHUB_ENV"
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -130,7 +135,7 @@ jobs:
           disable-animations: true
           script: |
             ./gradlew :timelineview:connectedDebugAndroidTest :app:connectedDebugAndroidTest --stacktrace
-            ./gradlew -p integration/consumer connectedReleaseAndroidTest -PtimelineRepository="$PWD/build/repository" -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)" --stacktrace
+            "$CONSUMER_GRADLE" -p integration/consumer connectedReleaseAndroidTest -PtimelineRepository="$PWD/build/repository" -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)" --stacktrace
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
