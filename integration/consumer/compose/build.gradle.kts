@@ -25,5 +25,5 @@ dependencies {
     implementation("com.github.dmitrypokrasov:timelineview:${providers.gradleProperty("timelineVersion").get()}")
     implementation("androidx.compose.ui:ui:1.5.4")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.robolectric:robolectric:4.12.2")
+    testImplementation("org.robolectric:robolectric:4.17")
 }
