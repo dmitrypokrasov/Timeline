@@ -35,10 +35,13 @@ the required one-time GitHub Pages and branch-protection settings.
 
 ## Requirements
 
-Timeline 2.x supports **Android 8.1 / API 27 and newer**. The checked-in builds use
-JDK 17, Gradle 8.6, AGP 8.4.0, Kotlin 1.9.0 and compile SDK 34; library bytecode targets
-Java 8. These are the verified toolchain versions, not a claim that every older/newer
-consumer toolchain is compatible. Kotlin and Java consumers are compiled against the AAR.
+Timeline 2.x supports **Android 8.1 / API 27 and newer**. Published 2.1.1 was built with
+JDK 17, Gradle 8.6, AGP 8.4.0 and Kotlin 1.9.0. The development branch uses JDK 17,
+Gradle 8.7, AGP 8.5.2, Kotlin 2.4.21 and compile SDK 34; library bytecode still targets
+Java 8. Kotlin consumers of a future release built from this branch must use a compiler
+that understands Kotlin 2.4 metadata; the integration fixtures verify Kotlin 2.4.21.
+The compiler migration does not change already published artifacts. Kotlin and Java
+consumers are compiled against the AAR, and existing interface `DefaultImpls` are preserved.
 The library uses Android Views; the [compiled Compose wrapper](integration/consumer/compose/src/main/java/com/example/timelinecompose/Timeline.kt) demonstrates `AndroidView` integration.
 View, engine and renderer updates run on the Android UI thread.
 
@@ -280,7 +283,8 @@ update, reuses engines for step-only changes and clears the callback on release.
 in host state; changing the callback alone does not request another layout. The wrapper uses
 public 2.0 APIs and is compiled/tested as part of the independent AAR consumer. Compose is
 not a transitive dependency of the library. Its fixture compiler version is paired with the
-repository's Kotlin 1.9.0 toolchain; your app keeps its own compatible Compose toolchain.
+repository's Kotlin 2.4.21 toolchain through the Compose compiler Gradle plugin; your app
+keeps its own compatible Compose toolchain.
 
 `TimelineDefaults` is an additive API in 2.1.1. It provides XML-equivalent defaults and explicit `dp`/`sp`
 conversion using the current context. Recreate these values after density/font configuration

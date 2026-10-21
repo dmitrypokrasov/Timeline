@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -10,7 +13,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions { jvmTarget = "1.8" }
     sourceSets["main"].java.srcDir("../../migration/before")
 }
 dependencies { implementation("com.github.dmitrypokrasov:timelineview:1.1.0") }
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
+        jvmDefault.set(JvmDefaultMode.DISABLE)
+    }
+}

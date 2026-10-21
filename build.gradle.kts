@@ -9,7 +9,9 @@ import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
@@ -43,9 +45,14 @@ fun Project.configureAndroidQuality() {
         }
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "1.8"
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        val legacyModuleName = "${project.name}_${name.removePrefix("compile").removeSuffix("Kotlin").replaceFirstChar { it.lowercase() }}"
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmDefault.set(JvmDefaultMode.DISABLE)
+            // Preserve JVM names and synthetic accessors emitted by the published Kotlin 1.9 build.
+            moduleName.set(legacyModuleName)
+            freeCompilerArgs.add("-Xlambdas=class")
         }
     }
 }
