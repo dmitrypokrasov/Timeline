@@ -14,7 +14,9 @@ The project now ships with a shared quality toolchain:
 
 ## Development status
 
-The latest public release is **2.0.0**, published on 2026-10-07. Version **1.1.0** remains available unchanged.
+This guide targets **2.1.1**. Publication status is recorded in [GitHub Releases](https://github.com/dmitrypokrasov/Timeline/releases)
+and [public Maven metadata](https://dmitrypokrasov.github.io/Timeline/maven/com/github/dmitrypokrasov/timelineview/maven-metadata.xml).
+Previously published **1.1.0** and **2.0.0** artifacts remain unchanged.
 See [CHANGELOG.md](CHANGELOG.md) for behavior changes and migration instructions.
 
 Documentation: [migration 1.1 → 2.0](MIGRATION_1_TO_2.md), [architecture](ARCHITECTURE.md),
@@ -33,7 +35,7 @@ the required one-time GitHub Pages and branch-protection settings.
 
 ## Requirements
 
-Timeline 2.0 supports **Android 8.1 / API 27 and newer**. The checked-in builds use
+Timeline 2.x supports **Android 8.1 / API 27 and newer**. The checked-in builds use
 JDK 17, Gradle 8.6, AGP 8.4.0, Kotlin 1.9.0 and compile SDK 34; library bytecode targets
 Java 8. These are the verified toolchain versions, not a claim that every older/newer
 consumer toolchain is compatible. Kotlin and Java consumers are compiled against the AAR.
@@ -48,7 +50,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.github.dmitrypokrasov:timelineview:2.0.0"
+    implementation "com.github.dmitrypokrasov:timelineview:2.1.1"
 }
 ```
 
@@ -56,7 +58,7 @@ GitHub Packages publication is still available for private/authenticated install
 
 ## Minimal Kotlin quickstart (2.0)
 
-The example below uses the published **2.0.0** dependency above. When upgrading an existing
+The example below uses the **2.1.1** dependency above. When upgrading an existing
 1.1.0 host, follow the [migration guide](MIGRATION_1_TO_2.md); 2.0 is a breaking major release.
 
 The following host is compiled and rendered by the independent consumer tests. Attach
@@ -201,9 +203,9 @@ Overlays support only local `@RawRes` animations.
 
 ## Grouped events (2.1)
 
-`GroupedTimelineView` and `TimelineSection` are included in the 2.1.0 release candidate;
-the latest published version remains 2.0.0 until publication completes. Test this example against `build/repository` after running
-`bash scripts/check-release.sh`. The example is compiled by the independent consumer.
+`GroupedTimelineView` and `TimelineSection` are available in 2.1.1.
+The example is compiled by the independent consumer; it can also be tested against
+`build/repository` after running `bash scripts/check-release.sh`.
 
 Each section has an accessible heading and an independent timeline. Section order and date
 formatting belong to the host; IDs must be unique per section, while step IDs may repeat
@@ -280,7 +282,7 @@ public 2.0 APIs and is compiled/tested as part of the independent AAR consumer. 
 not a transitive dependency of the library. Its fixture compiler version is paired with the
 repository's Kotlin 1.9.0 toolchain; your app keeps its own compatible Compose toolchain.
 
-`TimelineDefaults` is an additive API in the 2.1.0 release candidate. It provides XML-equivalent defaults and explicit `dp`/`sp`
+`TimelineDefaults` is an additive API in 2.1.1. It provides XML-equivalent defaults and explicit `dp`/`sp`
 conversion using the current context. Recreate these values after density/font configuration
 changes; Kotlin configuration values continue to mean pixels. Test the following compiled
 example against the local staged artifact with `bash scripts/check-release.sh`.
