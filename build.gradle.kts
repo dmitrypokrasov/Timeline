@@ -71,6 +71,8 @@ subprojects {
         apply(plugin = "org.jetbrains.dokka")
 
         extensions.configure<KtlintExtension> {
+            // Keep formatting rules stable when upgrading the Gradle integration.
+            version.set("1.0.1")
             android.set(true)
             outputToConsole.set(true)
             ignoreFailures.set(false)
