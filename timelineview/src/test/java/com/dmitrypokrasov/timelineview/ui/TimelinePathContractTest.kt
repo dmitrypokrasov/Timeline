@@ -78,22 +78,51 @@ class TimelinePathContractTest {
     }
 
     @Test
-    fun `independent alternating completion preserves total length for every strategy`() {
+    fun `independent completion colors each contour including partial segments after gaps`() {
         TimelineMathStrategy.entries.forEach { strategy ->
-            val config = TimelineMathConfig(steps = List(7) { TimelineStepData(timestampMillis = it * 1_000L, progress = 100) }, progressMode = TimelineMathConfig.ProgressMode.INDEPENDENT)
+            val progress = listOf(0, 100, 0, 35, 100, 0, 70)
+            val config = TimelineMathConfig(steps = List(progress.size) { TimelineStepData(timestampMillis = it * 1_000L, progress = 100) }, progressMode = TimelineMathConfig.ProgressMode.INDEPENDENT)
             val engine = TimelineMathFactory.create(strategy, config)
             engine.setMeasuredWidth(240)
             val full = Path()
             engine.buildPath(full, Path())
-            val total = length(full)
-            engine.replaceSteps(config.steps.mapIndexed { index, step -> step.copy(progress = if (index % 2 == 0) 0 else 100) })
+            val reference = PathMeasure(full, false)
+            val expectedCompleted = Path()
+            val expectedRemaining = Path()
+            progress.forEachIndexed { index, value ->
+                assertTrue("$strategy segment $index", reference.length > 0f)
+                reference.getSegment(0f, reference.length * value / 100f, expectedCompleted, true)
+                reference.getSegment(reference.length * value / 100f, reference.length, expectedRemaining, true)
+                assertEquals(index < progress.lastIndex, reference.nextContour())
+            }
+            engine.replaceSteps(config.steps.mapIndexed { index, step -> step.copy(progress = progress[index]) })
             val completed = Path()
             val remaining = Path()
             engine.buildPath(completed, remaining)
-            assertEquals(strategy.key.value, total, length(completed) + length(remaining), 0.5f)
-            assertTrue(strategy.key.value, length(completed) > 0f)
-            assertTrue(strategy.key.value, length(remaining) > 0f)
+            assertContours("$strategy completed", expectedCompleted, completed)
+            assertContours("$strategy remaining", expectedRemaining, remaining)
         }
+    }
+
+    private fun assertContours(
+        label: String,
+        expected: Path,
+        actual: Path,
+    ) {
+        val reference = PathMeasure(expected, false)
+        val measured = PathMeasure(actual, false)
+        do {
+            assertEquals(label, reference.length, measured.length, 0.5f)
+            listOf(0f, 0.5f, 1f).forEach { fraction ->
+                val expectedPoint = FloatArray(2)
+                val actualPoint = FloatArray(2)
+                assertTrue(reference.getPosTan(reference.length * fraction, expectedPoint, null))
+                assertTrue(measured.getPosTan(measured.length * fraction, actualPoint, null))
+                assertPoint(label, expectedPoint[0], expectedPoint[1], actualPoint)
+            }
+            val next = reference.nextContour()
+            assertEquals(label, next, measured.nextContour())
+        } while (next)
     }
 
     @Test

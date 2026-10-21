@@ -1024,7 +1024,7 @@ public final class com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManag
   public com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManager(android.view.View);
   public final int getEntryCount$timelineview_release();
   public final int getRunningAnimationCount$timelineview_release();
-  public final void beginFrame();
+  public final void beginFrame(android.graphics.RectF);
   public final void clear();
   public final void draw(android.graphics.Canvas, com.dmitrypokrasov.timelineview.ui.TimelineLottieOverlayManager$Key, float, float, float);
   public final void endFrame();
