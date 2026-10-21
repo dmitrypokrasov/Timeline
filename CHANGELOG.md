@@ -1,6 +1,9 @@
 # Changelog
 
-## 2.1.0 — 2026-10-07
+## 2.1.1 — 2026-10-21
+
+This release includes the additions from the unpublished 2.1.0 candidate and the fixes below.
+The existing `v2.1.0` tag is preserved; no 2.1.0 Maven artifacts were published.
 
 ### Additions
 
@@ -16,6 +19,9 @@
 
 ### Fixes
 
+- Keep visible Lottie overlays running during partial redraws; use the actual View viewport
+  for playback and the canvas damage clip only for drawing.
+- Reject blank grouped-section headings before changing the existing view hierarchy.
 - Pause Lottie overlays outside the visible viewport, including fully clipped views whose
   parent skips drawing, and resume playback on re-entry without retaining lifecycle listeners.
 - Keep large Snake titles clear of horizontal connectors at increased system font scales.
@@ -24,6 +30,11 @@
 
 ### Verification and delivery
 
+- Upgrade Lottie to 6.7.1, the benchmark runner to 1.7.0, and Detekt to 1.23.8 with
+  independently verified checksums for the affected library and consumer dependencies.
+- Update pinned GitHub Actions and cover the setup-project composite action in Dependabot.
+- Check completed/pending contour positions against full paths, including partial progress
+  after gaps, for all six built-in strategies.
 - Extend path/progress invariants across all six strategies and both progress modes; add
   large-font, mixed-script, RTL and dark-theme rendering regressions.
 - Add Android frame/memory benchmarks and Perfetto traces for 100/1,000 events, updates and
@@ -33,10 +44,14 @@
 
 ### Upgrading from 2.0.0
 
-This is an additive minor release: no existing public API is removed. Update the dependency
+Compared with 2.0.0, this is an additive release: no existing public API is removed. Update the dependency
 version; no configuration migration is required. Programmatic dimensions remain pixels;
 use the new conversion helpers at the host boundary. Keep using individual `TimelineView`s
 for custom registries and recycling containers for unbounded event feeds.
+
+## 2.1.0 — 2026-10-07
+
+Tagged candidate only; Maven publication did not complete. Superseded by 2.1.1 above.
 
 ## 2.0.0 — 2026-10-07
 
