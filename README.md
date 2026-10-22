@@ -14,10 +14,15 @@ The project now ships with a shared quality toolchain:
 
 ## Development status
 
-This guide targets **2.1.1**. Publication status is recorded in [GitHub Releases](https://github.com/dmitrypokrasov/Timeline/releases)
+This checkout prepares **2.1.2**; it is a release candidate until publication is verified.
+The installation example below uses the published **2.1.1** version. Publication status is recorded in [GitHub Releases](https://github.com/dmitrypokrasov/Timeline/releases)
 and [public Maven metadata](https://dmitrypokrasov.github.io/Timeline/maven/com/github/dmitrypokrasov/timelineview/maven-metadata.xml).
-Previously published **1.1.0** and **2.0.0** artifacts remain unchanged.
+Previously published **1.1.0**, **2.0.0** and **2.1.1** artifacts remain unchanged.
 See [CHANGELOG.md](CHANGELOG.md) for behavior changes and migration instructions.
+
+To verify the 2.1.2 candidate locally, run `bash scripts/check-release.sh`. It stages the
+candidate in `build/repository` and compiles/tests independent consumers against that exact
+version. No tag or publication is created. See [the 2.1.2 migration notes](MIGRATION_1_TO_2.md#updating-from-211-to-212).
 
 Documentation: [migration 1.1 → 2.0](MIGRATION_1_TO_2.md), [architecture](ARCHITECTURE.md),
 [custom strategies](CUSTOM_STRATEGIES.md), and [release process](RELEASING.md).
@@ -36,9 +41,9 @@ the required one-time GitHub Pages and branch-protection settings.
 ## Requirements
 
 Timeline 2.x supports **Android 8.1 / API 27 and newer**. Published 2.1.1 was built with
-JDK 17, Gradle 8.6, AGP 8.4.0 and Kotlin 1.9.0. The development branch uses JDK 17,
+JDK 17, Gradle 8.6, AGP 8.4.0 and Kotlin 1.9.0. The 2.1.2 candidate uses JDK 17,
 Gradle 9.8.1, AGP 8.5.2, Kotlin 2.4.21 and compile SDK 34; library bytecode still targets
-Java 8. Kotlin consumers of a future release built from this branch must use a compiler
+Java 8. Kotlin consumers of 2.1.2 must use a compiler
 that understands Kotlin 2.4 metadata; the integration fixtures verify Kotlin 2.4.21.
 The compiler migration does not change already published artifacts. Kotlin and Java
 consumers are compiled against the AAR, and existing interface `DefaultImpls` are preserved.
