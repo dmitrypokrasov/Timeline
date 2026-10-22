@@ -2,7 +2,7 @@
 agp = "8.5.2"
 kotlin = "2.4.21"
 detekt = "1.23.8"
-dokka = "1.9.20"
+dokka = "2.2.0"
 ktlintGradle = "14.2.0"
 binaryCompatibilityValidator = "0.16.3"
 coreKtx = "1.13.1"
