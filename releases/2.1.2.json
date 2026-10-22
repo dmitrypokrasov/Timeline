@@ -1,0 +1,26 @@
+{
+  "commit": "9f3537a6fbed45d8ea8a9d1014829a6470456a85",
+  "files": {
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2-sources.jar": "8ca527df286647d85c8bec17e2c38ed89d99b949cceef19fe849d5920d2ca4b6",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2-sources.jar.md5": "2816374ad07464c297dccf92b9bbd7e04923df30371aa66cc9de4d3296dd7d09",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2-sources.jar.sha1": "81a4ffef5be501564eebc2737cff58bc875601a488ad8a294ae9b78f3fc5c104",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2-sources.jar.sha256": "f9a8f9be4505fc6fdb5bbf4ccd671b6f122ccbbf989fac7f6acc4246f87f8d5f",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2-sources.jar.sha512": "e9680c86487823f943ba8d4e6e3fa46857d57864de2a7467698665226474010a",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.aar": "6f251924e91b5e740a857d3ce71a49187315ee8d9ee1565548f1ab84f2de3a8f",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.aar.md5": "5b6ef1a58c946148b34dcc8c2bddd2630a87c671e75184d0c0e1e3bc8402aa6b",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.aar.sha1": "5ed92a28749fb7ff4a62ac6a3086fde71e7214f3195f26d10f0ce022aef1d7ad",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.aar.sha256": "380be7791ce38b7aab7adfb895ef559d44c7583e36a3c6ed4f8ca0ee3802b950",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.aar.sha512": "f4c060163bc0c19df2b41921960815a7f0a6e3e1c3802900e17d15a164fa480f",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.module": "e849eaee757ba5ffa04bd57993ea76ba7c17b0977f82043da807e301a783b8c0",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.module.md5": "fabee86aab483226b58f7a45d249101926dabecb725d06702678b05a15cc4237",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.module.sha1": "7eb26e8f8720a0824fab4564586409efe37e78017ad6698e49ea1a4cda2a5de4",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.module.sha256": "eb44e55722cef0470e9cf906ccccd5fe679f55852803538f523795f0486bc0f3",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.module.sha512": "b3827dcd40921ded2abb4eb8e72d2e4db6d9630184daa6cc0d812846889da1a7",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.pom": "6bbd68fcd92df450be50f85f8e0c59b6c736e500784d319f1245905c77c67f26",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.pom.md5": "7494975f7623fa873b902b5011c64014c1edcb571b36d521ce1e1c648cd5c5a0",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.pom.sha1": "19277cc08e4114a0d3e1dd7d18e2f810aa0d1c53af81e35172c0816b874e227d",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.pom.sha256": "5037d01e6618d081f67dd5b35524a66a115407bf2c1068062ba3216cc2eb318b",
+    "com/github/dmitrypokrasov/timelineview/2.1.2/timelineview-2.1.2.pom.sha512": "4ae99edaa6475d2c2d7d0b0cc1521108d215ab9ab54bbb3d3ea1f30337e7367a"
+  },
+  "version": "2.1.2"
+}
