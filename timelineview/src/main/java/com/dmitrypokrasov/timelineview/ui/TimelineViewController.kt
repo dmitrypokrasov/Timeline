@@ -1,6 +1,7 @@
 package com.dmitrypokrasov.timelineview.ui
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
@@ -11,13 +12,23 @@ import android.view.View
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineConfig
 import com.dmitrypokrasov.timelineview.config.TimelineConfigParser
+import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathStrategy
 import com.dmitrypokrasov.timelineview.config.TimelineStrategy
+import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
+import com.dmitrypokrasov.timelineview.math.AdaptiveGridTimelineMath
+import com.dmitrypokrasov.timelineview.math.AlternatingTimelineMath
+import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
+import com.dmitrypokrasov.timelineview.math.SnakeTimelineMath
+import com.dmitrypokrasov.timelineview.math.TimeScaledTimelineMath
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.model.identity
+import com.dmitrypokrasov.timelineview.render.BaseTimelineUi
+import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
+import com.dmitrypokrasov.timelineview.render.SnakeTimelineUi
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract
@@ -33,11 +44,18 @@ class TimelineViewController(
 ) {
     companion object {
         internal const val PROGRESS_ID = Int.MAX_VALUE
+        private val cacheableMath = setOf<Class<*>>(LinearTimelineMath::class.java, SnakeTimelineMath::class.java, AlternatingTimelineMath::class.java, AdaptiveGridTimelineMath::class.java, TimeScaledTimelineMath::class.java)
+        private val cacheableUi = setOf<Class<*>>(BaseTimelineUi::class.java, LinearTimelineUi::class.java, SnakeTimelineUi::class.java)
     }
 
     internal data class Target(val id: Int, val bounds: RectF, val description: String, val clickable: Boolean)
 
     private var frame: TimelineFrame? = null
+    private var measuredFrame: TimelineFrame? = null
+    private var measuredUi: TimelineUiConfig? = null
+    private var measuredResources: Configuration? = null
+    private var measuredExtents = emptyList<Float>()
+    private var stepIndices = emptyMap<Int, Int>()
     private val layout get() = frame?.layout
     private val textBlocks get() = frame?.blocks.orEmpty()
     private val topInset get() = frame?.topInset ?: 0f
@@ -88,7 +106,7 @@ class TimelineViewController(
             throw failure
         }
         state = candidate.copy(mathConfig = timelineMath.getConfig())
-        invalidateGeometry()
+        invalidateGeometry(keepMeasurements = canCacheMeasurements() && sameContent(state.mathConfig))
     }
 
     fun setMathEngine(engine: TimelineMathEngine) = transition(state.withMathEngine(engine))
@@ -139,9 +157,7 @@ class TimelineViewController(
     fun performProgressIconClick(): Boolean = clickTarget(PROGRESS_ID)
 
     internal fun targets(): List<Target> =
-        frame?.targets().orEmpty().map {
-            it.copy(clickable = if (it.id == PROGRESS_ID) onProgressIconClickListener != null else onStepClickListener != null)
-        }
+        TimelineTargets.withClicks(frame?.targets().orEmpty(), onStepClickListener != null, onProgressIconClickListener != null)
 
     private fun buildTargets(
         current: TimelineLayout,
@@ -195,13 +211,7 @@ class TimelineViewController(
         x: Float,
         y: Float,
         clickableOnly: Boolean = true,
-    ): Int? =
-        targets().filter { (!clickableOnly || it.clickable) && it.bounds.contains(x, y) }
-            .minByOrNull {
-                val dx = x - it.bounds.centerX()
-                val dy = y - it.bounds.centerY()
-                dx * dx + dy * dy
-            }?.id
+    ): Int? = TimelineTargets.hit(targets(), x, y, clickableOnly)
 
     internal fun clickTarget(id: Int): Boolean {
         if (id == PROGRESS_ID && layout?.progressIcon != null) {
@@ -211,7 +221,7 @@ class TimelineViewController(
             } ?: false
         }
         val steps = layout?.steps.orEmpty()
-        val index = steps.indices.firstOrNull { virtualIds[steps[it].step.identity(it)] == id }
+        val index = stepIndices[id]
         val listener = onStepClickListener
         return if (index != null && listener != null) {
             listener(index, steps[index].step)
@@ -232,7 +242,19 @@ class TimelineViewController(
 
     fun measure(width: Int): Int {
         val direction = ownerView.layoutDirection == View.LAYOUT_DIRECTION_RTL
-        val resolved = TimelineLayoutResolver.resolve(timelineMath, timelineUi, width, 4f * context.resources.displayMetrics.density)
+        val previous = reusableFrame(width, direction)
+        // A caller retains access to direct engines' geometry setters (for example corner radius).
+        val ownedFrame = previous?.takeIf { frame != null && state.math is MathSelection.ByKey }
+        if (ownedFrame != null && ownedFrame.config == timelineMath.getConfig()) return ownedFrame.height
+        val reuse = previous != null && sameContent(timelineMath.getConfig())
+        val resolved =
+            if (reuse) {
+                timelineMath.setMeasuredWidth(width)
+                timelineMath.setStepExtents(measuredExtents)
+                timelineMath.buildLayout()
+            } else {
+                TimelineLayoutResolver.resolve(timelineMath, timelineUi, width, 4f * context.resources.displayMetrics.density)
+            }
         val completed = Path()
         val remaining = Path()
         timelineMath.buildPath(completed, remaining)
@@ -240,7 +262,7 @@ class TimelineViewController(
         val ids = virtualIds.filterKeys { it in identities }.toMutableMap()
         var nextId = nextVirtualId
         identities.forEach { ids.getOrPut(it) { nextId++ } }
-        val blocks = TimelineTextBlockResolver.resolve(resolved, timelineMath, timelineUi)
+        val blocks = if (reuse) previous!!.blocks else TimelineTextBlockResolver.resolve(resolved, timelineMath, timelineUi)
         val bounds = heightCalculator.calculateBounds(resolved, timelineMath, timelineUi, blocks, listOf(completed, remaining))
         val math = timelineMath.getConfig()
         val start = timelineMath.getStartPosition()
@@ -250,8 +272,40 @@ class TimelineViewController(
         virtualIds.clear()
         virtualIds.putAll(ids)
         nextVirtualId = nextId
+        stepIndices = resolved.steps.indices.associateBy { ids.getValue(resolved.steps[it].step.identity(it)) }
         frame = candidate
+        if (canCacheMeasurements()) {
+            measuredExtents = rowExtents(resolved)
+            measuredUi = timelineUi.getConfig()
+            measuredResources = Configuration(context.resources.configuration)
+            measuredFrame = candidate
+        }
         return candidate.height
+    }
+
+    private fun canCacheMeasurements(): Boolean =
+        timelineMath.javaClass in cacheableMath && timelineUi.javaClass in cacheableUi
+
+    private fun reusableFrame(
+        width: Int,
+        direction: Boolean,
+    ): TimelineFrame? {
+        val previous = measuredFrame ?: return null
+        val sameConstraints = previous.width == width && previous.rtl == direction
+        val sameConfiguration = measuredUi == timelineUi.getConfig() && measuredResources == context.resources.configuration
+        return previous.takeIf { canCacheMeasurements() && sameConstraints && sameConfiguration }
+    }
+
+    private fun sameContent(config: TimelineMathConfig): Boolean {
+        val previous = measuredFrame?.config ?: return false
+        return config.copy(steps = emptyList()) == previous.copy(steps = emptyList()) && config.steps.size == previous.steps.size &&
+            config.steps.indices.all { config.steps[it].copy(progress = previous.steps[it].progress) == previous.steps[it] }
+    }
+
+    private fun rowExtents(layout: TimelineLayout): List<Float> {
+        val rows = timelineMath.getContentRows() ?: return emptyList()
+        val starts = rows.indices.filter { it == 0 || rows[it] != rows[it - 1] }
+        return starts.zipWithNext { first, second -> layout.steps[second].iconY - layout.steps[first].iconY }
     }
 
     fun draw(canvas: Canvas) {
@@ -418,8 +472,15 @@ class TimelineViewController(
             }
         }
 
-    private fun invalidateGeometry() {
+    private fun invalidateGeometry(keepMeasurements: Boolean = false) {
         frame = null
+        stepIndices = emptyMap()
+        if (!keepMeasurements) {
+            measuredFrame = null
+            measuredUi = null
+            measuredResources = null
+            measuredExtents = emptyList()
+        }
         lottieOverlayManager.submit(timelineMath.getSteps())
     }
 

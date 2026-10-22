@@ -47,4 +47,9 @@ diagnostic on benchmark changes, weekly and manually. Emulator timings are not p
 budgets: collect repeated physical-device baselines before defining regression thresholds.
 Ordinary API-27 migration/instrumentation checks do not include this opt-in module.
 
+The separate Robolectric diagnostic (`TimelinePerformanceTest`) records unchanged repeat
+measurement, clipped drawing, progress-only replacement and full title replacement for
+10/100/1,000 events. These columns distinguish frame reuse from full content measurement;
+they do not replace the physical-device frame and memory comparison above.
+
 Setup follows the Android [Macrobenchmark guide](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview).
