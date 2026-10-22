@@ -169,19 +169,20 @@ for the fixes and additions.
 
 ## Updating from 2.1.1 to 2.1.2
 
-Version 2.1.2 is currently a release candidate. The public Kotlin/JVM API and data model
+Version 2.1.2 is published in the public Maven repository. The public Kotlin/JVM API and data model
 are unchanged; step/configuration code needs no rewrite. The fixes cover grouped-section
 focus, mixed-direction paragraph alignment and minimum height. Built-in measurements now
 reuse text metrics; directly installed engines still rebuild geometry so low-level geometry
 changes take effect. Custom engines/renderers keep their complete measurement callbacks.
 
-The candidate is compiled with Kotlin 2.4.21, whereas published 2.1.1 used Kotlin 1.9.0.
+Version 2.1.2 is compiled with Kotlin 2.4.21, whereas published 2.1.1 used Kotlin 1.9.0.
 Before changing the dependency to `com.github.dmitrypokrasov:timelineview:2.1.2`, use a
 Kotlin compiler that supports Kotlin 2.4 metadata. The independent consumer tests Kotlin
 2.4.21. JVM API compatibility does not imply compatibility with older Kotlin compilers;
 keep the 2.1.1 dependency if the host compiler cannot be upgraded. Java bytecode remains
 Java 8 and the minimum supported Android API remains 27.
 
-Use the local candidate repository produced by `bash scripts/check-release.sh` for
-pre-publication testing. Switch public Maven dependencies only after publication has been
-verified, and review the [changelog](CHANGELOG.md#212--2026-10-22).
+Public artifact hashes and a clean minified consumer build were verified before the
+[GitHub Release](https://github.com/dmitrypokrasov/Timeline/releases/tag/v2.1.2) was created.
+Use `bash scripts/check-release.sh` for local source validation, and review the
+[changelog](CHANGELOG.md#212--2026-10-22).
