@@ -8,6 +8,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -69,6 +70,11 @@ subprojects {
         apply(plugin = "org.jlleitschuh.gradle.ktlint")
         apply(plugin = "io.gitlab.arturbosch.detekt")
         apply(plugin = "org.jetbrains.dokka")
+        extensions.configure<DokkaExtension> {
+            dokkaPublications.named("html") {
+                outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
+            }
+        }
 
         extensions.configure<KtlintExtension> {
             // Keep formatting rules stable when upgrading the Gradle integration.
@@ -136,5 +142,5 @@ tasks.register("qualityFormat") {
 tasks.register("qualityDocs") {
     description = "Generates API documentation for the library module."
     group = "documentation"
-    dependsOn(":timelineview:dokkaHtml")
+    dependsOn(":timelineview:dokkaGeneratePublicationHtml")
 }
