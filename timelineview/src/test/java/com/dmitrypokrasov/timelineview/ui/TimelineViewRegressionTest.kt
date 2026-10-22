@@ -33,6 +33,37 @@ import java.io.File
 @Config(sdk = [28, 34])
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class TimelineViewRegressionTest {
+    @Test
+    fun `minimum height and background minimum respect padding and parent constraints`() {
+        listOf(false, true).forEach { populated ->
+            val view = TimelineView(org.robolectric.RuntimeEnvironment.getApplication())
+            if (populated) view.replaceSteps(listOf(TimelineStepData(title = "Event", progress = 100)))
+            view.setPadding(7, 11, 13, 17)
+            view.minimumHeight = 200
+
+            fun height(
+                mode: Int,
+                limit: Int,
+            ): Int {
+                view.forceLayout()
+                view.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(limit, mode))
+                return view.measuredHeight
+            }
+            assertEquals(200, height(View.MeasureSpec.UNSPECIFIED, 0))
+            assertEquals(200, height(View.MeasureSpec.AT_MOST, 300))
+            assertEquals(100, height(View.MeasureSpec.AT_MOST, 100))
+            assertEquals(80, height(View.MeasureSpec.EXACTLY, 80))
+            view.minimumHeight = 0
+            view.background =
+                object : android.graphics.drawable.ColorDrawable(Color.WHITE) {
+                    override fun getMinimumHeight(): Int = 240
+                }
+            assertEquals(240, height(View.MeasureSpec.UNSPECIFIED, 0))
+            assertEquals(120, height(View.MeasureSpec.AT_MOST, 120))
+            assertEquals(300, height(View.MeasureSpec.EXACTLY, 300))
+        }
+    }
+
     private fun math(steps: List<TimelineStepData> = listOf(TimelineStepData(title = "First", progress = 100))) =
         TimelineMathConfig(
             startPosition = TimelineMathConfig.StartPosition.START,

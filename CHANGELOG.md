@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Preserve keyboard/accessibility focus and Lottie instances when retained grouped sections reorder.
+- Align mixed LTR/RTL paragraphs independently while preserving explicit text spans.
+- Respect TimelineView minimum height and background minimum height within parent constraints.
+
 ## 2.1.1 — 2026-10-21
 
 This release includes the additions from the unpublished 2.1.0 candidate and the fixes below.

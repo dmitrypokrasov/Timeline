@@ -80,11 +80,12 @@ class GroupedTimelineView
             val ids = candidate.map { it.id }.toSet()
             views.keys.filter { it !in ids }.forEach { id -> removeView(views.remove(id)?.container) }
             desired.forEachIndexed { index, sectionViews ->
-                if (getChildAt(index) !== sectionViews.container) {
-                    removeView(sectionViews.container)
-                    addView(sectionViews.container, index)
-                }
+                if (sectionViews.container.parent == null) addView(sectionViews.container)
                 views[candidate[index].id] = sectionViews
+            }
+            if (desired.indices.any { getChildAt(it) !== desired[it].container }) {
+                // Reordering must not detach retained timelines (focus and animation ownership).
+                desired.forEach { bringChildToFront(it.container) }
             }
             this.sections = candidate
             config = configuration.copy(math = configuration.math.copy(steps = emptyList()))
