@@ -1,6 +1,6 @@
 # Releasing Timeline
 
-The checkout targets **2.1.2** as a release candidate. Local verification never publishes. Publishing
+The checkout matches published **2.1.2**. Local verification never publishes. Publishing
 requires explicitly dispatching **Publish tested release** for an existing stable tag.
 The workflow builds/tests that tag and publishes the exact staged Maven bytes it tested.
 
@@ -61,10 +61,10 @@ version 2.1.2: `git tag -a v2.1.2 -m "Timeline 2.1.2"`, then `git push origin v2
 A tag push verifies the release but does not publish it. Dispatch **Publish tested release**
 from a trusted branch containing this workflow and provide `v2.1.2`.
 
-Before tagging, finalize the candidate changelog date/status on the release branch and
-review the Kotlin 2.4 consumer requirement in the migration notes. After successful public
-verification, update README's stable installation example and candidate status to 2.1.2.
-Bring release preparation/documentation changes back into `dev` through a checked MR.
+For future releases, finalize the changelog date/status on the release branch before tagging
+and review consumer requirements in the migration notes. After successful public verification,
+update README's stable installation example and publication status. Bring release
+preparation/documentation changes back into `dev` through a checked MR.
 
 ## Publication flow
 
