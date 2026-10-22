@@ -343,6 +343,12 @@ while retaining the selected engines/renderers, including directly installed ins
 `setConfig(TimelineConfig)` reapplies its declarative strategy keys/enums through the registry;
 use it when restoring a declarative setup. `replaceSteps` changes only the step list.
 
+Factory-selected built-in engines with built-in renderers reuse the measured frame for unchanged inputs. Updating only
+step progress through `replaceSteps` retains measured text and row spacing while refreshing
+paths, the active marker and accessibility descriptions. Changes to content, configuration,
+width, direction or resources invalidate reuse. Directly installed built-ins rebuild geometry
+while retaining eligible text metrics; custom implementations keep full measurement.
+
 Configuration properties are immutable. Use `copy` and `timelineView.setConfig(math, ui)`
 to apply changes, or replace the math engine/renderer. Kotlin dimensions are pixels;
 convert dp/sp using the host resources. Negative or non-finite dimensions are rejected;
@@ -505,6 +511,8 @@ Diagnostic performance also runs for release verification, tags, manual dispatch
   `timelineview/build/reports/performance/timings.csv`. These are Robolectric diagnostics,
   not device frame-rate measurements. Drawing skips offscreen steps, but layout still
   measures the complete list; a recycling container remains preferable for unbounded feeds.
+  The CSV also separates progress-only and full text replacement updates. The measure column
+  records repeated measurement with unchanged inputs, including frame reuse; it is not cold layout cost.
 
 ## Notes
 
