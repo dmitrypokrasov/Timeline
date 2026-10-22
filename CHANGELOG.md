@@ -1,10 +1,33 @@
 # Changelog
 
-## Unreleased
+## 2.1.2 — 2026-10-22
+
+### Fixes
 
 - Preserve keyboard/accessibility focus and Lottie instances when retained grouped sections reorder.
 - Align mixed LTR/RTL paragraphs independently while preserving explicit text spans.
 - Respect TimelineView minimum height and background minimum height within parent constraints.
+- Reflect changes through directly installed engines' geometry setters on the next measurement.
+
+### Performance
+
+- Reuse committed frames for unchanged factory-selected built-in engines, and reuse text
+  metrics and row spacing for progress-only updates. Refresh paths, the active marker,
+  overlay bounds and accessibility descriptions. Direct instances rebuild geometry;
+  custom engines and renderers retain their full measurement callbacks.
+- Index accessibility targets by stable virtual ID, copy bounds only when queried, and
+  perform hit testing without copying the complete target collection.
+
+### Compatibility
+
+- Preserve the existing public Kotlin/JVM API and Android API 27 minimum; host configuration
+  and step data require no migration. Previously published Maven artifacts remain unchanged.
+- Build this version with Kotlin 2.4.21 instead of the Kotlin 1.9 toolchain used for 2.1.1.
+  Kotlin consumers must use a compiler that reads Kotlin 2.4 metadata; the independent
+  consumer verifies Kotlin 2.4.21. Java bytecode still targets Java 8. Review the
+  [2.1.2 migration notes](MIGRATION_1_TO_2.md#updating-from-211-to-212) before updating.
+- Update the root and independent consumer Gradle wrappers to 9.8.1 and modernize the
+  verified build, documentation and CI toolchain. This does not modify published 2.1.1 bytes.
 
 ## 2.1.1 — 2026-10-21
 
