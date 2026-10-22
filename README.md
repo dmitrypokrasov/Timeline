@@ -8,7 +8,7 @@ The project now ships with a shared quality toolchain:
 
 - `./gradlew qualityCheck` runs `ktlint`, `detekt`, Android lint, and unit tests for both modules.
 - `./gradlew qualityFormat` formats Kotlin sources with `ktlint`.
-- `./gradlew qualityDocs` generates Dokka API docs for the library module.
+- `./gradlew qualityDocs` generates library API docs with Dokka 2 (`:timelineview:dokkaGeneratePublicationHtml`) in `timelineview/build/dokka/html/`.
 - [Device benchmarks](integration/consumer/benchmark/README.md) measure frame timing and process
   memory for all six strategies, large datasets, updates and Lottie in the minified AAR consumer.
 
