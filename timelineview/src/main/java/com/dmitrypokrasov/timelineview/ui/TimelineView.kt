@@ -166,7 +166,7 @@ class TimelineView
                 )
             val contentWidth = (resolvedWidth - paddingLeft - paddingRight).coerceAtLeast(0)
             val desiredHeight = controller.measure(contentWidth) + paddingTop + paddingBottom
-            val resolvedHeight = resolveSizeAndState(desiredHeight, heightMeasureSpec, 0)
+            val resolvedHeight = resolveSizeAndState(maxOf(desiredHeight, suggestedMinimumHeight), heightMeasureSpec, 0)
             setMeasuredDimension(resolvedWidth, resolvedHeight)
             accessibility.onLayoutChanged()
         }

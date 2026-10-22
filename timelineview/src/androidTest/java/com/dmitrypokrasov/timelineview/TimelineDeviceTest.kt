@@ -11,15 +11,64 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.math.LinearTimelineMath
+import com.dmitrypokrasov.timelineview.model.TimelineSection
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
+import com.dmitrypokrasov.timelineview.ui.GroupedTimelineView
+import com.dmitrypokrasov.timelineview.ui.TimelineView
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class TimelineDeviceTest {
+    @Test
+    fun groupedReorderKeepsKeyboardFocusAndAttachment() {
+        ActivityScenario.launch(TimelineTestActivity::class.java).use { scenario ->
+            scenario.onActivity { activity ->
+                val grouped = GroupedTimelineView(activity)
+                activity.setContentView(grouped)
+                val steps = listOf(TimelineStepData(id = "event", title = "Event", progress = 100))
+                val first = TimelineSection("first", "First", steps)
+                val second = TimelineSection("second", "Second", steps)
+                grouped.replaceSections(listOf(first, second))
+
+                fun measure() {
+                    grouped.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+                    grouped.layout(0, 0, 320, grouped.measuredHeight)
+                }
+                measure()
+                val container = grouped.getChildAt(1) as android.widget.LinearLayout
+                val timeline = container.getChildAt(1) as TimelineView
+                timeline.isFocusableInTouchMode = true
+                var detaches = 0
+                timeline.addOnAttachStateChangeListener(
+                    object : View.OnAttachStateChangeListener {
+                        override fun onViewAttachedToWindow(v: View) = Unit
+
+                        override fun onViewDetachedFromWindow(v: View) {
+                            detaches++
+                        }
+                    },
+                )
+                val provider = requireNotNull(timeline.accessibilityNodeProvider)
+                assertTrue(timeline.requestFocus())
+                provider.performAction(0, AccessibilityNodeInfo.ACTION_FOCUS, null)
+                assertTrue(requireNotNull(provider.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)).contentDescription.contains("Event"))
+                grouped.replaceSections(listOf(second, first))
+                measure()
+                assertSame(container, grouped.getChildAt(0))
+                assertEquals(0, detaches)
+                assertTrue(requireNotNull(provider.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)).contentDescription.contains("Event"))
+                timeline.minimumHeight = 300
+                measure()
+                assertTrue(timeline.measuredHeight >= 300)
+            }
+        }
+    }
+
     @Test
     fun gesturesAccessibilityAndReattachment() {
         ActivityScenario.launch(TimelineTestActivity::class.java).use { scenario ->

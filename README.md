@@ -218,6 +218,10 @@ across different sections. All built-in layouts are supported. Use individual `T
 for custom registries. Empty sections retain their headings. This container measures all
 sections and is intended for bounded histories, not an unbounded feed.
 
+Reordering retained section IDs keeps their timelines attached, preserving keyboard and
+accessibility focus and existing Lottie instances. Stable step IDs preserve event focus
+when steps move within a section; removing the focused event clears that focus.
+
 <!-- source: integration/migration/after/GroupedTimelineSample.kt -->
 ```kotlin
 package com.example.migration
@@ -515,6 +519,8 @@ Diagnostic performance also runs for release verification, tags, manual dispatch
 - Linear timelines now start before the first badge and stop at the last badge anchor instead of drawing a trailing tail.
 - Long titles and descriptions are rendered with multiline `StaticLayout` and contribute to measured height.
 - `TimelineView` respects padding during drawing, hit testing, and measurement.
+- Minimum height and background minimum height are respected, subject to the parent's measure constraints.
+- Physical text alignment applies to each LTR/RTL paragraph independently; explicit paragraph alignment spans take precedence.
 - Linear vertical measurement is based on the actual rendered content bounds, which keeps multi-step previews from reserving extra empty space below the last visible element.
 - Snake timelines keep their corner transition stable when progress switches color at the beginning of a turn.
 - Click handling stays attached to the badge/progress icon bounds even when Lottie overlays are enabled.
