@@ -184,4 +184,4 @@ Java 8 and the minimum supported Android API remains 27.
 
 Use the local candidate repository produced by `bash scripts/check-release.sh` for
 pre-publication testing. Switch public Maven dependencies only after publication has been
-verified, and review the [changelog](CHANGELOG.md#212-release-candidate).
+verified, and review the [changelog](CHANGELOG.md#212--2026-10-22).

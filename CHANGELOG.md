@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.1.2 (release candidate)
+## 2.1.2 — 2026-10-22
 
 ### Fixes
 
@@ -22,7 +22,7 @@
 
 - Preserve the existing public Kotlin/JVM API and Android API 27 minimum; host configuration
   and step data require no migration. Previously published Maven artifacts remain unchanged.
-- Build this candidate with Kotlin 2.4.21 instead of the Kotlin 1.9 toolchain used for 2.1.1.
+- Build this version with Kotlin 2.4.21 instead of the Kotlin 1.9 toolchain used for 2.1.1.
   Kotlin consumers must use a compiler that reads Kotlin 2.4 metadata; the independent
   consumer verifies Kotlin 2.4.21. Java bytecode still targets Java 8. Review the
   [2.1.2 migration notes](MIGRATION_1_TO_2.md#updating-from-211-to-212) before updating.
