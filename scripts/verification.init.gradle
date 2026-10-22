@@ -4,7 +4,7 @@ gradle.projectsEvaluated {
     rootProject.tasks.register('verificationDependencies') {
         doLast {
             rootProject.configurations.detachedConfiguration(
-                rootProject.dependencies.create('com.android.tools.build:aapt2:8.4.0-11315950:linux')
+                rootProject.dependencies.create("com.android.tools.build:aapt2:${rootProject.findProperty('verificationAapt2Version') ?: '8.5.2-11315950'}:linux")
             ).resolve()
         }
     }

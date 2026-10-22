@@ -22,7 +22,7 @@ import kotlin.system.measureNanoTime
 class TimelinePerformanceTest {
     @Test
     fun `report measure and clipped draw costs for increasing datasets`() {
-        val rows = mutableListOf("steps,measure_median_ms,draw_median_ms")
+        val rows = mutableListOf("steps,measure_median_ms,draw_median_ms,progress_update_median_ms,data_update_median_ms")
         listOf(10, 100, 1000).forEach { count ->
             val view = TimelineView(RuntimeEnvironment.getApplication())
             view.setMathEngine(AlternatingTimelineMath(TimelineMathConfig(steps = List(count) { TimelineStepData(id = "$it", title = "Event $it", description = "A description for event $it", progress = 0) })))
@@ -30,20 +30,38 @@ class TimelinePerformanceTest {
             val canvas = Canvas(bitmap)
             val measure = mutableListOf<Long>()
             val draw = mutableListOf<Long>()
+            val progress = mutableListOf<Long>()
+            val data = mutableListOf<Long>()
+
+            fun measureView() {
+                view.measure(View.MeasureSpec.makeMeasureSpec(480, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
+                view.layout(0, 0, 480, view.measuredHeight)
+            }
             repeat(7) { iteration ->
                 view.forceLayout()
                 val measured =
                     measureNanoTime {
-                        view.measure(View.MeasureSpec.makeMeasureSpec(480, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED))
-                        view.layout(0, 0, 480, view.measuredHeight)
+                        measureView()
                     }
                 val drawn = measureNanoTime { view.draw(canvas) }
+                val progressed =
+                    measureNanoTime {
+                        view.replaceSteps(view.getConfig().math.steps.mapIndexed { index, step -> if (index == 0) step.copy(progress = iteration * 10) else step })
+                        measureView()
+                    }
+                val replaced =
+                    measureNanoTime {
+                        view.replaceSteps(view.getConfig().math.steps.mapIndexed { index, step -> step.copy(title = "Event $index update $iteration") })
+                        measureView()
+                    }
                 if (iteration >= 2) {
                     measure += measured
                     draw += drawn
+                    progress += progressed
+                    data += replaced
                 }
             }
-            rows += "$count,${measure.sorted()[2] / 1_000_000.0},${draw.sorted()[2] / 1_000_000.0}"
+            rows += "$count,${measure.sorted()[2] / 1_000_000.0},${draw.sorted()[2] / 1_000_000.0},${progress.sorted()[2] / 1_000_000.0},${data.sorted()[2] / 1_000_000.0}"
             bitmap.recycle()
         }
         File("build/reports/performance/timings.csv").apply {

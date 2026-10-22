@@ -8,16 +8,21 @@ The project now ships with a shared quality toolchain:
 
 - `./gradlew qualityCheck` runs `ktlint`, `detekt`, Android lint, and unit tests for both modules.
 - `./gradlew qualityFormat` formats Kotlin sources with `ktlint`.
-- `./gradlew qualityDocs` generates Dokka API docs for the library module.
+- `./gradlew qualityDocs` generates library API docs with Dokka 2 (`:timelineview:dokkaGeneratePublicationHtml`) in `timelineview/build/dokka/html/`.
 - [Device benchmarks](integration/consumer/benchmark/README.md) measure frame timing and process
   memory for all six strategies, large datasets, updates and Lottie in the minified AAR consumer.
 
 ## Development status
 
-This guide targets **2.1.1**. Publication status is recorded in [GitHub Releases](https://github.com/dmitrypokrasov/Timeline/releases)
+This checkout prepares **2.1.2**; it is a release candidate until publication is verified.
+The installation example below uses the published **2.1.1** version. Publication status is recorded in [GitHub Releases](https://github.com/dmitrypokrasov/Timeline/releases)
 and [public Maven metadata](https://dmitrypokrasov.github.io/Timeline/maven/com/github/dmitrypokrasov/timelineview/maven-metadata.xml).
-Previously published **1.1.0** and **2.0.0** artifacts remain unchanged.
+Previously published **1.1.0**, **2.0.0** and **2.1.1** artifacts remain unchanged.
 See [CHANGELOG.md](CHANGELOG.md) for behavior changes and migration instructions.
+
+To verify the 2.1.2 candidate locally, run `bash scripts/check-release.sh`. It stages the
+candidate in `build/repository` and compiles/tests independent consumers against that exact
+version. No tag or publication is created. See [the 2.1.2 migration notes](MIGRATION_1_TO_2.md#updating-from-211-to-212).
 
 Documentation: [migration 1.1 → 2.0](MIGRATION_1_TO_2.md), [architecture](ARCHITECTURE.md),
 [custom strategies](CUSTOM_STRATEGIES.md), and [release process](RELEASING.md).
@@ -35,10 +40,15 @@ the required one-time GitHub Pages and branch-protection settings.
 
 ## Requirements
 
-Timeline 2.x supports **Android 8.1 / API 27 and newer**. The checked-in builds use
-JDK 17, Gradle 8.6, AGP 8.4.0, Kotlin 1.9.0 and compile SDK 34; library bytecode targets
-Java 8. These are the verified toolchain versions, not a claim that every older/newer
-consumer toolchain is compatible. Kotlin and Java consumers are compiled against the AAR.
+Timeline 2.x supports **Android 8.1 / API 27 and newer**. Published 2.1.1 was built with
+JDK 17, Gradle 8.6, AGP 8.4.0 and Kotlin 1.9.0. The 2.1.2 candidate uses JDK 17,
+Gradle 9.8.1, AGP 8.5.2, Kotlin 2.4.21 and compile SDK 34; library bytecode still targets
+Java 8. Kotlin consumers of 2.1.2 must use a compiler
+that understands Kotlin 2.4 metadata; the integration fixtures verify Kotlin 2.4.21.
+The compiler migration does not change already published artifacts. Kotlin and Java
+consumers are compiled against the AAR, and existing interface `DefaultImpls` are preserved.
+The independent consumer fixture additionally verifies AGP 9.4.1, Gradle 9.8.1 and Kotlin 2.4.21
+using its own wrapper; see the [consumer toolchain](RELEASING.md#independent-consumer-toolchain).
 The library uses Android Views; the [compiled Compose wrapper](integration/consumer/compose/src/main/java/com/example/timelinecompose/Timeline.kt) demonstrates `AndroidView` integration.
 View, engine and renderer updates run on the Android UI thread.
 
@@ -213,6 +223,10 @@ across different sections. All built-in layouts are supported. Use individual `T
 for custom registries. Empty sections retain their headings. This container measures all
 sections and is intended for bounded histories, not an unbounded feed.
 
+Reordering retained section IDs keeps their timelines attached, preserving keyboard and
+accessibility focus and existing Lottie instances. Stable step IDs preserve event focus
+when steps move within a section; removing the focused event clears that focus.
+
 <!-- source: integration/migration/after/GroupedTimelineSample.kt -->
 ```kotlin
 package com.example.migration
@@ -280,7 +294,8 @@ update, reuses engines for step-only changes and clears the callback on release.
 in host state; changing the callback alone does not request another layout. The wrapper uses
 public 2.0 APIs and is compiled/tested as part of the independent AAR consumer. Compose is
 not a transitive dependency of the library. Its fixture compiler version is paired with the
-repository's Kotlin 1.9.0 toolchain; your app keeps its own compatible Compose toolchain.
+repository's Kotlin 2.4.21 toolchain through the Compose compiler Gradle plugin; your app
+keeps its own compatible Compose toolchain.
 
 `TimelineDefaults` is an additive API in 2.1.1. It provides XML-equivalent defaults and explicit `dp`/`sp`
 conversion using the current context. Recreate these values after density/font configuration
@@ -332,6 +347,12 @@ timelineView.setStrategy(
 while retaining the selected engines/renderers, including directly installed instances.
 `setConfig(TimelineConfig)` reapplies its declarative strategy keys/enums through the registry;
 use it when restoring a declarative setup. `replaceSteps` changes only the step list.
+
+Factory-selected built-in engines with built-in renderers reuse the measured frame for unchanged inputs. Updating only
+step progress through `replaceSteps` retains measured text and row spacing while refreshing
+paths, the active marker and accessibility descriptions. Changes to content, configuration,
+width, direction or resources invalidate reuse. Directly installed built-ins rebuild geometry
+while retaining eligible text metrics; custom implementations keep full measurement.
 
 Configuration properties are immutable. Use `copy` and `timelineView.setConfig(math, ui)`
 to apply changes, or replace the math engine/renderer. Kotlin dimensions are pixels;
@@ -495,12 +516,16 @@ Diagnostic performance also runs for release verification, tags, manual dispatch
   `timelineview/build/reports/performance/timings.csv`. These are Robolectric diagnostics,
   not device frame-rate measurements. Drawing skips offscreen steps, but layout still
   measures the complete list; a recycling container remains preferable for unbounded feeds.
+  The CSV also separates progress-only and full text replacement updates. The measure column
+  records repeated measurement with unchanged inputs, including frame reuse; it is not cold layout cost.
 
 ## Notes
 
 - Linear timelines now start before the first badge and stop at the last badge anchor instead of drawing a trailing tail.
 - Long titles and descriptions are rendered with multiline `StaticLayout` and contribute to measured height.
 - `TimelineView` respects padding during drawing, hit testing, and measurement.
+- Minimum height and background minimum height are respected, subject to the parent's measure constraints.
+- Physical text alignment applies to each LTR/RTL paragraph independently; explicit paragraph alignment spans take precedence.
 - Linear vertical measurement is based on the actual rendered content bounds, which keeps multi-step previews from reserving extra empty space below the last visible element.
 - Snake timelines keep their corner transition stable when progress switches color at the beginning of a turn.
 - Click handling stays attached to the badge/progress icon bounds even when Lottie overlays are enabled.

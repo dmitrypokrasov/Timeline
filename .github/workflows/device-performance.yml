@@ -24,6 +24,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-project
       - run: ./gradlew :timelineview:publishReleasePublicationToBuildRepository
+      - name: Select consumer Gradle wrapper
+        run: |
+          wrapper=./gradlew
+          if [ -f integration/consumer/gradlew ]; then wrapper=./integration/consumer/gradlew; fi
+          echo "CONSUMER_GRADLE=$wrapper" >> "$GITHUB_ENV"
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -36,14 +41,14 @@ jobs:
           target: default
           disable-animations: false
           script: >-
-            ./gradlew -p integration/consumer :benchmark:connectedReleaseAndroidTest
+            "$CONSUMER_GRADLE" -p integration/consumer :benchmark:connectedReleaseAndroidTest
             -PtimelineBenchmarks=true
             -PtimelineRepository="$PWD/build/repository"
             -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)"
             -Pandroid.testInstrumentationRunnerArguments.timelineSmoke=true
             -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.suppressErrors=EMULATOR
             --stacktrace
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: device-performance-diagnostics

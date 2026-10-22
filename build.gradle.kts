@@ -8,8 +8,11 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
@@ -43,9 +46,14 @@ fun Project.configureAndroidQuality() {
         }
     }
 
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "1.8"
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        val legacyModuleName = "${project.name}_${name.removePrefix("compile").removeSuffix("Kotlin").replaceFirstChar { it.lowercase() }}"
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmDefault.set(JvmDefaultMode.DISABLE)
+            // Preserve JVM names and synthetic accessors emitted by the published Kotlin 1.9 build.
+            moduleName.set(legacyModuleName)
+            freeCompilerArgs.add("-Xlambdas=class")
         }
     }
 }
@@ -62,8 +70,15 @@ subprojects {
         apply(plugin = "org.jlleitschuh.gradle.ktlint")
         apply(plugin = "io.gitlab.arturbosch.detekt")
         apply(plugin = "org.jetbrains.dokka")
+        extensions.configure<DokkaExtension> {
+            dokkaPublications.named("html") {
+                outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
+            }
+        }
 
         extensions.configure<KtlintExtension> {
+            // Keep formatting rules stable when upgrading the Gradle integration.
+            version.set("1.0.1")
             android.set(true)
             outputToConsole.set(true)
             ignoreFailures.set(false)
@@ -127,5 +142,5 @@ tasks.register("qualityFormat") {
 tasks.register("qualityDocs") {
     description = "Generates API documentation for the library module."
     group = "documentation"
-    dependsOn(":timelineview:dokkaHtml")
+    dependsOn(":timelineview:dokkaGeneratePublicationHtml")
 }

@@ -1,7 +1,6 @@
 package com.dmitrypokrasov.timelineview.ui
 
 import android.graphics.Path
-import android.graphics.RectF
 import android.text.Spanned
 import android.text.SpannedString
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
@@ -34,9 +33,9 @@ internal class TimelineFrame(
     val blocks = blocks.toList()
     private val completed = Path(completed)
     private val remaining = Path(remaining)
-    private val targets = targets.map { it.copy(bounds = RectF(it.bounds)) }
+    private val targets = TimelineTargets.snapshot(targets)
 
-    fun targets(): List<TimelineViewController.Target> = targets.map { it.copy(bounds = RectF(it.bounds)) }
+    fun targets(): List<TimelineViewController.Target> = targets
 
     fun restorePaths(renderer: TimelineUiRenderer) {
         renderer.getCompletedPath().set(completed)

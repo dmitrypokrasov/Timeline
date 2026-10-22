@@ -8,9 +8,9 @@ On a connected physical Android 10+ device, with JDK 17 and the Android SDK conf
 
 ```bash
 ./gradlew :timelineview:publishReleasePublicationToBuildRepository
-./gradlew -p integration/consumer :benchmark:connectedReleaseAndroidTest \
+./integration/consumer/gradlew -p integration/consumer :benchmark:connectedReleaseAndroidTest \
   -PtimelineBenchmarks=true \
-  -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.1.1
+  -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.1.2
 ```
 
 Use the version declared in `timelineview/build.gradle.kts` when it changes. Set
@@ -46,5 +46,10 @@ warning is suppressed; profileability/debuggability validation remains active. C
 diagnostic on benchmark changes, weekly and manually. Emulator timings are not performance
 budgets: collect repeated physical-device baselines before defining regression thresholds.
 Ordinary API-27 migration/instrumentation checks do not include this opt-in module.
+
+The separate Robolectric diagnostic (`TimelinePerformanceTest`) records unchanged repeat
+measurement, clipped drawing, progress-only replacement and full title replacement for
+10/100/1,000 events. These columns distinguish frame reuse from full content measurement;
+they do not replace the physical-device frame and memory comparison above.
 
 Setup follows the Android [Macrobenchmark guide](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview).

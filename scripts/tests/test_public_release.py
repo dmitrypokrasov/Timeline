@@ -85,6 +85,14 @@ class PublicReleaseTest(unittest.TestCase):
         self.assertIn('include(":compose")', result)
         self.assertNotIn('docs/maven', result)
 
+    def test_consumer_wrapper_supports_current_and_historical_releases(self):
+        consumer = self.root / 'consumer-wrapper'
+        consumer.mkdir()
+        self.assertEqual(public.consumer_wrapper(consumer), public.ROOT / 'gradlew')
+        wrapper = consumer / 'gradlew'
+        wrapper.write_text('#!/bin/sh\n')
+        self.assertEqual(public.consumer_wrapper(consumer), wrapper)
+
     def test_release_notes_select_exact_version_and_fail_when_missing(self):
         changelog = '# Changes\n\n## 2.0.0 — today\n\nNew features\n\n## 1.1.0\n\nOld features\n'
         result = notes.notes(changelog, 'v2.0.0', 'https://example.test/')
