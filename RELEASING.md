@@ -153,7 +153,7 @@ staged candidate version, restricted to file repositories; the release manifest 
 Preserved 1.1.0 artifacts remain checksum-verified. Update the exact candidate version in the
 consumer verification metadata when preparing the next release.
 
-See [Gradle verification guidance](https://docs.gradle.org/8.7/userguide/dependency_verification.html)
+See [Gradle verification guidance](https://docs.gradle.org/9.8.1/userguide/dependency_verification.html)
 and [Kotlin binary compatibility validator](https://github.com/Kotlin/binary-compatibility-validator/tree/0.16.3)
 for the tools' scope and limitations.
 
