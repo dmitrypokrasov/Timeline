@@ -3,8 +3,8 @@
 from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 props = dict(line.split('=', 1) for line in (root / 'gradle/wrapper/gradle-wrapper.properties').read_text().splitlines() if '=' in line and not line.startswith('#'))
-assert props['distributionUrl'].replace('\\:', ':') == 'https://services.gradle.org/distributions/gradle-8.7-bin.zip'
-assert props['distributionSha256Sum'] == '544c35d6bd849ae8a5ed0bcea39ba677dc40f49df7d1835561582da2009b961d'
+assert props['distributionUrl'].replace('\\:', ':') == 'https://services.gradle.org/distributions/gradle-9.8.1-bin.zip'
+assert props['distributionSha256Sum'] == 'dce76f55f8e251a3a1f130eb120f30b3d271de2b76c9b0729d316b5a1b6dc01f'
 print('Gradle distribution URL and SHA-256 match the reviewed pin.')
 
 consumer = root / 'integration/consumer/gradle/wrapper/gradle-wrapper.properties'

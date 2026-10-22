@@ -37,7 +37,7 @@ the required one-time GitHub Pages and branch-protection settings.
 
 Timeline 2.x supports **Android 8.1 / API 27 and newer**. Published 2.1.1 was built with
 JDK 17, Gradle 8.6, AGP 8.4.0 and Kotlin 1.9.0. The development branch uses JDK 17,
-Gradle 8.7, AGP 8.5.2, Kotlin 2.4.21 and compile SDK 34; library bytecode still targets
+Gradle 9.8.1, AGP 8.5.2, Kotlin 2.4.21 and compile SDK 34; library bytecode still targets
 Java 8. Kotlin consumers of a future release built from this branch must use a compiler
 that understands Kotlin 2.4 metadata; the integration fixtures verify Kotlin 2.4.21.
 The compiler migration does not change already published artifacts. Kotlin and Java
