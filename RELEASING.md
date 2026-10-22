@@ -7,7 +7,7 @@ The workflow builds/tests that tag and publishes the exact staged Maven bytes it
 ## Independent consumer toolchain
 
 The library build uses the root `./gradlew`. The AAR consumer uses
-`./integration/consumer/gradlew -p integration/consumer` with Gradle 9.6.0,
+`./integration/consumer/gradlew -p integration/consumer` with Gradle 9.8.1,
 AGP 9.4.1, built-in Kotlin and the Kotlin 2.4.21 Compose compiler plugin.
 Both builds use JDK 17; install Android SDK platform 34 and build tools 34.0.0
 and 36.0.0. `scripts/check-wrapper.py` verifies both distribution checksums.
