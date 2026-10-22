@@ -80,12 +80,14 @@ incoming segment separately. Both modes expose one active progress marker.
 
 - Engines invalidate derived layout/path data on config, width, extents or radius changes.
 - A successful state update invalidates the frame; a successful measure installs a new one.
-- Exact built-in engine/renderer implementations reuse a committed frame when content,
+- Factory-selected built-in engines with built-in renderers reuse a committed frame when content,
   configuration, width, layout direction and resource configuration are unchanged. Progress-only
   `replaceSteps` updates reuse measured text and row extents, then rebuild paths, the active
   marker, overlay height and accessibility descriptions. Content, identity, timestamps, overlay
   specs and constraint changes invalidate that reuse. Custom engines, subclasses and custom
-  renderers retain the complete measurement callback sequence on every measure.
+  renderers retain the complete measurement callback sequence on every measure. Directly installed
+  built-in engines reuse text metrics while rebuilding geometry, so changes through their
+  low-level geometry setters are reflected in the next measurement.
 - A frame indexes accessibility targets by virtual ID. Single-node queries copy only that
   target's bounds; hit testing reads the owned bounds without allocating target copies.
   Listener changes apply immediately, including after a cached measurement.

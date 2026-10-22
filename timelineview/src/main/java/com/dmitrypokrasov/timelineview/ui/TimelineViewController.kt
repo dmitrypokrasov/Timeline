@@ -243,7 +243,9 @@ class TimelineViewController(
     fun measure(width: Int): Int {
         val direction = ownerView.layoutDirection == View.LAYOUT_DIRECTION_RTL
         val previous = reusableFrame(width, direction)
-        if (previous != null && frame != null && previous.config == timelineMath.getConfig()) return previous.height
+        // A caller retains access to direct engines' geometry setters (for example corner radius).
+        val ownedFrame = previous?.takeIf { frame != null && state.math is MathSelection.ByKey }
+        if (ownedFrame != null && ownedFrame.config == timelineMath.getConfig()) return ownedFrame.height
         val reuse = previous != null && sameContent(timelineMath.getConfig())
         val resolved =
             if (reuse) {

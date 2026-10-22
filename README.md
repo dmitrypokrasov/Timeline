@@ -339,10 +339,11 @@ while retaining the selected engines/renderers, including directly installed ins
 `setConfig(TimelineConfig)` reapplies its declarative strategy keys/enums through the registry;
 use it when restoring a declarative setup. `replaceSteps` changes only the step list.
 
-Built-in engines and renderers reuse the measured frame for unchanged inputs. Updating only
+Factory-selected built-in engines with built-in renderers reuse the measured frame for unchanged inputs. Updating only
 step progress through `replaceSteps` retains measured text and row spacing while refreshing
 paths, the active marker and accessibility descriptions. Changes to content, configuration,
-width, direction or resources invalidate reuse. Custom implementations keep full measurement.
+width, direction or resources invalidate reuse. Directly installed built-ins rebuild geometry
+while retaining eligible text metrics; custom implementations keep full measurement.
 
 Configuration properties are immutable. Use `copy` and `timelineView.setConfig(math, ui)`
 to apply changes, or replace the math engine/renderer. Kotlin dimensions are pixels;

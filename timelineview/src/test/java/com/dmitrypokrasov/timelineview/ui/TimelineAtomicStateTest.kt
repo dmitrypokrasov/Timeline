@@ -50,6 +50,31 @@ class TimelineAtomicStateTest {
 
     private fun controller() = TimelineViewController(View(context), context, null)
 
+    @Test
+    fun `factory owned built ins reuse the committed frame on unchanged measurement`() {
+        val controller = controller()
+        controller.setConfig(TimelineConfig(math(), TimelineUiConfig(), mathStrategy = TimelineMathStrategy.LinearVertical))
+        controller.measure(320)
+        val original = measuredFrame(controller)
+        controller.measure(320)
+        assertSame(original, measuredFrame(controller))
+    }
+
+    @Test
+    fun `direct built in engine geometry changes are reflected by the next measure`() {
+        val config = TimelineMathConfig(steps = List(3) { TimelineStepData(id = "$it", title = "Event $it", progress = 100) })
+        val engine = com.dmitrypokrasov.timelineview.math.SnakeTimelineMath(config)
+        val controller = controller()
+        controller.setStrategies(engine, BaseTimelineUi(TimelineUiConfig()))
+        controller.measure(320)
+        engine.setCornerRadius(40f)
+        val height = controller.measure(320)
+        val reference = controller()
+        reference.setStrategies(com.dmitrypokrasov.timelineview.math.SnakeTimelineMath(config), BaseTimelineUi(TimelineUiConfig(stroke = TimelineUiConfig.Stroke(radius = 40f))))
+        assertEquals(reference.measure(320), height)
+        assertArrayEquals(pixels(reference, 320, height), pixels(controller, 320, height))
+    }
+
     private class TextBuilds : TimelineTextLayoutBuilder {
         var count = 0
         private val delegate = StaticTimelineTextLayoutBuilder()
@@ -126,10 +151,8 @@ class TimelineAtomicStateTest {
             reference.setStrategies(object : TimelineMathEngine by delegate {}, BaseTimelineUi(TimelineUiConfig()))
             try {
                 controller.measure(320)
-                val original = measuredFrame(controller)
                 builds.reset()
                 controller.measure(320)
-                assertSame(original, measuredFrame(controller))
                 assertEquals(0, builds.count)
                 listOf(listOf(100, 0, 50, 20), listOf(100, 100, 50, 100), List(4) { 100 }, List(4) { 0 }).forEach { progress ->
                     val changed = steps.mapIndexed { index, step -> step.copy(progress = progress[index]) }
