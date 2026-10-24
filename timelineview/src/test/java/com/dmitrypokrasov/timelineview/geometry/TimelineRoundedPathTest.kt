@@ -22,6 +22,14 @@ class TimelineRoundedPathTest {
     }
 
     @Test
+    fun `finite extreme coordinates never overflow rounded commands`() {
+        val points = listOf(TimelineGeometryPoint(-Float.MAX_VALUE, 0f), TimelineGeometryPoint(Float.MAX_VALUE, 0f), TimelineGeometryPoint(Float.MAX_VALUE, 10f))
+        val commands = TimelineRoundedPath.commands(points, 8f)
+        assertEquals(TimelinePathCommand.Line(Float.MAX_VALUE, 0f), commands[1])
+        assertEquals(TimelinePathCommand.Quad(Float.MAX_VALUE, 0f, Float.MAX_VALUE, 5f), commands[2])
+    }
+
+    @Test
     fun `non finite coordinates and invalid radius fail at boundary`() {
         assertThrows(IllegalArgumentException::class.java) { TimelineRoundedPath.commands(emptyList(), -1f) }
         assertThrows(IllegalArgumentException::class.java) { TimelineRoundedPath.commands(listOf(TimelineGeometryPoint(Float.NaN, 0f)), 0f) }

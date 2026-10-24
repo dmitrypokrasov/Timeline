@@ -2,6 +2,7 @@ package com.dmitrypokrasov.timelineview.ui
 
 import android.graphics.Path
 import android.view.View
+import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
@@ -11,6 +12,7 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryBounds
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryLayout
+import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryProgressIcon
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryStep
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryStrategy
@@ -18,6 +20,7 @@ import com.dmitrypokrasov.timelineview.geometry.TimelinePathCommand
 import com.dmitrypokrasov.timelineview.geometry.TimelineTextAlignment
 import com.dmitrypokrasov.timelineview.geometry.TimelineTextMetrics
 import com.dmitrypokrasov.timelineview.math.TimelineGeometryMathAdapter
+import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
@@ -46,6 +49,32 @@ class TimelineGeometryAdapterTest {
                 }
             TimelineGeometryResult(TimelineGeometryLayout(steps, null, null), listOf(TimelinePathCommand.Move(0f, 0f), TimelinePathCommand.Quad(0f, 10f, 20f, 20f)), emptyList(), TimelineGeometryBounds(0f, -10f, 100f, 300f), 12f)
         }
+
+    @Test
+    fun `progress overlay follows custom layout instead of first incomplete step`() {
+        val context = RuntimeEnvironment.getApplication()
+        val controller = TimelineViewController(View(context), context, null)
+        val steps = List(2) { TimelineStepData(progress = 10, progressAnimation = TimelineLottieSpec(R.raw.timeline_test_animation)) }
+        val engine =
+            TimelineGeometryMathAdapter(TimelineMathConfig(steps = steps)) { input ->
+                val result = geometry.calculate(input)
+                result.copy(layout = result.layout.copy(progressIcon = TimelineGeometryProgressIcon(0f, 0f), progressStepIndex = 1))
+            }
+        controller.setMathEngine(engine)
+        controller.measure(320)
+        val managerField = TimelineViewController::class.java.getDeclaredField("lottieOverlayManager").apply { isAccessible = true }
+        val manager = managerField.get(controller) as TimelineLottieOverlayManager
+        val entriesField = TimelineLottieOverlayManager::class.java.getDeclaredField("entries").apply { isAccessible = true }
+
+        @Suppress("UNCHECKED_CAST") // Test observes occurrence identity without expanding the production API.
+        val entries = entriesField.get(manager) as Map<TimelineLottieOverlayManager.Key, Any>
+        assertEquals(setOf(TimelineLottieOverlayManager.Key(1, true)), entries.keys)
+        val entry = entries.values.single()
+        controller.replaceSteps(steps.map { it.copy(progress = 20) })
+        controller.measure(320)
+        assertSame(entry, entries.values.single())
+        controller.release()
+    }
 
     @Test
     fun `layout paths bounds share cache and changes invalidate it`() {

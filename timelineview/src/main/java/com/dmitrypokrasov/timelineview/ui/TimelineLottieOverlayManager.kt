@@ -72,11 +72,25 @@ internal class TimelineLottieOverlayManager(private val ownerView: View) {
             }
         }
 
-    fun submit(steps: List<TimelineStepData>) {
+    // Совместимый вход для внутренних клиентов; окончательный выбор всегда передаёт frame.
+    fun submit(steps: List<TimelineStepData>) = submit(steps, steps.indexOfFirst { it.progress < 100 }.takeIf { it >= 0 })
+
+    /** До измерения сохраняет живой progress overlay, пока его шаг и ресурс ещё существуют. */
+    fun prepare(steps: List<TimelineStepData>) {
+        val retained = entries.keys.firstOrNull { key -> key.progress && steps.indices.any { steps[it].identity(it) == key.step } }
+        submit(steps, steps.indices.firstOrNull { steps[it].identity(it) == retained?.step })
+    }
+
+    /** Выбор активного шага принадлежит layout, а не менеджеру проигрывания. */
+    fun submit(
+        steps: List<TimelineStepData>,
+        progressIndex: Int?,
+    ) {
         val desired = mutableMapOf<Key, TimelineLottieSpec>()
         steps.forEachIndexed { index, step -> step.badgeAnimation?.let { desired[Key(step.identity(index))] = it } }
-        val progressIndex = steps.indexOfFirst { it.progress < 100 }
-        steps.getOrNull(progressIndex)?.progressAnimation?.let { desired[Key(steps[progressIndex].identity(progressIndex), true)] = it }
+        progressIndex?.let { index ->
+            steps.getOrNull(index)?.progressAnimation?.let { desired[Key(steps[index].identity(index), true)] = it }
+        }
         entries.keys.toList().forEach { key ->
             if (entries[key]?.spec != desired[key]) entries.remove(key)?.let(::dispose)
         }
