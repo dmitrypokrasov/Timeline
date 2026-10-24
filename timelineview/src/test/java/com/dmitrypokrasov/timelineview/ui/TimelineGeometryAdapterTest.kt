@@ -11,6 +11,7 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryBounds
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput
+import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryIntrinsicWidth
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryLayout
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryProgressIcon
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult
@@ -49,6 +50,61 @@ class TimelineGeometryAdapterTest {
                 }
             TimelineGeometryResult(TimelineGeometryLayout(steps, null, null), listOf(TimelinePathCommand.Move(0f, 0f), TimelinePathCommand.Quad(0f, 10f, 20f, 20f)), emptyList(), TimelineGeometryBounds(0f, -10f, 100f, 300f), 12f)
         }
+
+    @Test
+    fun `invalid output is retried and invalid metrics preserve cached snapshot`() {
+        val config = TimelineMathConfig(steps = listOf(TimelineStepData(progress = 1)))
+        var invalid = true
+        var attempts = 0
+        val adapter =
+            TimelineGeometryMathAdapter(config) { input ->
+                attempts++
+                geometry.calculate(input).let { if (invalid) it.copy(startPosition = Float.NaN) else it }
+            }
+        repeat(2) {
+            val failure = assertThrows(IllegalArgumentException::class.java) { adapter.geometryResult() }
+            assertTrue(failure.message!!.contains("startPosition"))
+        }
+        assertEquals(2, attempts)
+        invalid = false
+        val valid = adapter.geometryResult()
+        assertThrows(IllegalArgumentException::class.java) { adapter.setTextMetrics(listOf(TimelineTextMetrics(-1, 0))) }
+        assertThrows(IllegalArgumentException::class.java) { adapter.setTextMetrics(listOf(TimelineTextMetrics(0, -1))) }
+        assertSame(valid, adapter.geometryResult())
+    }
+
+    @Test
+    fun `text pass must retain widths and can recover after rejected result`() {
+        val config = TimelineMathConfig(steps = listOf(TimelineStepData(progress = 1)))
+        var invalid = true
+        val adapter =
+            TimelineGeometryMathAdapter(config) { input ->
+                val result = geometry.calculate(input)
+                if (input.textMetrics.isNotEmpty() && invalid) result.copy(layout = result.layout.copy(steps = result.layout.steps.map { it.copy(titleWidth = 101) })) else result
+            }
+        adapter.geometryResult()
+        adapter.setTextMetrics(listOf(TimelineTextMetrics(20, 10)))
+        val failure = assertThrows(IllegalArgumentException::class.java) { adapter.geometryResult() }
+        assertTrue(failure.message!!.contains("titleWidth"))
+        invalid = false
+        assertEquals(100, adapter.geometryResult().layout.steps.single().titleWidth)
+    }
+
+    @Test
+    fun `intrinsic width is optional and rejects negative values`() {
+        var requested = 480
+        val strategy =
+            object : TimelineGeometryStrategy, TimelineGeometryIntrinsicWidth {
+                override fun desiredWidth(config: TimelineMathConfig): Int = requested
+
+                override fun calculate(input: TimelineGeometryInput) = geometry.calculate(input)
+            }
+        val adapter = TimelineGeometryMathAdapter(TimelineMathConfig(), strategy)
+        assertEquals(480, adapter.getDesiredWidth())
+        requested = -1
+        assertThrows(IllegalArgumentException::class.java) { adapter.getDesiredWidth() }
+        assertEquals(0, TimelineGeometryMathAdapter(TimelineMathConfig(), geometry).getDesiredWidth())
+    }
 
     @Test
     fun `progress overlay follows custom layout instead of first incomplete step`() {

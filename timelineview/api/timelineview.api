@@ -357,6 +357,10 @@ public final class com/dmitrypokrasov/timelineview/geometry/TimelineGeometryInpu
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class com/dmitrypokrasov/timelineview/geometry/TimelineGeometryIntrinsicWidth {
+	public abstract fun desiredWidth (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)I
+}
+
 public final class com/dmitrypokrasov/timelineview/geometry/TimelineGeometryLayout {
 	public fun <init> (Ljava/util/List;Lcom/dmitrypokrasov/timelineview/geometry/TimelineGeometryProgressIcon;Ljava/lang/Integer;)V
 	public final fun component1 ()Ljava/util/List;
@@ -643,6 +647,7 @@ public final class com/dmitrypokrasov/timelineview/math/TimelineGeometryMathAdap
 	public fun buildLayout ()Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;
 	public fun buildPath (Landroid/graphics/Path;Landroid/graphics/Path;)V
 	public final fun geometryResult ()Lcom/dmitrypokrasov/timelineview/geometry/TimelineGeometryResult;
+	public fun getDesiredWidth ()I
 	public fun getGeometryBounds ()Lcom/dmitrypokrasov/timelineview/geometry/TimelineGeometryBounds;
 	public fun getHasRoundedGeometry ()Z
 	public fun getStartPosition ()F
