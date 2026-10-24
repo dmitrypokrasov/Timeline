@@ -25,8 +25,11 @@ import com.dmitrypokrasov.timelineview.render.CachingTimelineTextLayoutBuilder
 import com.dmitrypokrasov.timelineview.render.StaticTimelineTextLayoutBuilder
 import com.dmitrypokrasov.timelineview.render.TimelineTextLayout
 import com.dmitrypokrasov.timelineview.render.TimelineTextLayoutBuilder
+import com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy
 import com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
+import com.dmitrypokrasov.timelineview.strategy.registerMath
+import com.dmitrypokrasov.timelineview.strategy.registerUi
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -146,7 +149,14 @@ class TimelineAtomicStateTest {
             val config = TimelineMathConfig(steps = steps, horizontalLayout = policy, progressMode = mode, minCellWidth = 120f)
             val renderer = BaseTimelineUi(TimelineUiConfig())
             val builds = countText(renderer)
-            controller.setStrategies(TimelineMathFactory.create(strategy, config), renderer)
+            val key = StrategyKey("test.progress-reuse")
+            controller.setStrategyRegistry(
+                TimelineStrategyRegistry.createLocalRegistry().apply {
+                    registerMath(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { TimelineMathFactory.create(strategy, it) }
+                    registerUi(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { renderer }
+                },
+            )
+            controller.setConfig(TimelineConfig(config, renderer.getConfig(), mathStrategyKey = key, uiStrategyKey = key))
             val delegate = TimelineMathFactory.create(strategy, config)
             reference.setStrategies(object : TimelineMathEngine by delegate {}, BaseTimelineUi(TimelineUiConfig()))
             try {

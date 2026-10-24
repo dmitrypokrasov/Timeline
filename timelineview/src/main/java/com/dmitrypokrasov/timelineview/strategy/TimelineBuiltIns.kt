@@ -35,7 +35,8 @@ internal object TimelineBuiltIns {
     fun register(registry: TimelineStrategyRegistryContract) {
         math.forEach { (id, factory) ->
             registry.registerMath(
-                object : TimelineMathProvider {
+                object : TimelineMathProvider, TimelineCachePolicyProvider {
+                    override val cachePolicy = TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE
                     override val key = id
 
                     override fun create(config: TimelineMathConfig): TimelineMathEngine = factory(config)
@@ -44,7 +45,8 @@ internal object TimelineBuiltIns {
         }
         ui.forEach { (id, factory) ->
             registry.registerUi(
-                object : TimelineUiProvider {
+                object : TimelineUiProvider, TimelineCachePolicyProvider {
+                    override val cachePolicy = TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE
                     override val key = id
 
                     override fun create(config: TimelineUiConfig): TimelineUiRenderer = factory(config)

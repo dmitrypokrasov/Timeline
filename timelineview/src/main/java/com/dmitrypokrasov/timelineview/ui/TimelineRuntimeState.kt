@@ -10,6 +10,7 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
+import com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategies
 import com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategiesData
 import com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController
 
@@ -54,7 +55,10 @@ internal data class TimelineRuntimeState(
     ): TimelineRuntimeState = copy(math = MathSelection.ByKey(mathKey, math.fallback), ui = UiSelection.ByKey(uiKey, ui.fallback))
 
     fun resolve(controller: TimelineViewStrategyController): TimelineViewStrategiesData =
-        controller.resolve(
+        resolveWithPolicy(controller).let { TimelineViewStrategiesData(it.math, it.ui) }
+
+    fun resolveWithPolicy(controller: TimelineViewStrategyController): TimelineResolvedStrategies =
+        controller.resolveWithPolicy(
             mathStrategyKey = (math as? MathSelection.ByKey)?.key,
             uiStrategyKey = (ui as? UiSelection.ByKey)?.key,
             fallbackMath = math.fallback,

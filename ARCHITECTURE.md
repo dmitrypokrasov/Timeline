@@ -50,6 +50,7 @@ Built-in selection also resolves through registry providers. A registry created 
 
 ## Measurement and the frame
 
+`TimelineFrameCalculator` prepares a candidate without committing controller state.
 Measurement sets width, produces initial layout, measures text, expands declared content
 rows, and rebuilds geometry. Engines opt in using `getContentRows` and `setStepExtents`;
 unknown custom strategies are not assumed to be vertical.
@@ -71,7 +72,8 @@ extends it with deprecated coordinate getters for existing integrations.
 [TimelineMathAdapter](timelineview/src/main/java/com/dmitrypokrasov/timelineview/math/TimelineMathAdapter.kt)
 bridges a layout-first custom engine to that compatibility surface.
 
-`TimelinePathGeometry` constructs rounded paths and uses their arc length for progress and
+Pure `TimelineLinearCoordinates` and `TimelineSnakeCoordinates` own layout and segment
+topology. `TimelinePathGeometry` adapts their points to Android and constructs rounded paths and uses their arc length for progress and
 color splitting. `hasRoundedGeometry` prevents paint from rounding those paths again.
 Sequential progress stops at the first incomplete step; independent progress colors each
 incoming segment separately. Both modes expose one active progress marker.
@@ -80,14 +82,12 @@ incoming segment separately. Both modes expose one active progress marker.
 
 - Engines invalidate derived layout/path data on config, width, extents or radius changes.
 - A successful state update invalidates the frame; a successful measure installs a new one.
-- Factory-selected built-in engines with built-in renderers reuse a committed frame when content,
-  configuration, width, layout direction and resource configuration are unchanged. Progress-only
-  `replaceSteps` updates reuse measured text and row extents, then rebuild paths, the active
-  marker, overlay height and accessibility descriptions. Content, identity, timestamps, overlay
-  specs and constraint changes invalidate that reuse. Custom engines, subclasses and custom
-  renderers retain the complete measurement callback sequence on every measure. Directly installed
-  built-in engines reuse text metrics while rebuilding geometry, so changes through their
-  low-level geometry setters are reflected in the next measurement.
+- Providers explicitly opt in through `TimelineCachePolicyProvider`; both participants must
+  agree and the weaker policy applies. Built-ins use `CONFIGURATION_WITH_PROGRESS_REUSE`.
+  Existing custom providers default to `NONE`; direct instances run full callbacks. No class
+  allowlist is used. `CONFIGURATION` caches identical frames; the strongest policy also reuses
+  measured blocks on progress-only updates. Width, direction, resources, content, timestamps,
+  identity and overlay specification changes invalidate reuse.
 - A frame indexes accessibility targets by virtual ID. Single-node queries copy only that
   target's bounds; hit testing reads the owned bounds without allocating target copies.
   Listener changes apply immediately, including after a cached measurement.

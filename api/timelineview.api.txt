@@ -455,9 +455,53 @@ public interface com.dmitrypokrasov.timelineview.geometry.TimelineGeometryStrate
   public abstract com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult calculate(com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput);
 }
 
+public final class com.dmitrypokrasov.timelineview.geometry.TimelineGeometryTextWidth {
+  public final int resolve(int, float, float, com.dmitrypokrasov.timelineview.geometry.TimelineTextAlignment);
+  public static final com.dmitrypokrasov.timelineview.geometry.TimelineGeometryTextWidth INSTANCE;
+}
+
+public final class com.dmitrypokrasov.timelineview.geometry.TimelineGeometryTextWidth$WhenMappings {
+  public static final int[] $EnumSwitchMapping$0;
+}
+
 public final class com.dmitrypokrasov.timelineview.geometry.TimelineGeometryValidation {
   public final void validate(com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput, com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult, com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult);
   public static final com.dmitrypokrasov.timelineview.geometry.TimelineGeometryValidation INSTANCE;
+}
+
+public final class com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates {
+  public com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates(com.dmitrypokrasov.timelineview.config.TimelineMathConfig, boolean, int, float[]);
+  public final com.dmitrypokrasov.timelineview.geometry.TimelineGeometryLayout buildLayout();
+  public final float getDescriptionYCoordinates(int);
+  public final float getHorizontalBaseline();
+  public final float getHorizontalProgressTop();
+  public final float getIconXCoordinates();
+  public final float getIconYCoordinates(int);
+  public final float getProgressPosition(int);
+  public final float getStartPositionX();
+  public final float getTitleXCoordinates(com.dmitrypokrasov.timelineview.geometry.TimelineTextAlignment);
+  public final float getTitleYCoordinates(int);
+  public final java.util.List<com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates$SegmentInfo> getSegments();
+  public static final java.util.List access$buildSegments(com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates);
+}
+
+public final class com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates$SegmentInfo {
+  public boolean equals(java.lang.Object);
+  public com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates$SegmentInfo(float, float);
+  public final com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates$SegmentInfo copy(float, float);
+  public final float component1();
+  public final float component2();
+  public final float getEnd();
+  public final float getLength();
+  public final float getStart();
+  public int hashCode();
+  public java.lang.String toString();
+  public static com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates$SegmentInfo copy$default(com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates$SegmentInfo, float, float, int, java.lang.Object);
+}
+
+public final class com.dmitrypokrasov.timelineview.geometry.TimelineLinearCoordinates$WhenMappings {
+  public static final int[] $EnumSwitchMapping$0;
+  public static final int[] $EnumSwitchMapping$1;
 }
 
 public interface com.dmitrypokrasov.timelineview.geometry.TimelinePathCommand {
@@ -509,6 +553,25 @@ public final class com.dmitrypokrasov.timelineview.geometry.TimelinePathCommand$
 public final class com.dmitrypokrasov.timelineview.geometry.TimelineRoundedPath {
   public final java.util.List<com.dmitrypokrasov.timelineview.geometry.TimelinePathCommand> commands(java.util.List<com.dmitrypokrasov.timelineview.geometry.TimelineGeometryPoint>, float);
   public static final com.dmitrypokrasov.timelineview.geometry.TimelineRoundedPath INSTANCE;
+}
+
+public final class com.dmitrypokrasov.timelineview.geometry.TimelineSnakeCoordinates {
+  public com.dmitrypokrasov.timelineview.geometry.TimelineSnakeCoordinates(com.dmitrypokrasov.timelineview.config.TimelineMathConfig, int, float[]);
+  public final com.dmitrypokrasov.timelineview.geometry.TimelineGeometryLayout layout();
+  public final com.dmitrypokrasov.timelineview.geometry.TimelineGeometryPoint anchor(int);
+  public final float descriptionY(int);
+  public final float getOrigin();
+  public final float iconX(com.dmitrypokrasov.timelineview.geometry.TimelineTextAlignment);
+  public final float iconY(int);
+  public final float rowTop(int);
+  public final float titleX(com.dmitrypokrasov.timelineview.geometry.TimelineTextAlignment);
+  public final float titleY(int);
+  public final java.util.List<com.dmitrypokrasov.timelineview.geometry.TimelineGeometryPoint> segment(int);
+}
+
+public final class com.dmitrypokrasov.timelineview.geometry.TimelineSnakeCoordinates$WhenMappings {
+  public static final int[] $EnumSwitchMapping$0;
+  public static final int[] $EnumSwitchMapping$1;
 }
 
 public final class com.dmitrypokrasov.timelineview.geometry.TimelineTextAlignment extends java.lang.Enum<com.dmitrypokrasov.timelineview.geometry.TimelineTextAlignment> {
@@ -606,11 +669,6 @@ public final class com.dmitrypokrasov.timelineview.math.LinearTimelineMath$Orien
   public static kotlin.enums.EnumEntries<com.dmitrypokrasov.timelineview.math.LinearTimelineMath$Orientation> getEntries();
 }
 
-public final class com.dmitrypokrasov.timelineview.math.LinearTimelineMath$WhenMappings {
-  public static final int[] $EnumSwitchMapping$0;
-  public static final int[] $EnumSwitchMapping$1;
-}
-
 public final class com.dmitrypokrasov.timelineview.math.SnakeTimelineMath implements com.dmitrypokrasov.timelineview.math.TimelineMathEngine,com.dmitrypokrasov.timelineview.math.TimelineTextBoundary {
   public boolean getHasRoundedGeometry();
   public boolean getTextBelowBadge();
@@ -637,11 +695,6 @@ public final class com.dmitrypokrasov.timelineview.math.SnakeTimelineMath implem
   public void setCornerRadius(float);
   public void setMeasuredWidth(int);
   public void setStepExtents(java.util.List<java.lang.Float>);
-}
-
-public final class com.dmitrypokrasov.timelineview.math.SnakeTimelineMath$WhenMappings {
-  public static final int[] $EnumSwitchMapping$0;
-  public static final int[] $EnumSwitchMapping$1;
 }
 
 public final class com.dmitrypokrasov.timelineview.math.TimeScaledTimelineMath extends com.dmitrypokrasov.timelineview.math.AlternatingTimelineMath {
@@ -777,10 +830,6 @@ public interface com.dmitrypokrasov.timelineview.math.TimelineTextBoundary {
 public final class com.dmitrypokrasov.timelineview.math.TimelineTextWidthResolver {
   public final int resolve(int, float, float, android.graphics.Paint$Align);
   public static final com.dmitrypokrasov.timelineview.math.TimelineTextWidthResolver INSTANCE;
-}
-
-public final class com.dmitrypokrasov.timelineview.math.TimelineTextWidthResolver$WhenMappings {
-  public static final int[] $EnumSwitchMapping$0;
 }
 
 public final class com.dmitrypokrasov.timelineview.math.data.TimelineLayout {
@@ -1093,14 +1142,29 @@ public final class com.dmitrypokrasov.timelineview.strategy.TimelineBuiltIns {
   public static final com.dmitrypokrasov.timelineview.strategy.TimelineBuiltIns INSTANCE;
 }
 
-public final class com.dmitrypokrasov.timelineview.strategy.TimelineBuiltIns$register$1$1 implements com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider {
+public final class com.dmitrypokrasov.timelineview.strategy.TimelineBuiltIns$register$1$1 implements com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider,com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicyProvider {
   public com.dmitrypokrasov.timelineview.math.TimelineMathEngine create(com.dmitrypokrasov.timelineview.config.TimelineMathConfig);
+  public com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy getCachePolicy();
   public java.lang.String getKey-RZ6gGB0();
 }
 
-public final class com.dmitrypokrasov.timelineview.strategy.TimelineBuiltIns$register$2$1 implements com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider {
+public final class com.dmitrypokrasov.timelineview.strategy.TimelineBuiltIns$register$2$1 implements com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider,com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicyProvider {
   public com.dmitrypokrasov.timelineview.render.TimelineUiRenderer create(com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
+  public com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy getCachePolicy();
   public java.lang.String getKey-RZ6gGB0();
+}
+
+public final class com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy extends java.lang.Enum<com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy> {
+  public static com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy valueOf(java.lang.String);
+  public static com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy[] values();
+  public static final com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy CONFIGURATION;
+  public static final com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy CONFIGURATION_WITH_PROGRESS_REUSE;
+  public static final com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy NONE;
+  public static kotlin.enums.EnumEntries<com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy> getEntries();
+}
+
+public interface com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicyProvider {
+  public abstract com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy getCachePolicy();
 }
 
 public interface com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider {
@@ -1108,18 +1172,50 @@ public interface com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider {
   public abstract java.lang.String getKey-RZ6gGB0();
 }
 
-public final class com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistrationKt {
-  public static final void registerMath-snggAAM(com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract, java.lang.String, kotlin.jvm.functions.Function1<? super com.dmitrypokrasov.timelineview.config.TimelineMathConfig, ? extends com.dmitrypokrasov.timelineview.math.TimelineMathEngine>);
-  public static final void registerUi-snggAAM(com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract, java.lang.String, kotlin.jvm.functions.Function1<? super com.dmitrypokrasov.timelineview.config.TimelineUiConfig, ? extends com.dmitrypokrasov.timelineview.render.TimelineUiRenderer>);
+public final class com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategies {
+  public boolean equals(java.lang.Object);
+  public com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategies(com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy);
+  public final com.dmitrypokrasov.timelineview.math.TimelineMathEngine component1();
+  public final com.dmitrypokrasov.timelineview.math.TimelineMathEngine getMath();
+  public final com.dmitrypokrasov.timelineview.render.TimelineUiRenderer component2();
+  public final com.dmitrypokrasov.timelineview.render.TimelineUiRenderer getUi();
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy component3();
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy getPolicy();
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategies copy(com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy);
+  public int hashCode();
+  public java.lang.String toString();
+  public static com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategies copy$default(com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategies, com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy, int, java.lang.Object);
 }
 
-public final class com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistrationKt$registerMath$1 implements com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider {
+public final class com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategy<T> {
+  public boolean equals(java.lang.Object);
+  public com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategy(T, com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy);
+  public final T component1();
+  public final T getInstance();
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy component2();
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy getPolicy();
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategy<T> copy(T, com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy);
+  public int hashCode();
+  public java.lang.String toString();
+  public static com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategy copy$default(com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategy, java.lang.Object, com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy, int, java.lang.Object);
+}
+
+public final class com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistrationKt {
+  public static final void registerMath-snggAAM(com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract, java.lang.String, kotlin.jvm.functions.Function1<? super com.dmitrypokrasov.timelineview.config.TimelineMathConfig, ? extends com.dmitrypokrasov.timelineview.math.TimelineMathEngine>);
+  public static final void registerMath-yPPq-pw(com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract, java.lang.String, com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy, kotlin.jvm.functions.Function1<? super com.dmitrypokrasov.timelineview.config.TimelineMathConfig, ? extends com.dmitrypokrasov.timelineview.math.TimelineMathEngine>);
+  public static final void registerUi-snggAAM(com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract, java.lang.String, kotlin.jvm.functions.Function1<? super com.dmitrypokrasov.timelineview.config.TimelineUiConfig, ? extends com.dmitrypokrasov.timelineview.render.TimelineUiRenderer>);
+  public static final void registerUi-yPPq-pw(com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract, java.lang.String, com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy, kotlin.jvm.functions.Function1<? super com.dmitrypokrasov.timelineview.config.TimelineUiConfig, ? extends com.dmitrypokrasov.timelineview.render.TimelineUiRenderer>);
+}
+
+public final class com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistrationKt$registerMath$1 implements com.dmitrypokrasov.timelineview.strategy.TimelineMathProvider,com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicyProvider {
   public com.dmitrypokrasov.timelineview.math.TimelineMathEngine create(com.dmitrypokrasov.timelineview.config.TimelineMathConfig);
+  public com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy getCachePolicy();
   public java.lang.String getKey-RZ6gGB0();
 }
 
-public final class com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistrationKt$registerUi$1 implements com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider {
+public final class com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistrationKt$registerUi$1 implements com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider,com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicyProvider {
   public com.dmitrypokrasov.timelineview.render.TimelineUiRenderer create(com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
+  public com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy getCachePolicy();
   public java.lang.String getKey-RZ6gGB0();
 }
 
@@ -1171,6 +1267,8 @@ public final class com.dmitrypokrasov.timelineview.strategy.TimelineStrategyReso
   public final com.dmitrypokrasov.timelineview.render.TimelineUiRenderer resolveUi(com.dmitrypokrasov.timelineview.config.TimelineConfig);
   public final com.dmitrypokrasov.timelineview.render.TimelineUiRenderer resolveUi(com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
   public final com.dmitrypokrasov.timelineview.render.TimelineUiRenderer resolveUi-omWTb1Q(java.lang.String, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategy<com.dmitrypokrasov.timelineview.math.TimelineMathEngine> resolveMathWithPolicy-omWTb1Q$timelineview_release(java.lang.String, com.dmitrypokrasov.timelineview.config.TimelineMathStrategy, com.dmitrypokrasov.timelineview.config.TimelineMathConfig);
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategy<com.dmitrypokrasov.timelineview.render.TimelineUiRenderer> resolveUiWithPolicy-omWTb1Q$timelineview_release(java.lang.String, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
 }
 
 public interface com.dmitrypokrasov.timelineview.strategy.TimelineUiProvider {
@@ -1196,6 +1294,7 @@ public final class com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategy
   public com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController(com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract);
   public com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController(com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract, boolean);
   public com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController(com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistryContract, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategies resolveWithPolicy-zTCkI4g$timelineview_release(java.lang.String, java.lang.String, com.dmitrypokrasov.timelineview.config.TimelineMathStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, com.dmitrypokrasov.timelineview.config.TimelineMathConfig, com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
   public final com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategiesData resolve(com.dmitrypokrasov.timelineview.config.TimelineConfig);
   public final com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategiesData resolve(com.dmitrypokrasov.timelineview.config.TimelineMathStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.config.TimelineMathConfig, com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
   public final com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategiesData resolve-zTCkI4g(java.lang.String, java.lang.String, com.dmitrypokrasov.timelineview.config.TimelineMathStrategy, com.dmitrypokrasov.timelineview.config.TimelineUiStrategy, com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, com.dmitrypokrasov.timelineview.config.TimelineMathConfig, com.dmitrypokrasov.timelineview.config.TimelineUiConfig);
@@ -1261,6 +1360,28 @@ public final class com.dmitrypokrasov.timelineview.ui.TimelineFrame {
   public final java.util.List<com.dmitrypokrasov.timelineview.ui.TimelineResolvedTextBlock> getBlocks();
   public final java.util.List<com.dmitrypokrasov.timelineview.ui.TimelineViewController$Target> targets();
   public final void restorePaths(com.dmitrypokrasov.timelineview.render.TimelineUiRenderer);
+}
+
+public final class com.dmitrypokrasov.timelineview.ui.TimelineFrameCalculator {
+  public com.dmitrypokrasov.timelineview.ui.TimelineFrameCalculator(android.content.Context);
+  public final com.dmitrypokrasov.timelineview.ui.TimelineFrameCalculator$Calculation calculate(com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, int, boolean, com.dmitrypokrasov.timelineview.ui.TimelineFrame, java.util.List<java.lang.Float>, java.util.Map<java.lang.String, java.lang.Integer>, int, boolean, boolean, boolean);
+}
+
+public final class com.dmitrypokrasov.timelineview.ui.TimelineFrameCalculator$Calculation {
+  public boolean equals(java.lang.Object);
+  public com.dmitrypokrasov.timelineview.ui.TimelineFrameCalculator$Calculation(com.dmitrypokrasov.timelineview.ui.TimelineFrame, java.util.Map<java.lang.String, java.lang.Integer>, int, java.util.List<java.lang.Float>);
+  public final com.dmitrypokrasov.timelineview.ui.TimelineFrame component1();
+  public final com.dmitrypokrasov.timelineview.ui.TimelineFrame getFrame();
+  public final com.dmitrypokrasov.timelineview.ui.TimelineFrameCalculator$Calculation copy(com.dmitrypokrasov.timelineview.ui.TimelineFrame, java.util.Map<java.lang.String, java.lang.Integer>, int, java.util.List<java.lang.Float>);
+  public final int component3();
+  public final int getNextId();
+  public final java.util.List<java.lang.Float> component4();
+  public final java.util.List<java.lang.Float> getExtents();
+  public final java.util.Map<java.lang.String, java.lang.Integer> component2();
+  public final java.util.Map<java.lang.String, java.lang.Integer> getIds();
+  public int hashCode();
+  public java.lang.String toString();
+  public static com.dmitrypokrasov.timelineview.ui.TimelineFrameCalculator$Calculation copy$default(com.dmitrypokrasov.timelineview.ui.TimelineFrameCalculator$Calculation, com.dmitrypokrasov.timelineview.ui.TimelineFrame, java.util.Map, int, java.util.List, int, java.lang.Object);
 }
 
 public final class com.dmitrypokrasov.timelineview.ui.TimelineHeightCalculator {
@@ -1337,6 +1458,7 @@ public final class com.dmitrypokrasov.timelineview.ui.TimelineRuntimeState {
   public final com.dmitrypokrasov.timelineview.config.TimelineMathConfig getMathConfig();
   public final com.dmitrypokrasov.timelineview.config.TimelineUiConfig component2();
   public final com.dmitrypokrasov.timelineview.config.TimelineUiConfig getUiConfig();
+  public final com.dmitrypokrasov.timelineview.strategy.TimelineResolvedStrategies resolveWithPolicy(com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController);
   public final com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategiesData resolve(com.dmitrypokrasov.timelineview.strategy.TimelineViewStrategyController);
   public final com.dmitrypokrasov.timelineview.ui.MathSelection component3();
   public final com.dmitrypokrasov.timelineview.ui.MathSelection getMath();

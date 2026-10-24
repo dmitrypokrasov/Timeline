@@ -45,29 +45,41 @@ class TimelineStrategyResolver(
         strategyKey: StrategyKey?,
         fallbackStrategy: TimelineMathStrategy,
         config: TimelineMathConfig,
-    ): TimelineMathEngine {
-        val preferredKey = strategyKey ?: fallbackStrategy.key
-        registry.getMathProvider(preferredKey)?.let { provider ->
-            return provider.create(config)
-        }
-        require(!strict) { "Unknown math strategy key: ${preferredKey.value}" }
-        return requireNotNull(registry.getMathProvider(fallbackStrategy.key)) {
-            "No built-in math strategy registered for key: ${fallbackStrategy.key.value}"
-        }.create(config)
-    }
+    ): TimelineMathEngine = resolveMathWithPolicy(strategyKey, fallbackStrategy, config).instance
 
     fun resolveUi(
         strategyKey: StrategyKey?,
         fallbackStrategy: TimelineUiStrategy,
         config: TimelineUiConfig,
-    ): TimelineUiRenderer {
-        val preferredKey = strategyKey ?: fallbackStrategy.key
-        registry.getUiProvider(preferredKey)?.let { provider ->
-            return provider.create(config)
-        }
-        require(!strict) { "Unknown UI strategy key: ${preferredKey.value}" }
-        return requireNotNull(registry.getUiProvider(fallbackStrategy.key)) {
-            "No built-in UI strategy registered for key: ${fallbackStrategy.key.value}"
-        }.create(config)
+    ): TimelineUiRenderer = resolveUiWithPolicy(strategyKey, fallbackStrategy, config).instance
+
+    internal fun resolveMathWithPolicy(
+        strategyKey: StrategyKey?,
+        fallbackStrategy: TimelineMathStrategy,
+        config: TimelineMathConfig,
+    ): TimelineResolvedStrategy<TimelineMathEngine> {
+        val preferred = strategyKey ?: fallbackStrategy.key
+        val provider =
+            registry.getMathProvider(preferred) ?: run {
+                require(!strict) { "Unknown math strategy key: ${preferred.value}" }
+                requireNotNull(registry.getMathProvider(fallbackStrategy.key)) { "No built-in math strategy registered for key: ${fallbackStrategy.key.value}" }
+            }
+        val policy = (provider as? TimelineCachePolicyProvider)?.cachePolicy ?: TimelineCachePolicy.NONE
+        return TimelineResolvedStrategy(provider.create(config), policy)
+    }
+
+    internal fun resolveUiWithPolicy(
+        strategyKey: StrategyKey?,
+        fallbackStrategy: TimelineUiStrategy,
+        config: TimelineUiConfig,
+    ): TimelineResolvedStrategy<TimelineUiRenderer> {
+        val preferred = strategyKey ?: fallbackStrategy.key
+        val provider =
+            registry.getUiProvider(preferred) ?: run {
+                require(!strict) { "Unknown UI strategy key: ${preferred.value}" }
+                requireNotNull(registry.getUiProvider(fallbackStrategy.key)) { "No built-in UI strategy registered for key: ${fallbackStrategy.key.value}" }
+            }
+        val policy = (provider as? TimelineCachePolicyProvider)?.cachePolicy ?: TimelineCachePolicy.NONE
+        return TimelineResolvedStrategy(provider.create(config), policy)
     }
 }

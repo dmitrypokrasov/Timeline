@@ -24,6 +24,7 @@ import com.dmitrypokrasov.timelineview.math.TimelineGeometryMathAdapter
 import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
+import com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import com.dmitrypokrasov.timelineview.strategy.registerMath
 import com.dmitrypokrasov.timelineview.strategy.registerUi
@@ -50,6 +51,33 @@ class TimelineGeometryAdapterTest {
                 }
             TimelineGeometryResult(TimelineGeometryLayout(steps, null, null), listOf(TimelinePathCommand.Move(0f, 0f), TimelinePathCommand.Quad(0f, 10f, 20f, 20f)), emptyList(), TimelineGeometryBounds(0f, -10f, 100f, 300f), 12f)
         }
+
+    @Test
+    fun `progress reuse restores measured metrics to custom geometry`() {
+        val context = RuntimeEnvironment.getApplication()
+        val key = StrategyKey("test.measured-reuse")
+        var lastMetrics = emptyList<TimelineTextMetrics>()
+        val registry =
+            TimelineStrategyRegistry.createLocalRegistry().apply {
+                registerMath(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { config ->
+                    TimelineGeometryMathAdapter(config) { input ->
+                        lastMetrics = input.textMetrics
+                        geometry.calculate(input)
+                    }
+                }
+                registerUi(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { LinearTimelineUi(it) }
+            }
+        val controller = TimelineViewController(View(context), context, null, registry)
+        val config = TimelineMathConfig(steps = listOf(TimelineStepData(title = "Measured title", progress = 1)))
+        controller.setConfig(TimelineConfig(config, TimelineUiConfig(), mathStrategyKey = key, uiStrategyKey = key))
+        controller.measure(320)
+        val measured = lastMetrics
+        assertTrue(measured.single().titleHeight > 0)
+        controller.replaceSteps(config.steps.map { it.copy(progress = 99) })
+        controller.measure(320)
+        assertEquals(measured, lastMetrics)
+        controller.release()
+    }
 
     @Test
     fun `invalid output is retried and invalid metrics preserve cached snapshot`() {
