@@ -144,7 +144,7 @@ jobs:
           script: |
             ./gradlew :timelineview:connectedDebugAndroidTest :app:connectedDebugAndroidTest --stacktrace
             "$CONSUMER_GRADLE" -p integration/consumer connectedReleaseAndroidTest -PtimelineRepository="$PWD/build/repository" -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)" --stacktrace
-            if [ "${{ matrix.api }}" = 34 ]; then "$CONSUMER_GRADLE" -p integration/consumer :benchmark:connectedReleaseAndroidTest -PtimelineBenchmarks=true -PtimelineRepository="$PWD/build/repository" -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)" -Pandroid.testInstrumentationRunnerArguments.timelineSmoke=true -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.suppressErrors=EMULATOR --stacktrace; fi
+            if [ "${{ matrix.api }}" = 34 ]; then adb shell svc power stayon true; adb shell wm dismiss-keyguard; "$CONSUMER_GRADLE" -p integration/consumer :benchmark:connectedReleaseAndroidTest -PtimelineBenchmarks=true -PtimelineRepository="$PWD/build/repository" -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)" -Pandroid.testInstrumentationRunnerArguments.timelineSmoke=true -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.suppressErrors=EMULATOR --stacktrace; fi
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

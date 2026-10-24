@@ -53,3 +53,7 @@ measurement, clipped drawing, progress-only replacement and full title replaceme
 they do not replace the physical-device frame and memory comparison above.
 
 Setup follows the Android [Macrobenchmark guide](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview).
+
+The reused CI emulator stays awake for benchmark smoke. Setup dismisses keyguard before
+launching the target; a missing scroll container fails with the current package and UI
+hierarchy attached to the assertion, so device-state failures remain diagnosable.
