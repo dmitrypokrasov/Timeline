@@ -25,6 +25,8 @@ fi
 ./integration/consumer/gradlew -p integration/consumer assembleDebug assembleRelease assembleReleaseAndroidTest :testReleaseUnitTest :compose:testDebugUnitTest \
   -PtimelineRepository="$PROJECT_ROOT/build/repository" -PtimelineVersion="$VERSION" --stacktrace
 
+python3 scripts/check-consumer-contract.py
+python3 scripts/check-maven-bytes.py
 python3 scripts/check-api.py
 python3 scripts/check-docs.py
 python3 scripts/release-artifact.py record

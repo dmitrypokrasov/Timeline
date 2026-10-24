@@ -1,13 +1,5 @@
 name: Device performance diagnostics
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/device-performance.yml'
-      - 'integration/consumer/benchmark/**'
-      - 'integration/consumer/settings.gradle.kts'
-      - 'integration/consumer/gradle/verification-metadata.xml'
-      - 'integration/consumer/src/main/AndroidManifest.xml'
-      - 'integration/consumer/src/main/java/com/example/consumer/BenchmarkActivity.kt'
   workflow_dispatch:
   schedule:
     - cron: '30 4 * * 1'

@@ -21,6 +21,18 @@ concurrency:
   group: quality-${{ github.ref }}-${{ github.event_name }}-${{ inputs.ref }}
   cancel-in-progress: ${{ !inputs.release && !startsWith(github.ref, 'refs/tags/') }}
 jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Exercise Windows line ending conversion
+        run: git config --global core.autocrlf true
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+      - run: python scripts/check-wrapper.py
+      - run: python -m unittest discover -s scripts/tests -v
+      - run: python scripts/check-maven-bytes.py
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -128,10 +140,11 @@ jobs:
           api-level: ${{ matrix.api }}
           arch: ${{ matrix.arch }}
           target: default
-          disable-animations: true
+          disable-animations: false
           script: |
             ./gradlew :timelineview:connectedDebugAndroidTest :app:connectedDebugAndroidTest --stacktrace
             "$CONSUMER_GRADLE" -p integration/consumer connectedReleaseAndroidTest -PtimelineRepository="$PWD/build/repository" -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)" --stacktrace
+            if [ "${{ matrix.api }}" = 34 ]; then "$CONSUMER_GRADLE" -p integration/consumer :benchmark:connectedReleaseAndroidTest -PtimelineBenchmarks=true -PtimelineRepository="$PWD/build/repository" -PtimelineVersion="$(sed -n 's/^version = "\([^"]*\)"/\1/p' timelineview/build.gradle.kts)" -Pandroid.testInstrumentationRunnerArguments.timelineSmoke=true -Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.suppressErrors=EMULATOR --stacktrace; fi
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -139,6 +152,7 @@ jobs:
           path: |
             **/build/reports/androidTests/
             **/build/outputs/androidTest-results/
+            integration/consumer/benchmark/build/outputs/connected_android_test_additional_output/
   performance:
     if: inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
@@ -157,7 +171,7 @@ jobs:
   required-checks:
     name: Required checks
     if: always()
-    needs: [quality, screenshots, package, documentation, devices, performance]
+    needs: [windows, quality, screenshots, package, documentation, devices, performance]
     runs-on: ubuntu-latest
     steps:
       - name: Enforce the event's required checks
@@ -169,7 +183,7 @@ jobs:
           python3 - <<'PY'
           import json, os
           results = json.loads(os.environ['RESULTS'])
-          required = {'quality', 'screenshots', 'package', 'documentation'}
+          required = {'windows', 'quality', 'screenshots', 'package', 'documentation'}
           if os.environ['DEVICES_REQUIRED'] == 'true': required.add('devices')
           if os.environ['PERFORMANCE_REQUIRED'] == 'true': required.add('performance')
           bad = {name: value['result'] for name, value in results.items()
