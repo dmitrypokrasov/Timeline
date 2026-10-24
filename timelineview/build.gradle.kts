@@ -2,10 +2,11 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("maven-publish")
+    jacoco
 }
 
 group = "com.github.dmitrypokrasov"
-version = "2.1.2"
+version = "2.2.0"
 
 android {
     namespace = "com.dmitrypokrasov.timelineview"
@@ -37,6 +38,7 @@ android {
             if (providers.gradleProperty("skipScreenshots").isPresent) it.filter.excludeTestsMatching("*TimelineScreenshotTest")
         }
     }
+    testFixtures.enable = true
     publishing {
         singleVariant("release") { withSourcesJar() }
     }
@@ -49,6 +51,14 @@ publishing {
                 from(components["release"])
             }
             artifactId = "timelineview"
+            // JUnit остаётся в metadata testFixtures, но не в POM основного артефакта.
+            pom.withXml {
+                val dependencyNodes = asNode().get("dependencies") as groovy.util.NodeList
+                val dependencies = dependencyNodes.firstOrNull() as? groovy.util.Node
+                dependencies?.children()?.filterIsInstance<groovy.util.Node>()
+                    ?.filter { (it.get("groupId") as groovy.util.NodeList).text() == "junit" }
+                    ?.forEach { dependencies.remove(it) }
+            }
             pom {
                 name.set("Timeline")
                 description.set("Android timeline widget with pluggable layout and rendering strategies")
@@ -93,8 +103,33 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.customview)
     implementation(libs.lottie)
+    testFixturesApi(libs.junit)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+// Отчёт покрытия задаёт baseline без искусственного общего порога.
+jacoco { toolVersion = "0.8.12" }
+tasks.withType<Test>().configureEach {
+    systemProperty("robolectric.dependency.repo.url", "https://repo.maven.apache.org/maven2")
+    extensions.configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
+    }
+}
+tasks.register<JacocoReport>("coverageReport") {
+    dependsOn("testDebugUnitTest")
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+    executionData(fileTree(layout.buildDirectory) { include("jacoco/testDebugUnitTest.exec") })
+    sourceDirectories.setFrom(files("src/main/java"))
+    classDirectories.setFrom(
+        fileTree(layout.buildDirectory.dir("tmp/kotlin-classes/debug")) {
+            exclude("**/R.class", "**/R$*.class", "**/BuildConfig.*")
+        },
+    )
 }

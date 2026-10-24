@@ -132,6 +132,13 @@ class TimelineViewController(
 
     fun setStrategyRegistry(registry: TimelineStrategyRegistryContract) = transition(state, TimelineViewStrategyController(registry))
 
+    /** Устанавливает resolver атомарно: ошибка ключа сохраняет прежнее рабочее состояние. */
+    fun setStrategyRegistry(
+        registry: TimelineStrategyRegistryContract,
+        strict: Boolean,
+    ) =
+        transition(state, TimelineViewStrategyController(registry, strict))
+
     fun setStrategyRegistry(configure: TimelineStrategyRegistryContract.() -> Unit) {
         val registry = TimelineStrategyRegistry.createLocalRegistry()
         configure(registry)

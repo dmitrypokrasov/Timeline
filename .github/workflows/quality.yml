@@ -30,7 +30,7 @@ jobs:
           ref: ${{ inputs.ref || github.ref }}
       - uses: ./.github/actions/setup-project
       - run: python3 -m unittest discover -s scripts/tests -v
-      - run: ./gradlew qualityCheck -PskipScreenshots --continue --stacktrace
+      - run: ./gradlew qualityCheck :timelineview:coverageReport -PskipScreenshots --continue --stacktrace
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -97,17 +97,13 @@ jobs:
           if-no-files-found: error
   devices:
     needs: package
-    if: inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'pull_request' || inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - api: 27
-            arch: x86
-          - api: 34
-            arch: x86_64
+        include: ${{ fromJSON(github.event_name == 'pull_request' && !inputs.release && '[{"api":34,"arch":"x86_64"}]' || '[{"api":27,"arch":"x86"},{"api":34,"arch":"x86_64"}]') }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -167,7 +163,7 @@ jobs:
       - name: Enforce the event's required checks
         env:
           RESULTS: ${{ toJSON(needs) }}
-          DEVICES_REQUIRED: ${{ inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
+          DEVICES_REQUIRED: ${{ github.event_name == 'pull_request' || inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
           PERFORMANCE_REQUIRED: ${{ inputs.release || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/') }}
         run: |
           python3 - <<'PY'

@@ -80,3 +80,46 @@ arc length must equal the full path, and the active marker must meet the drawn c
 Reuse those checks when adding a custom engine; they iterate every path contour, including
 independently colored segments. Time-scaled tests also cover equal/pre-epoch timestamps and
 atomic rejection of unsorted or unrepresentable ranges.
+
+
+## Pure geometry strategies (next release)
+
+`TimelineGeometryStrategy` receives `TimelineGeometryInput` and returns an immutable
+`TimelineGeometryResult`: layout, completed/pending `Move`/`Line`/`Quad` commands, content
+bounds and horizontal origin. These models do not import Android rendering types.
+`TimelineRoundedPath.commands` provides the same corner construction used by built-ins;
+Android arc-length sampling stays in the existing path adapter, preserving progress behavior.
+
+Wrap your strategy in `TimelineGeometryMathAdapter(config, strategy)`. The first calculation
+receives empty `textMetrics` to determine positive text widths. The next receives measured
+heights in layout order. Keep step order and widths unchanged between these passes; move rows
+or enlarge bounds to fit text. Bounds must include any extra content drawn by your renderer.
+All coordinates and sizes are physical pixels; Y values for labels are requested baselines,
+icons use top-left coordinates. `TimelineTextAlignment` uses physical LEFT/CENTER/RIGHT;
+TimelineView mirrors the complete frame for RTL. Padding and `startPosition` are applied once
+by View. Pure strategies must handle empty lists and zero width and return finite coordinates.
+
+Use local registries and lambda overloads:
+
+```kotlin
+val registry = TimelineStrategyRegistry.createLocalRegistry().apply {
+    registerMath(StrategyKey("app.geometry")) { TimelineGeometryMathAdapter(it, CustomGeometry()) }
+    registerUi(StrategyKey("app.renderer")) { CustomRenderer(it) }
+}
+timelineView.setStrategyRegistry(registry, strict = true)
+```
+
+The optional strict mode reports an unknown key. Without it, existing built-in fallback is
+preserved. Duplicate keys remain errors. Providers create an engine/renderer per View;
+providers must not share mutable drawing tools. A failed resolution or initialization leaves
+the previous working state installed. Direct instances remain supported. Calculations and
+Android callbacks run on the main thread; pure strategies own no Canvas, Context or resources.
+`BaseTimelineUi` manages its own bitmap and Lottie resources through the existing lifecycle.
+
+The independent [consumer example](integration/consumer/src/main/java/com/example/consumer/CustomGeometry.kt)
+implements both contracts outside the library and runs after R8 against the staged Maven AAR.
+Switch back with `setStrategy(TimelineMathStrategy.LinearVertical, TimelineUiStrategy.Linear)`.
+For reusable JUnit checks add `testImplementation(testFixtures("com.github.dmitrypokrasov:timelineview:<next-version>"))`
+and subclass `com.dmitrypokrasov.timelineview.testing.TimelineGeometryContractTest` with your
+strategy. The suite checks repeatability, empty/narrow/populated inputs, text passes and finite
+coordinates. Add your own progress semantics, path continuity and screenshot assertions.
