@@ -3,8 +3,10 @@ package com.dmitrypokrasov.timelineview.math
 import android.graphics.Path
 import android.graphics.PathMeasure
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryPoint
+import com.dmitrypokrasov.timelineview.geometry.TimelineRoundedPath
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
-import kotlin.math.hypot
+import com.dmitrypokrasov.timelineview.render.setCommands
 
 internal data class TimelinePoint(val x: Float, val y: Float)
 
@@ -17,21 +19,7 @@ internal class TimelinePathGeometry(points: List<TimelinePoint>, radius: Float) 
     val length: Float get() = measure.length
 
     init {
-        val vertices = points.filterIndexed { index, point -> index == 0 || point != points[index - 1] }
-        path.moveTo(start.x, start.y)
-        for (index in 1 until vertices.lastIndex) {
-            val a = vertices[index - 1]
-            val b = vertices[index]
-            val c = vertices[index + 1]
-            val incoming = hypot(b.x - a.x, b.y - a.y)
-            val outgoing = hypot(c.x - b.x, c.y - b.y)
-            val inset = minOf(radius, incoming / 2f, outgoing / 2f)
-            val before = TimelinePoint(b.x - (b.x - a.x) * inset / incoming, b.y - (b.y - a.y) * inset / incoming)
-            val after = TimelinePoint(b.x + (c.x - b.x) * inset / outgoing, b.y + (c.y - b.y) * inset / outgoing)
-            path.lineTo(before.x, before.y)
-            path.quadTo(b.x, b.y, after.x, after.y)
-        }
-        path.lineTo(end.x, end.y)
+        path.setCommands(TimelineRoundedPath.commands(points.map { TimelineGeometryPoint(it.x, it.y) }, radius))
         measure = PathMeasure(path, false)
     }
 

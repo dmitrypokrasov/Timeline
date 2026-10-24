@@ -1,0 +1,7 @@
+# Published artifacts and their checksums must retain their exact bytes on every OS.
+docs/maven/** -text
+
+# Git Bash and Linux execute the same scripts without checkout-dependent CRLF.
+*.sh text eol=lf
+gradlew text eol=lf
+integration/consumer/gradlew text eol=lf

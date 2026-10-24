@@ -44,6 +44,7 @@ extensions.configure<com.android.build.api.dsl.ApplicationExtension> {
 
 dependencies {
     implementation("com.github.dmitrypokrasov:timelineview:${providers.gradleProperty("timelineVersion").get()}")
+    testImplementation(testFixtures("com.github.dmitrypokrasov:timelineview:${providers.gradleProperty("timelineVersion").get()}"))
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.17")
 }

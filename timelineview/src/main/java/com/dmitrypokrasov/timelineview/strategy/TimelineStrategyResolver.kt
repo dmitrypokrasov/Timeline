@@ -8,9 +8,17 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
+/** Выбирает provider по ключу; по умолчанию сохраняет fallback встроенных стратегий. */
 class TimelineStrategyResolver(
     private val registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry,
 ) {
+    private var strict = false
+
+    /** Неизвестный ключ в строгом режиме вызывает ошибку вместо встроенного fallback. */
+    constructor(registry: TimelineStrategyRegistryContract, strict: Boolean) : this(registry) {
+        this.strict = strict
+    }
+
     fun resolveMath(config: TimelineConfig): TimelineMathEngine {
         return resolveMath(config.mathStrategyKey, config.mathStrategy, config.math)
     }
@@ -42,6 +50,7 @@ class TimelineStrategyResolver(
         registry.getMathProvider(preferredKey)?.let { provider ->
             return provider.create(config)
         }
+        require(!strict) { "Unknown math strategy key: ${preferredKey.value}" }
         return requireNotNull(registry.getMathProvider(fallbackStrategy.key)) {
             "No built-in math strategy registered for key: ${fallbackStrategy.key.value}"
         }.create(config)
@@ -56,6 +65,7 @@ class TimelineStrategyResolver(
         registry.getUiProvider(preferredKey)?.let { provider ->
             return provider.create(config)
         }
+        require(!strict) { "Unknown UI strategy key: ${preferredKey.value}" }
         return requireNotNull(registry.getUiProvider(fallbackStrategy.key)) {
             "No built-in UI strategy registered for key: ${fallbackStrategy.key.value}"
         }.create(config)

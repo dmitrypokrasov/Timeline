@@ -14,6 +14,8 @@ The project now ships with a shared quality toolchain:
 
 ## Development status
 
+The working tree prepares **2.2.0** with [pure geometry strategies](CUSTOM_STRATEGIES.md#pure-geometry-strategies-next-release); it is not published.
+
 The current published version is **2.1.2**. Public artifact hashes and a clean minified
 consumer build were verified by the [release workflow](https://github.com/dmitrypokrasov/Timeline/actions/runs/39758110751).
 Publication status is recorded in [GitHub Releases](https://github.com/dmitrypokrasov/Timeline/releases)

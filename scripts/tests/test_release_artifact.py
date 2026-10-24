@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 SCRIPT = Path(__file__).resolve().parents[1] / 'release-artifact.py'
 spec = importlib.util.spec_from_file_location('release_artifact', SCRIPT)
@@ -55,6 +56,19 @@ class ReleaseArtifactTest(unittest.TestCase):
         (self.folder / 'timelineview-2.0.0.aar').unlink()
         with self.assertRaises(ValueError):
             release.inventory(self.repo, '2.0.0')
-        (self.folder / 'timelineview-2.0.0.aar').symlink_to(self.folder / 'timelineview-2.0.0.pom')
-        with self.assertRaises(ValueError):
-            release.inventory(self.repo, '2.0.0')
+        artifact = self.folder / 'timelineview-2.0.0.aar'
+        try:
+            artifact.symlink_to(self.folder / 'timelineview-2.0.0.pom')
+        except OSError as error:
+            if getattr(error, 'winerror', None) != 1314:
+                raise
+            # Windows without Developer Mode cannot create symlinks. Exercise the
+            # same rejection branch with a controlled filesystem predicate; CI
+            # on Linux still verifies a real symlink. No assertion is skipped.
+            artifact.write_bytes(b'linked artifact')
+            with patch.object(Path, 'is_symlink', lambda path: path == artifact):
+                with self.assertRaisesRegex(ValueError, 'Symlinks'):
+                    release.inventory(self.repo, '2.0.0')
+        else:
+            with self.assertRaisesRegex(ValueError, 'Symlinks'):
+                release.inventory(self.repo, '2.0.0')

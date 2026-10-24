@@ -64,6 +64,18 @@ public class MinifiedConsumerInstrumentation extends Instrumentation {
         Activity activity = instrumentation.startActivitySync(intent);
         try {
             instrumentation.waitForIdleSync();
+            onMain(() -> {
+                View custom = activity.getWindow().getDecorView().findViewWithTag("custom-timeline");
+                assertTrue("Custom geometry survives shrinking", custom != null && custom.getHeight() > 0);
+                Bitmap bitmap = Bitmap.createBitmap(custom.getWidth(), custom.getHeight(), Bitmap.Config.ARGB_8888);
+                custom.draw(new Canvas(bitmap));
+                bitmap.recycle();
+                assertTrue("Custom strategy switches to built-ins after R8", custom.performClick());
+                assertTrue("Built-in switch callback completed", "custom-switched".equals(custom.getTag()));
+                custom.measure(View.MeasureSpec.makeMeasureSpec(320, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                assertTrue("Built-in layout is measured", custom.getMeasuredHeight() > 0);
+            });
             // Loading is asynchronous: poll rendered animation pixels with a bounded timeout.
             boolean animated = false;
             long deadline = SystemClock.uptimeMillis() + 10000;
