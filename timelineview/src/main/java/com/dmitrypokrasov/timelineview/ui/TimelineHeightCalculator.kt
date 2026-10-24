@@ -3,6 +3,7 @@ package com.dmitrypokrasov.timelineview.ui
 import android.graphics.Path
 import android.graphics.RectF
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.math.TimelineMeasuredGeometry
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
@@ -35,6 +36,7 @@ class TimelineHeightCalculator {
             bottom = maxOf(bottom, y + height)
         }
         val stroke = uiRenderer.getConfig().stroke.sizeStroke / 2f
+        (mathEngine as? TimelineMeasuredGeometry)?.getGeometryBounds()?.let { include(it.top, it.bottom - it.top) }
         paths.forEach { path ->
             if (!path.isEmpty) {
                 val bounds = RectF()

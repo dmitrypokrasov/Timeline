@@ -186,3 +186,19 @@ Public artifact hashes and a clean minified consumer build were verified before 
 [GitHub Release](https://github.com/dmitrypokrasov/Timeline/releases/tag/v2.1.2) was created.
 Use `bash scripts/check-release.sh` for local source validation, and review the
 [changelog](CHANGELOG.md#212--2026-10-22).
+
+
+## Preparing 2.2.0
+
+The next version adds opt-in [pure geometry strategies](CUSTOM_STRATEGIES.md#pure-geometry-strategies-next-release),
+`TimelineGeometryMathAdapter`, lambda registry extensions and strict key resolution. Existing
+providers, direct engines and fallback resolution keep their API. No changes to existing
+implementations are required; no methods were added to the existing strategy interfaces.
+Strict mode is enabled explicitly with `setStrategyRegistry(registry, strict = true)`.
+It throws for missing keys and preserves the previously installed View state on failure.
+
+The 2.1.2 progress contract is retained, including independent segment progress and the
+active marker at 0%. Existing RTL, stable identity and resource lifecycle behavior remains
+covered by the original regression and screenshot suites. Test fixtures add JUnit only to
+the test capability; the main POM does not add test dependencies to consuming applications.
+Version 2.2.0 is prepared locally and in CI; this change creates no tag or publication.

@@ -1,6 +1,8 @@
 package com.dmitrypokrasov.timelineview.ui
 
+import com.dmitrypokrasov.timelineview.geometry.TimelineTextMetrics
 import com.dmitrypokrasov.timelineview.math.TimelineMathEngine
+import com.dmitrypokrasov.timelineview.math.TimelineMeasuredGeometry
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
 import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 
@@ -15,6 +17,11 @@ internal object TimelineLayoutResolver {
         engine.setStepExtents(emptyList())
         engine.setMeasuredWidth(width)
         val initial = engine.buildLayout()
+        if (engine is TimelineMeasuredGeometry) {
+            val measured = TimelineTextBlockResolver.resolve(initial, engine, renderer)
+            engine.setTextMetrics(measured.map { TimelineTextMetrics(it.titleHeight, it.descriptionHeight) })
+            return engine.buildLayout()
+        }
         val rows = engine.getContentRows() ?: return initial
         require((rows.isEmpty() || rows.first() == 0) && rows.size == initial.steps.size && rows.zipWithNext().all { (a, b) -> b == a || b == a + 1 }) { "Content rows must be contiguous and ordered" }
         val blocks = TimelineTextBlockResolver.resolve(initial, engine, renderer)

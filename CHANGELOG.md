@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.2.0 — Unreleased
+
+- Add pure geometry models, a cached Android adapter and a shared rounded-path helper.
+- Add lambda registrations and optional strict strategy resolution with atomic View switching.
+- Publish reusable geometry test fixtures and exercise an external strategy/renderer after R8.
+- Execute the release consumer unit suite explicitly and preserve Maven bytes on Windows checkouts.
+- Run API 34 device smoke checks on pull requests and report unit-test coverage without a global threshold.
+- Preserve 2.1.2 progress semantics, RTL, lifecycle behavior and previously published artifacts.
+
 ## 2.1.2 — 2026-10-22
 
 ### Fixes

@@ -131,6 +131,15 @@ class TimelineView
             changed()
         }
 
+        /** Включает ошибки неизвестных ключей; неудачная замена сохраняет прежние стратегии. */
+        fun setStrategyRegistry(
+            registry: TimelineStrategyRegistryContract,
+            strict: Boolean,
+        ) {
+            controller.setStrategyRegistry(registry, strict)
+            changed()
+        }
+
         /** Creates and installs a local strategy registry configured by [configure]. */
         fun setStrategyRegistry(configure: TimelineStrategyRegistryContract.() -> Unit) {
             val registry = TimelineStrategyRegistry.createLocalRegistry()
