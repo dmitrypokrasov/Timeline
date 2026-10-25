@@ -13,7 +13,12 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 class TimelineViewStrategyController(
     registry: TimelineStrategyRegistryContract = TimelineStrategyRegistry,
 ) {
-    private val resolver = TimelineStrategyResolver(registry)
+    private var resolver = TimelineStrategyResolver(registry)
+
+    /** Сохраняет совместимый конструктор и явно включает строгую проверку ключей. */
+    constructor(registry: TimelineStrategyRegistryContract, strict: Boolean) : this(registry) {
+        resolver = TimelineStrategyResolver(registry, strict)
+    }
 
     fun resolve(config: TimelineConfig): TimelineViewStrategiesData {
         return TimelineViewStrategiesData(

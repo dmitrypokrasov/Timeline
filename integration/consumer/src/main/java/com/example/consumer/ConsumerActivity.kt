@@ -27,6 +27,7 @@ class ConsumerActivity : Activity() {
             setBackgroundColor(Color.WHITE)
             addView(status)
             addView(timeline)
+            addView(customTimeline(this@ConsumerActivity).apply { tag = "custom-timeline" })
         })
     }
 }
