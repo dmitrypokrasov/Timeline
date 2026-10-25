@@ -1484,6 +1484,7 @@ public final class com.dmitrypokrasov.timelineview.ui.TimelineRuntimeState$Compa
 
 public final class com.dmitrypokrasov.timelineview.ui.TimelineTextBlockResolver {
   public final java.util.List<com.dmitrypokrasov.timelineview.ui.TimelineResolvedTextBlock> resolve(com.dmitrypokrasov.timelineview.math.data.TimelineLayout, com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer);
+  public final java.util.List<com.dmitrypokrasov.timelineview.ui.TimelineResolvedTextBlock> resolve(com.dmitrypokrasov.timelineview.math.data.TimelineLayout, com.dmitrypokrasov.timelineview.math.TimelineMathEngine, com.dmitrypokrasov.timelineview.render.TimelineUiRenderer, java.util.List<com.dmitrypokrasov.timelineview.ui.TimelineResolvedTextBlock>);
   public static final com.dmitrypokrasov.timelineview.ui.TimelineTextBlockResolver INSTANCE;
 }
 

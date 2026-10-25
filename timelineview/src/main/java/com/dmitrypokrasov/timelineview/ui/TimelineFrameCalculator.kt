@@ -46,7 +46,7 @@ internal class TimelineFrameCalculator(private val context: Context) {
         val ids = virtualIds.filterKeys { it in identities }.toMutableMap()
         var nextId = nextVirtualId
         identities.forEach { ids.getOrPut(it) { nextId++ } }
-        val blocks = previous?.blocks ?: TimelineTextBlockResolver.resolve(resolved, timelineMath, timelineUi)
+        val blocks = TimelineTextBlockResolver.resolve(resolved, timelineMath, timelineUi, previous?.blocks.orEmpty())
         val bounds = heightCalculator.calculateBounds(resolved, timelineMath, timelineUi, blocks, listOf(completed, remaining))
         val math = timelineMath.getConfig()
         val start = timelineMath.getStartPosition()
