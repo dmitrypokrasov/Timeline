@@ -1,5 +1,6 @@
 package com.dmitrypokrasov.timelineview.ui
 
+import android.graphics.Paint
 import android.graphics.Path
 import android.view.View
 import com.dmitrypokrasov.timelineview.R
@@ -23,6 +24,7 @@ import com.dmitrypokrasov.timelineview.geometry.TimelineTextMetrics
 import com.dmitrypokrasov.timelineview.math.TimelineGeometryMathAdapter
 import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
+import com.dmitrypokrasov.timelineview.render.BaseTimelineUi
 import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
 import com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
@@ -51,6 +53,51 @@ class TimelineGeometryAdapterTest {
                 }
             TimelineGeometryResult(TimelineGeometryLayout(steps, null, null), listOf(TimelinePathCommand.Move(0f, 0f), TimelinePathCommand.Quad(0f, 10f, 20f, 20f)), emptyList(), TimelineGeometryBounds(0f, -10f, 100f, 300f), 12f)
         }
+
+    @Test
+    fun `progress reuse repositions text without measuring it again`() {
+        val context = RuntimeEnvironment.getApplication()
+        val key = StrategyKey("test.moving-text")
+        var measurements = 0
+        val registry =
+            TimelineStrategyRegistry.createLocalRegistry().apply {
+                registerMath(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { config ->
+                    TimelineGeometryMathAdapter(config) { input ->
+                        val result = geometry.calculate(input)
+                        val offset = input.config.steps.single().progress.toFloat()
+                        result.copy(layout = result.layout.copy(steps = result.layout.steps.map { it.copy(titleY = 100f + offset, descriptionY = 200f + offset) }))
+                    }
+                }
+                registerUi(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { config ->
+                    object : BaseTimelineUi(config) {
+                        override fun measureTitleHeight(
+                            title: CharSequence,
+                            maxWidth: Int,
+                            align: Paint.Align,
+                        ): Int {
+                            measurements++
+                            return super.measureTitleHeight(title, maxWidth, align)
+                        }
+                    }
+                }
+            }
+        val controller = TimelineViewController(View(context), context, null, registry)
+        val config = TimelineMathConfig(steps = listOf(TimelineStepData(title = "Title", description = "Description", progress = 1)))
+        controller.setConfig(TimelineConfig(config, TimelineUiConfig(), mathStrategyKey = key, uiStrategyKey = key))
+        val frameField = TimelineViewController::class.java.getDeclaredField("frame").apply { isAccessible = true }
+        controller.measure(320)
+        val before = (frameField.get(controller) as TimelineFrame).blocks.single()
+        val measured = measurements
+        controller.replaceSteps(config.steps.map { it.copy(progress = 99) })
+        controller.measure(320)
+        val after = (frameField.get(controller) as TimelineFrame).blocks.single()
+        assertEquals(before.titleTop + 98f, after.titleTop, 0.01f)
+        assertEquals(before.descriptionTop + 98f, after.descriptionTop, 0.01f)
+        assertEquals(before.titleHeight, after.titleHeight)
+        assertEquals(before.descriptionHeight, after.descriptionHeight)
+        assertEquals(measured, measurements)
+        controller.release()
+    }
 
     @Test
     fun `progress reuse restores measured metrics to custom geometry`() {

@@ -19,18 +19,26 @@ internal object TimelineTextBlockResolver {
         layout: TimelineLayout?,
         mathEngine: TimelineMathEngine,
         uiRenderer: TimelineUiRenderer,
+    ): List<TimelineResolvedTextBlock> = resolve(layout, mathEngine, uiRenderer, emptyList())
+
+    /** Повторно использует только высоты: позиции всегда рассчитываются из актуальной геометрии. */
+    fun resolve(
+        layout: TimelineLayout?,
+        mathEngine: TimelineMathEngine,
+        uiRenderer: TimelineUiRenderer,
+        measuredBlocks: List<TimelineResolvedTextBlock>,
     ): List<TimelineResolvedTextBlock> {
         if (layout == null) return emptyList()
 
         return layout.steps.mapIndexed { index, stepLayout ->
             val titleHeight =
-                uiRenderer.measureTitleHeight(
+                measuredBlocks.getOrNull(index)?.titleHeight ?: uiRenderer.measureTitleHeight(
                     stepLayout.step.title ?: "",
                     stepLayout.titleWidth,
                     stepLayout.textAlign,
                 )
             val descriptionHeight =
-                uiRenderer.measureDescriptionHeight(
+                measuredBlocks.getOrNull(index)?.descriptionHeight ?: uiRenderer.measureDescriptionHeight(
                     stepLayout.step.description ?: "",
                     stepLayout.descriptionWidth,
                     stepLayout.textAlign,
