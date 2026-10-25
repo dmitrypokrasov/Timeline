@@ -1,6 +1,7 @@
 # Releasing Timeline
 
-The checkout matches published **2.1.2**. Local verification never publishes. Publishing
+The checkout prepares the unpublished **2.2.0** release; the latest published version is **2.1.2**.
+Local verification never publishes. Publishing
 requires explicitly dispatching **Publish tested release** for an existing stable tag.
 The workflow builds/tests that tag and publishes the exact staged Maven bytes it tested.
 
@@ -181,3 +182,12 @@ from `dev` only when preparing the actual release. Do not tag or publish during 
 
 Consumer runtime tests address the minified app only through Android framework APIs;
 they do not add keep-all rules that would hide missing library consumer rules.
+
+## Cross-platform verification
+
+The required Windows job runs wrapper and Python checks with `core.autocrlf=true` and
+compares every tracked `docs/maven` file directly with its Git blob. It is offline and
+never treats a checkout as a substitute for published-release provenance verification.
+The package rehearsal requires a nonempty, successful external geometry contract XML
+suite from `testReleaseUnitTest`, preventing an omitted or fully skipped suite from passing.
+API 34 reuses the main device job for benchmark harness smoke; timings remain diagnostic.

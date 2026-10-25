@@ -10,12 +10,12 @@ import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.io.ByteArrayOutputStream
 
 /** Same interactions on each strategy: scroll, progress, replace data, and switch strategy. */
 @RunWith(Parameterized::class)
@@ -30,6 +30,9 @@ class TimelineBenchmark(private val strategy: Int, private val count: Int, priva
         startupMode = StartupMode.WARM,
         iterations = iterationCount,
         setupBlock = {
+            // Предыдущий instrumentation suite может оставить устройство заблокированным.
+            device.wakeUp()
+            device.executeShellCommand("wm dismiss-keyguard")
             startActivityAndWait(Intent().apply {
                 component = ComponentName("com.example.consumer", "com.example.consumer.BenchmarkActivity")
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -37,13 +40,24 @@ class TimelineBenchmark(private val strategy: Int, private val count: Int, priva
                 putExtra("count", count)
                 putExtra("animated", animated)
             })
-            check(device.wait(Until.hasObject(By.desc("timeline-scroll")), 10_000))
+            check(device.wait(Until.hasObject(By.desc("timeline-scroll")), 10_000)) {
+                val hierarchy = ByteArrayOutputStream().also { device.dumpWindowHierarchy(it) }.toString("UTF-8")
+                "Benchmark content missing in ${device.currentPackageName}: $hierarchy"
+            }
         },
     ) {
-        val scroll = checkNotNull(device.findObject(By.desc("timeline-scroll")))
-        scroll.setGestureMargin(device.displayWidth / 10)
-        repeat(3) { scroll.scroll(Direction.DOWN, 0.8f) }
-        repeat(3) { scroll.scroll(Direction.UP, 0.8f) }
+        // Каждая прокрутка обновляет accessibility-дерево: не удерживаем UiObject2 между жестами.
+        fun swipe(down: Boolean) {
+            val bounds = checkNotNull(device.findObject(By.desc("timeline-scroll"))).visibleBounds
+            val inset = (bounds.height() * 0.1f).toInt()
+            val top = bounds.top + inset
+            val bottom = bounds.bottom - inset
+            check(device.swipe(bounds.centerX(), if (down) bottom else top, bounds.centerX(), if (down) top else bottom, 20)) {
+                "Benchmark swipe injection failed"
+            }
+        }
+        repeat(3) { swipe(true) }
+        repeat(3) { swipe(false) }
         listOf("progress", "data", "strategy").forEach { action ->
             checkNotNull(device.findObject(By.desc(action))).click()
             device.waitForIdle()
