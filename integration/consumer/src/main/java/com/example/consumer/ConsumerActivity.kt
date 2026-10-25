@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.LinearLayout
+import android.widget.HorizontalScrollView
 import android.widget.TextView
 import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
@@ -27,7 +28,9 @@ class ConsumerActivity : Activity() {
             setBackgroundColor(Color.WHITE)
             addView(status)
             addView(timeline)
-            addView(customTimeline(this@ConsumerActivity).apply { tag = "custom-timeline" })
+            addView(HorizontalScrollView(this@ConsumerActivity).apply {
+                addView(customTimeline(this@ConsumerActivity).apply { tag = "custom-timeline" })
+            })
         })
     }
 }

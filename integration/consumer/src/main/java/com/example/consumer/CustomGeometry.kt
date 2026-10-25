@@ -9,6 +9,7 @@ import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryBounds
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput
+import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryIntrinsicWidth
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryLayout
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryStep
@@ -24,13 +25,15 @@ import com.dmitrypokrasov.timelineview.strategy.registerUi
 import com.dmitrypokrasov.timelineview.ui.TimelineView
 
 /** Геометрия приложения: высота каждой ячейки зависит от измеренного текста. */
-class CustomGeometry : TimelineGeometryStrategy {
+class CustomGeometry : TimelineGeometryStrategy, TimelineGeometryIntrinsicWidth {
+    override fun desiredWidth(config: TimelineMathConfig): Int = maxOf(480, (config.sizes.sizeImageLvl + 48f).toInt())
+
     override fun calculate(input: TimelineGeometryInput): TimelineGeometryResult {
         var bottom = 0f
         val steps = input.config.steps.mapIndexed { index, step ->
             val top = bottom
             val metrics = input.textMetrics.getOrNull(index)
-            val height = maxOf(80f, (metrics?.titleHeight ?: 0) + (metrics?.descriptionHeight ?: 0) + 40f)
+            val height = maxOf(80f, input.config.sizes.sizeImageLvl, (metrics?.titleHeight ?: 0) + (metrics?.descriptionHeight ?: 0) + 40f)
             bottom += height
             TimelineGeometryStep(step, 40f, top + 20f, (input.width - 48).coerceAtLeast(1),
                 40f, top + 28f + (metrics?.titleHeight ?: 0), (input.width - 48).coerceAtLeast(1),

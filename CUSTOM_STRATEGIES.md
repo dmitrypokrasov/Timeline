@@ -123,3 +123,17 @@ For reusable JUnit checks add `testImplementation(testFixtures("com.github.dmitr
 and subclass `com.dmitrypokrasov.timelineview.testing.TimelineGeometryContractTest` with your
 strategy. The suite checks repeatability, empty/narrow/populated inputs, text passes and finite
 coordinates. Add your own progress semantics, path continuity and screenshot assertions.
+
+### Geometry validation and intrinsic width
+
+The adapter validates each snapshot before caching or constructing an Android path. Invalid
+step count/order, non-positive text widths, non-finite coordinates/origin/bounds, inverted
+bounds, out-of-range non-null progress indices and paths without an initial Move throw an
+`IllegalArgumentException` naming the field. Text metric heights must be non-negative, and
+both text passes retain the same widths. Failed calculations are retried on the next request;
+there is no automatic strategy fallback. The strategy decides which step is active, including
+its progress overlay; it need not choose the first incomplete step.
+
+Implement `TimelineGeometryIntrinsicWidth` alongside your geometry to request an intrinsic
+width in pixels through `desiredWidth(config)`. It must be non-negative; 0 leaves sizing to
+the parent. The external example uses this capability inside a `HorizontalScrollView`.

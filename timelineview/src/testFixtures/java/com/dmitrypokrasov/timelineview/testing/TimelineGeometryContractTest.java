@@ -32,6 +32,7 @@ public abstract class TimelineGeometryContractTest {
                 new TimelineMathConfig(), width, 0f, Collections.emptyList());
             TimelineGeometryResult result = strategy.calculate(input);
             assertEquals(result, strategy.calculate(input));
+            assertValid(input, result);
             assertTrue(Float.isFinite(result.getStartPosition()));
             for (TimelinePathCommand command : result.getCompleted()) assertFinite(command);
             for (TimelinePathCommand command : result.getRemaining()) assertFinite(command);
@@ -43,14 +44,16 @@ public abstract class TimelineGeometryContractTest {
         for (TimelineMathConfig.StartPosition start : TimelineMathConfig.StartPosition.values()) {
             for (int width : new int[] {0, 1, 320}) {
                 for (int progress : new int[] {0, 1, 99, 100}) {
-                    TimelineStepData step = new TimelineStepData("Title", "Description", null, null, null, null, progress, null, null);
-                    List<TimelineStepData> steps = Arrays.asList(step, step);
+                    TimelineStepData step = new TimelineStepData("Title", "Description", null, null, null, null, progress, "first", null);
+                    TimelineStepData second = new TimelineStepData("Second", "Other", null, null, null, null, 99, "second", null);
+                    List<TimelineStepData> steps = Arrays.asList(step, second);
                     TimelineMathConfig config = new TimelineMathConfig(start, steps,
                         new TimelineMathConfig.Spacing(), new TimelineMathConfig.Sizes(),
                         TimelineMathConfig.ProgressMode.SEQUENTIAL, TimelineMathConfig.HorizontalLayout.FIT, 160f, 0.001);
                     TimelineGeometryInput initial = new TimelineGeometryInput(config, width, 1000f, Collections.emptyList());
                     TimelineGeometryResult result = strategy.calculate(initial);
                     assertEquals(result, strategy.calculate(initial));
+                    assertValid(initial, result);
                     assertEquals(steps.size(), result.getLayout().getSteps().size());
                     TimelineGeometryBounds bounds = result.getBounds();
                     assertTrue(Float.isFinite(bounds.getLeft()) && Float.isFinite(bounds.getTop())
@@ -58,6 +61,7 @@ public abstract class TimelineGeometryContractTest {
                     assertTrue(bounds.getRight() >= bounds.getLeft() && bounds.getBottom() >= bounds.getTop());
                     TimelineGeometryResult measured = strategy.calculate(new TimelineGeometryInput(config, width, 1000f,
                         Arrays.asList(new TimelineTextMetrics(40, 80), new TimelineTextMetrics(20, 40))));
+                    assertValid(initial, measured);
                     assertEquals(steps.size(), measured.getLayout().getSteps().size());
                     for (int index = 0; index < steps.size(); index++) {
                         TimelineGeometryStep before = result.getLayout().getSteps().get(index);
@@ -72,6 +76,55 @@ public abstract class TimelineGeometryContractTest {
                     for (TimelinePathCommand command : measured.getRemaining()) assertFinite(command);
                 }
             }
+        }
+    }
+
+    @Test
+    public void singletonAndLegacyDuplicatesWithLargeIcons() {
+        TimelineStepData step = new TimelineStepData("Title", "Description", null, null, null, null, 1, null, null);
+        for (List<TimelineStepData> steps : Arrays.asList(Collections.singletonList(step), Arrays.asList(step, step))) {
+            TimelineMathConfig config = new TimelineMathConfig(TimelineMathConfig.StartPosition.START, steps,
+                new TimelineMathConfig.Spacing(), new TimelineMathConfig.Sizes(1024f, 2048f),
+                TimelineMathConfig.ProgressMode.INDEPENDENT, TimelineMathConfig.HorizontalLayout.FIT, 160f, 0.001);
+            TimelineGeometryInput input = new TimelineGeometryInput(config, 1, Float.MAX_VALUE, Collections.emptyList());
+            TimelineGeometryResult initial = strategy.calculate(input);
+            assertValid(input, initial);
+            List<TimelineTextMetrics> metrics = new java.util.ArrayList<>();
+            for (TimelineStepData ignored : steps) metrics.add(new TimelineTextMetrics(1024, 2048));
+            TimelineGeometryResult measured = strategy.calculate(new TimelineGeometryInput(config, 1, Float.MAX_VALUE, metrics));
+            assertValid(input, measured);
+            for (int index = 0; index < steps.size(); index++) {
+                assertEquals(initial.getLayout().getSteps().get(index).getTitleWidth(), measured.getLayout().getSteps().get(index).getTitleWidth());
+                assertEquals(initial.getLayout().getSteps().get(index).getDescriptionWidth(), measured.getLayout().getSteps().get(index).getDescriptionWidth());
+            }
+            assertEquals(measured, strategy.calculate(new TimelineGeometryInput(config, 1, Float.MAX_VALUE, metrics)));
+        }
+    }
+
+    private void assertValid(TimelineGeometryInput input, TimelineGeometryResult result) {
+        assertTrue(Float.isFinite(result.getStartPosition()));
+        TimelineGeometryBounds bounds = result.getBounds();
+        assertTrue(Float.isFinite(bounds.getLeft()) && Float.isFinite(bounds.getTop())
+            && Float.isFinite(bounds.getRight()) && Float.isFinite(bounds.getBottom()));
+        assertTrue(bounds.getLeft() <= bounds.getRight() && bounds.getTop() <= bounds.getBottom());
+        assertEquals(input.getConfig().getSteps().size(), result.getLayout().getSteps().size());
+        Integer active = result.getLayout().getProgressStepIndex();
+        assertTrue(active == null || (active >= 0 && active < result.getLayout().getSteps().size()));
+        if (result.getLayout().getProgressIcon() != null) {
+            assertTrue(Float.isFinite(result.getLayout().getProgressIcon().getLeft()));
+            assertTrue(Float.isFinite(result.getLayout().getProgressIcon().getTop()));
+        }
+        for (int index = 0; index < result.getLayout().getSteps().size(); index++) {
+            TimelineGeometryStep step = result.getLayout().getSteps().get(index);
+            assertEquals(input.getConfig().getSteps().get(index), step.getStep());
+            assertTrue(step.getTitleWidth() > 0 && step.getDescriptionWidth() > 0);
+            assertTrue(Float.isFinite(step.getTitleX()) && Float.isFinite(step.getTitleY()));
+            assertTrue(Float.isFinite(step.getDescriptionX()) && Float.isFinite(step.getDescriptionY()));
+            assertTrue(Float.isFinite(step.getIconX()) && Float.isFinite(step.getIconY()));
+        }
+        for (List<TimelinePathCommand> commands : Arrays.asList(result.getCompleted(), result.getRemaining())) {
+            assertTrue(commands.isEmpty() || commands.get(0) instanceof TimelinePathCommand.Move);
+            for (TimelinePathCommand command : commands) assertFinite(command);
         }
     }
 

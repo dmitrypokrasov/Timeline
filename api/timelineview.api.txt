@@ -357,6 +357,10 @@ public final class com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInpu
   public static com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput copy$default(com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput, com.dmitrypokrasov.timelineview.config.TimelineMathConfig, int, float, java.util.List, int, java.lang.Object);
 }
 
+public interface com.dmitrypokrasov.timelineview.geometry.TimelineGeometryIntrinsicWidth {
+  public abstract int desiredWidth(com.dmitrypokrasov.timelineview.config.TimelineMathConfig);
+}
+
 public final class com.dmitrypokrasov.timelineview.geometry.TimelineGeometryLayout {
   public boolean equals(java.lang.Object);
   public com.dmitrypokrasov.timelineview.geometry.TimelineGeometryLayout(java.util.List<com.dmitrypokrasov.timelineview.geometry.TimelineGeometryStep>, com.dmitrypokrasov.timelineview.geometry.TimelineGeometryProgressIcon, java.lang.Integer);
@@ -449,6 +453,11 @@ public final class com.dmitrypokrasov.timelineview.geometry.TimelineGeometryStep
 
 public interface com.dmitrypokrasov.timelineview.geometry.TimelineGeometryStrategy {
   public abstract com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult calculate(com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput);
+}
+
+public final class com.dmitrypokrasov.timelineview.geometry.TimelineGeometryValidation {
+  public final void validate(com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput, com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult, com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult);
+  public static final com.dmitrypokrasov.timelineview.geometry.TimelineGeometryValidation INSTANCE;
 }
 
 public interface com.dmitrypokrasov.timelineview.geometry.TimelinePathCommand {
@@ -647,6 +656,7 @@ public final class com.dmitrypokrasov.timelineview.math.TimelineGeometryMathAdap
   public com.dmitrypokrasov.timelineview.math.data.TimelineLayout buildLayout();
   public final com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult geometryResult();
   public float getStartPosition();
+  public int getDesiredWidth();
   public void buildPath(android.graphics.Path, android.graphics.Path);
   public void setConfig(com.dmitrypokrasov.timelineview.config.TimelineMathConfig);
   public void setCornerRadius(float);
