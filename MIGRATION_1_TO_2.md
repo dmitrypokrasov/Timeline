@@ -188,9 +188,9 @@ Use `bash scripts/check-release.sh` for local source validation, and review the
 [changelog](CHANGELOG.md#212--2026-10-22).
 
 
-## Preparing 2.2.0
+## Updating from 2.1.2 to 2.2.0
 
-The next version adds opt-in [pure geometry strategies](CUSTOM_STRATEGIES.md#pure-geometry-strategies-next-release),
+Version 2.2.0 adds opt-in [pure geometry strategies](CUSTOM_STRATEGIES.md#pure-geometry-strategies-next-release),
 `TimelineGeometryMathAdapter`, lambda registry extensions and strict key resolution. Existing
 providers, direct engines and fallback resolution keep their API. No changes to existing
 implementations are required; no methods were added to the existing strategy interfaces.
@@ -201,4 +201,20 @@ The 2.1.2 progress contract is retained, including independent segment progress 
 active marker at 0%. Existing RTL, stable identity and resource lifecycle behavior remains
 covered by the original regression and screenshot suites. Test fixtures add JUnit only to
 the test capability; the main POM does not add test dependencies to consuming applications.
-Version 2.2.0 is prepared locally and in CI; this change creates no tag or publication.
+Custom geometries are validated before caching or path adaptation. Return finite coordinates,
+ordered bounds, the original step order, positive text widths and an in-range active index.
+Keep widths unchanged between the preliminary and measured text passes. Invalid output throws
+`IllegalArgumentException` identifying the field; the adapter does not silently choose a fallback.
+The layout's active index also selects the progress Lottie overlay.
+
+Intrinsic width and cache policies are optional capabilities. Existing providers keep `NONE`;
+both providers must explicitly opt in to frame reuse. Progress-only measurement reuse also
+requires stable text content, widths and row extents. Label positions are recalculated from
+the new layout even when measured heights are reused. Direct instances retain all callbacks.
+See the [strategy contracts](CUSTOM_STRATEGIES.md#explicit-frame-cache-policy) and the compiled
+external consumer for registration and scrolling examples.
+
+No host configuration rewrite is required. Android API 27, Java 8 bytecode and the Kotlin 2.4
+metadata requirement introduced in 2.1.2 are unchanged. When publication is verified, update
+the dependency to `com.github.dmitrypokrasov:timelineview:2.2.0`; keep the current stable
+dependency until then. This release preparation creates no tag or publication.
