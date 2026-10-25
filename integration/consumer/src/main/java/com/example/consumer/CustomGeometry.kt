@@ -19,6 +19,7 @@ import com.dmitrypokrasov.timelineview.geometry.TimelineTextAlignment
 import com.dmitrypokrasov.timelineview.math.TimelineGeometryMathAdapter
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.render.BaseTimelineUi
+import com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import com.dmitrypokrasov.timelineview.strategy.registerMath
 import com.dmitrypokrasov.timelineview.strategy.registerUi
@@ -53,8 +54,8 @@ fun customTimeline(context: Context): TimelineView {
     val mathKey = StrategyKey("consumer.geometry")
     val uiKey = StrategyKey("consumer.renderer")
     val registry = TimelineStrategyRegistry.createLocalRegistry().apply {
-        registerMath(mathKey) { TimelineGeometryMathAdapter(it, CustomGeometry()) }
-        registerUi(uiKey) { CustomRenderer(it) }
+        registerMath(mathKey, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { TimelineGeometryMathAdapter(it, CustomGeometry()) }
+        registerUi(uiKey, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { CustomRenderer(it) }
     }
     return TimelineView(context).apply {
         setOnClickListener {
