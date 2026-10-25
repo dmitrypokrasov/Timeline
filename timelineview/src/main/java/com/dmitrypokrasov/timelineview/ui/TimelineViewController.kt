@@ -275,7 +275,7 @@ class TimelineViewController(
         val start = timelineMath.getStartPosition()
         val targets = buildTargets(resolved, math, start, width, direction, bounds.topInset, ids)
         val candidate = TimelineFrame(resolved, blocks, math, start, width, direction, bounds.topInset, bounds.height, completed, remaining, targets)
-        lottieOverlayManager.submit(math.steps)
+        lottieOverlayManager.submit(candidate.layout.steps.map { it.step }, candidate.layout.progressStepIndex)
         virtualIds.clear()
         virtualIds.putAll(ids)
         nextVirtualId = nextId
@@ -457,7 +457,7 @@ class TimelineViewController(
     }
 
     internal fun setActive(active: Boolean) {
-        if (active) lottieOverlayManager.submit(timelineMath.getSteps())
+        if (active) frame?.let { lottieOverlayManager.submit(it.layout.steps.map { step -> step.step }, it.layout.progressStepIndex) }
         lottieOverlayManager.setActive(active)
     }
 
@@ -488,7 +488,7 @@ class TimelineViewController(
             measuredResources = null
             measuredExtents = emptyList()
         }
-        lottieOverlayManager.submit(timelineMath.getSteps())
+        lottieOverlayManager.prepare(timelineMath.getSteps())
     }
 
     private fun initTools() {

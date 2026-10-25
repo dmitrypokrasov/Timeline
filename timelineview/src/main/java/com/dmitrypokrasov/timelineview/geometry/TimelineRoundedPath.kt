@@ -25,10 +25,29 @@ object TimelineRoundedPath {
                 val incoming = hypot(b.x - a.x, b.y - a.y)
                 val outgoing = hypot(c.x - b.x, c.y - b.y)
                 val inset = minOf(radius, incoming / 2f, outgoing / 2f)
-                add(TimelinePathCommand.Line(b.x - (b.x - a.x) * inset / incoming, b.y - (b.y - a.y) * inset / incoming))
-                add(TimelinePathCommand.Quad(b.x, b.y, b.x + (c.x - b.x) * inset / outgoing, b.y + (c.y - b.y) * inset / outgoing))
+                val before = TimelineGeometryPoint(b.x - (b.x - a.x) * inset / incoming, b.y - (b.y - a.y) * inset / incoming)
+                val after = TimelineGeometryPoint(b.x + (c.x - b.x) * inset / outgoing, b.y + (c.y - b.y) * inset / outgoing)
+                val safeBefore = if (before.x.isFinite() && before.y.isFinite()) before else safeOffset(b, a, c, radius)
+                val safeAfter = if (after.x.isFinite() && after.y.isFinite()) after else safeOffset(b, c, a, radius)
+                add(TimelinePathCommand.Line(safeBefore.x, safeBefore.y))
+                add(TimelinePathCommand.Quad(b.x, b.y, safeAfter.x, safeAfter.y))
             }
             add(TimelinePathCommand.Line(vertices.last().x, vertices.last().y))
         }
+    }
+
+    /** Double используется только при переполнении, чтобы сохранить прежнее округление обычных путей. */
+    private fun safeOffset(
+        vertex: TimelineGeometryPoint,
+        neighbor: TimelineGeometryPoint,
+        other: TimelineGeometryPoint,
+        radius: Float,
+    ): TimelineGeometryPoint {
+        val dx = neighbor.x.toDouble() - vertex.x
+        val dy = neighbor.y.toDouble() - vertex.y
+        val length = hypot(dx, dy)
+        val otherLength = hypot(other.x.toDouble() - vertex.x, other.y.toDouble() - vertex.y)
+        val fraction = minOf(radius.toDouble(), length / 2, otherLength / 2) / length
+        return TimelineGeometryPoint((vertex.x + dx * fraction).toFloat(), (vertex.y + dy * fraction).toFloat())
     }
 }
