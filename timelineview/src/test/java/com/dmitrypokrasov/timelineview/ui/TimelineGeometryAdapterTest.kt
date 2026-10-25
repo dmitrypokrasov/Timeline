@@ -1,7 +1,9 @@
 package com.dmitrypokrasov.timelineview.ui
 
+import android.graphics.Paint
 import android.graphics.Path
 import android.view.View
+import com.dmitrypokrasov.timelineview.R
 import com.dmitrypokrasov.timelineview.config.StrategyKey
 import com.dmitrypokrasov.timelineview.config.TimelineConfig
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
@@ -10,7 +12,9 @@ import com.dmitrypokrasov.timelineview.config.TimelineUiConfig
 import com.dmitrypokrasov.timelineview.config.TimelineUiStrategy
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryBounds
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryInput
+import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryIntrinsicWidth
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryLayout
+import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryProgressIcon
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryResult
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryStep
 import com.dmitrypokrasov.timelineview.geometry.TimelineGeometryStrategy
@@ -18,8 +22,11 @@ import com.dmitrypokrasov.timelineview.geometry.TimelinePathCommand
 import com.dmitrypokrasov.timelineview.geometry.TimelineTextAlignment
 import com.dmitrypokrasov.timelineview.geometry.TimelineTextMetrics
 import com.dmitrypokrasov.timelineview.math.TimelineGeometryMathAdapter
+import com.dmitrypokrasov.timelineview.model.TimelineLottieSpec
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
+import com.dmitrypokrasov.timelineview.render.BaseTimelineUi
 import com.dmitrypokrasov.timelineview.render.LinearTimelineUi
+import com.dmitrypokrasov.timelineview.strategy.TimelineCachePolicy
 import com.dmitrypokrasov.timelineview.strategy.TimelineStrategyRegistry
 import com.dmitrypokrasov.timelineview.strategy.registerMath
 import com.dmitrypokrasov.timelineview.strategy.registerUi
@@ -46,6 +53,159 @@ class TimelineGeometryAdapterTest {
                 }
             TimelineGeometryResult(TimelineGeometryLayout(steps, null, null), listOf(TimelinePathCommand.Move(0f, 0f), TimelinePathCommand.Quad(0f, 10f, 20f, 20f)), emptyList(), TimelineGeometryBounds(0f, -10f, 100f, 300f), 12f)
         }
+
+    @Test
+    fun `progress reuse repositions text without measuring it again`() {
+        val context = RuntimeEnvironment.getApplication()
+        val key = StrategyKey("test.moving-text")
+        var measurements = 0
+        val registry =
+            TimelineStrategyRegistry.createLocalRegistry().apply {
+                registerMath(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { config ->
+                    TimelineGeometryMathAdapter(config) { input ->
+                        val result = geometry.calculate(input)
+                        val offset = input.config.steps.single().progress.toFloat()
+                        result.copy(layout = result.layout.copy(steps = result.layout.steps.map { it.copy(titleY = 100f + offset, descriptionY = 200f + offset) }))
+                    }
+                }
+                registerUi(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { config ->
+                    object : BaseTimelineUi(config) {
+                        override fun measureTitleHeight(
+                            title: CharSequence,
+                            maxWidth: Int,
+                            align: Paint.Align,
+                        ): Int {
+                            measurements++
+                            return super.measureTitleHeight(title, maxWidth, align)
+                        }
+                    }
+                }
+            }
+        val controller = TimelineViewController(View(context), context, null, registry)
+        val config = TimelineMathConfig(steps = listOf(TimelineStepData(title = "Title", description = "Description", progress = 1)))
+        controller.setConfig(TimelineConfig(config, TimelineUiConfig(), mathStrategyKey = key, uiStrategyKey = key))
+        val frameField = TimelineViewController::class.java.getDeclaredField("frame").apply { isAccessible = true }
+        controller.measure(320)
+        val before = (frameField.get(controller) as TimelineFrame).blocks.single()
+        val measured = measurements
+        controller.replaceSteps(config.steps.map { it.copy(progress = 99) })
+        controller.measure(320)
+        val after = (frameField.get(controller) as TimelineFrame).blocks.single()
+        assertEquals(before.titleTop + 98f, after.titleTop, 0.01f)
+        assertEquals(before.descriptionTop + 98f, after.descriptionTop, 0.01f)
+        assertEquals(before.titleHeight, after.titleHeight)
+        assertEquals(before.descriptionHeight, after.descriptionHeight)
+        assertEquals(measured, measurements)
+        controller.release()
+    }
+
+    @Test
+    fun `progress reuse restores measured metrics to custom geometry`() {
+        val context = RuntimeEnvironment.getApplication()
+        val key = StrategyKey("test.measured-reuse")
+        var lastMetrics = emptyList<TimelineTextMetrics>()
+        val registry =
+            TimelineStrategyRegistry.createLocalRegistry().apply {
+                registerMath(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { config ->
+                    TimelineGeometryMathAdapter(config) { input ->
+                        lastMetrics = input.textMetrics
+                        geometry.calculate(input)
+                    }
+                }
+                registerUi(key, TimelineCachePolicy.CONFIGURATION_WITH_PROGRESS_REUSE) { LinearTimelineUi(it) }
+            }
+        val controller = TimelineViewController(View(context), context, null, registry)
+        val config = TimelineMathConfig(steps = listOf(TimelineStepData(title = "Measured title", progress = 1)))
+        controller.setConfig(TimelineConfig(config, TimelineUiConfig(), mathStrategyKey = key, uiStrategyKey = key))
+        controller.measure(320)
+        val measured = lastMetrics
+        assertTrue(measured.single().titleHeight > 0)
+        controller.replaceSteps(config.steps.map { it.copy(progress = 99) })
+        controller.measure(320)
+        assertEquals(measured, lastMetrics)
+        controller.release()
+    }
+
+    @Test
+    fun `invalid output is retried and invalid metrics preserve cached snapshot`() {
+        val config = TimelineMathConfig(steps = listOf(TimelineStepData(progress = 1)))
+        var invalid = true
+        var attempts = 0
+        val adapter =
+            TimelineGeometryMathAdapter(config) { input ->
+                attempts++
+                geometry.calculate(input).let { if (invalid) it.copy(startPosition = Float.NaN) else it }
+            }
+        repeat(2) {
+            val failure = assertThrows(IllegalArgumentException::class.java) { adapter.geometryResult() }
+            assertTrue(failure.message!!.contains("startPosition"))
+        }
+        assertEquals(2, attempts)
+        invalid = false
+        val valid = adapter.geometryResult()
+        assertThrows(IllegalArgumentException::class.java) { adapter.setTextMetrics(listOf(TimelineTextMetrics(-1, 0))) }
+        assertThrows(IllegalArgumentException::class.java) { adapter.setTextMetrics(listOf(TimelineTextMetrics(0, -1))) }
+        assertSame(valid, adapter.geometryResult())
+    }
+
+    @Test
+    fun `text pass must retain widths and can recover after rejected result`() {
+        val config = TimelineMathConfig(steps = listOf(TimelineStepData(progress = 1)))
+        var invalid = true
+        val adapter =
+            TimelineGeometryMathAdapter(config) { input ->
+                val result = geometry.calculate(input)
+                if (input.textMetrics.isNotEmpty() && invalid) result.copy(layout = result.layout.copy(steps = result.layout.steps.map { it.copy(titleWidth = 101) })) else result
+            }
+        adapter.geometryResult()
+        adapter.setTextMetrics(listOf(TimelineTextMetrics(20, 10)))
+        val failure = assertThrows(IllegalArgumentException::class.java) { adapter.geometryResult() }
+        assertTrue(failure.message!!.contains("titleWidth"))
+        invalid = false
+        assertEquals(100, adapter.geometryResult().layout.steps.single().titleWidth)
+    }
+
+    @Test
+    fun `intrinsic width is optional and rejects negative values`() {
+        var requested = 480
+        val strategy =
+            object : TimelineGeometryStrategy, TimelineGeometryIntrinsicWidth {
+                override fun desiredWidth(config: TimelineMathConfig): Int = requested
+
+                override fun calculate(input: TimelineGeometryInput) = geometry.calculate(input)
+            }
+        val adapter = TimelineGeometryMathAdapter(TimelineMathConfig(), strategy)
+        assertEquals(480, adapter.getDesiredWidth())
+        requested = -1
+        assertThrows(IllegalArgumentException::class.java) { adapter.getDesiredWidth() }
+        assertEquals(0, TimelineGeometryMathAdapter(TimelineMathConfig(), geometry).getDesiredWidth())
+    }
+
+    @Test
+    fun `progress overlay follows custom layout instead of first incomplete step`() {
+        val context = RuntimeEnvironment.getApplication()
+        val controller = TimelineViewController(View(context), context, null)
+        val steps = List(2) { TimelineStepData(progress = 10, progressAnimation = TimelineLottieSpec(R.raw.timeline_test_animation)) }
+        val engine =
+            TimelineGeometryMathAdapter(TimelineMathConfig(steps = steps)) { input ->
+                val result = geometry.calculate(input)
+                result.copy(layout = result.layout.copy(progressIcon = TimelineGeometryProgressIcon(0f, 0f), progressStepIndex = 1))
+            }
+        controller.setMathEngine(engine)
+        controller.measure(320)
+        val managerField = TimelineViewController::class.java.getDeclaredField("lottieOverlayManager").apply { isAccessible = true }
+        val manager = managerField.get(controller) as TimelineLottieOverlayManager
+        val entriesField = TimelineLottieOverlayManager::class.java.getDeclaredField("entries").apply { isAccessible = true }
+
+        @Suppress("UNCHECKED_CAST") // Test observes occurrence identity without expanding the production API.
+        val entries = entriesField.get(manager) as Map<TimelineLottieOverlayManager.Key, Any>
+        assertEquals(setOf(TimelineLottieOverlayManager.Key(1, true)), entries.keys)
+        val entry = entries.values.single()
+        controller.replaceSteps(steps.map { it.copy(progress = 20) })
+        controller.measure(320)
+        assertSame(entry, entries.values.single())
+        controller.release()
+    }
 
     @Test
     fun `layout paths bounds share cache and changes invalidate it`() {

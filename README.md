@@ -25,7 +25,8 @@ See [CHANGELOG.md](CHANGELOG.md) for behavior changes and migration instructions
 
 To verify the source checkout locally, run `bash scripts/check-release.sh`. It stages a
 local build in `build/repository` and compiles/tests independent consumers against that exact
-version. No tag or publication is created. See [the 2.1.2 migration notes](MIGRATION_1_TO_2.md#updating-from-211-to-212).
+version. No tag or publication is created. See [the 2.1.2 migration notes](MIGRATION_1_TO_2.md#updating-from-211-to-212)
+and [the 2.2.0 upgrade notes](MIGRATION_1_TO_2.md#updating-from-212-to-220) for the release candidate.
 
 Documentation: [migration 1.1 → 2.0](MIGRATION_1_TO_2.md), [architecture](ARCHITECTURE.md),
 [custom strategies](CUSTOM_STRATEGIES.md), and [release process](RELEASING.md).

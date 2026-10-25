@@ -54,4 +54,24 @@ class TimelineViewStrategyController(
             ui = explicitUi ?: resolver.resolveUi(uiStrategyKey, fallbackUi, uiConfig),
         )
     }
+
+    /** Политика снимается одновременно с созданием экземпляров, без повторного обращения к registry. */
+    internal fun resolveWithPolicy(
+        mathStrategyKey: StrategyKey?,
+        uiStrategyKey: StrategyKey?,
+        fallbackMath: TimelineMathStrategy,
+        fallbackUi: TimelineUiStrategy,
+        explicitMath: com.dmitrypokrasov.timelineview.math.TimelineMathEngine?,
+        explicitUi: com.dmitrypokrasov.timelineview.render.TimelineUiRenderer?,
+        mathConfig: TimelineMathConfig,
+        uiConfig: TimelineUiConfig,
+    ): TimelineResolvedStrategies {
+        val math =
+            explicitMath?.let { TimelineResolvedStrategy(it, TimelineCachePolicy.NONE) }
+                ?: resolver.resolveMathWithPolicy(mathStrategyKey, fallbackMath, mathConfig)
+        val ui =
+            explicitUi?.let { TimelineResolvedStrategy(it, TimelineCachePolicy.NONE) }
+                ?: resolver.resolveUiWithPolicy(uiStrategyKey, fallbackUi, uiConfig)
+        return TimelineResolvedStrategies(math.instance, ui.instance, minOf(math.policy, ui.policy))
+    }
 }

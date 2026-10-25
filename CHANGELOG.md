@@ -1,13 +1,41 @@
 # Changelog
 
-## 2.2.0 — Unreleased
+## 2.2.0 — 2026-10-25
 
-- Add pure geometry models, a cached Android adapter and a shared rounded-path helper.
-- Add lambda registrations and optional strict strategy resolution with atomic View switching.
-- Publish reusable geometry test fixtures and exercise an external strategy/renderer after R8.
-- Execute the release consumer unit suite explicitly and preserve Maven bytes on Windows checkouts.
-- Run API 34 device smoke checks on pull requests and report unit-test coverage without a global threshold.
-- Preserve 2.1.2 progress semantics, RTL, lifecycle behavior and previously published artifacts.
+### Custom strategies
+
+- Add Android-independent geometry models, `TimelineGeometryStrategy` and the cached
+  `TimelineGeometryMathAdapter`, with shared rounded-path construction and native path sampling.
+- Validate geometry before caching or drawing: step identity/order, finite coordinates,
+  ordered bounds, positive text widths, valid progress indices and consistent text passes.
+  Invalid results throw `IllegalArgumentException` naming the field and are not cached.
+- Add optional `TimelineGeometryIntrinsicWidth` for custom layouts in scrolling containers.
+- Add lambda registry extensions and optional strict key resolution. Failed resolution or
+  initialization preserves the installed strategy pair; existing fallback remains the default.
+- Add explicit provider cache policies for frame and progress-only text measurement reuse.
+  Both providers must opt in; existing providers and directly installed instances retain
+  their full callbacks. Reused text heights are positioned against the current geometry.
+- Supply reusable geometry contract test fixtures and an external math/renderer example
+  using a local registry, intrinsic width and switching back to built-in strategies after R8.
+
+### Fixes and architecture
+
+- Select the progress Lottie overlay from the calculated layout's active step, preserving
+  playback identity even when a custom strategy selects another unfinished step.
+- Avoid rounded-path Float overflow for finite large coordinates through a Double fallback;
+  retain existing commands and visual results for ordinary coordinates.
+- Extract pure built-in coordinate helpers and a frame calculator; share the committed
+  layout between drawing, measurement, interaction and accessibility.
+
+### Verification and compatibility
+
+- Require Windows wrapper/Python checks and byte-for-byte comparison of tracked Maven files.
+- Require a nonempty, successful external geometry contract suite in publication rehearsal.
+- Reuse the API 34 device job for benchmark smoke; retain API 27/34 release verification
+  and unit-test coverage reporting without a global numerical threshold.
+- Preserve existing 2.x APIs, API 27 minimum, RTL, independent progress, marker visibility
+  at 0%, built-in screenshot baselines and previously published artifacts. Kotlin consumer
+  requirements remain those of 2.1.2; see the [upgrade notes](MIGRATION_1_TO_2.md#updating-from-212-to-220).
 
 ## 2.1.2 — 2026-10-22
 

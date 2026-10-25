@@ -43,7 +43,7 @@ the harness, not statistical stability; use the default five or more for compari
 
 The smoke run uses one 100-event animated case and one measured iteration. Only the emulator
 warning is suppressed; profileability/debuggability validation remains active. CI runs this
-diagnostic on benchmark changes, weekly and manually. Emulator timings are not performance
+harness smoke in the existing API-34 quality emulator on PRs. Separate diagnostics run weekly and manually. Emulator timings are not performance
 budgets: collect repeated physical-device baselines before defining regression thresholds.
 Ordinary API-27 migration/instrumentation checks do not include this opt-in module.
 
@@ -53,3 +53,8 @@ measurement, clipped drawing, progress-only replacement and full title replaceme
 they do not replace the physical-device frame and memory comparison above.
 
 Setup follows the Android [Macrobenchmark guide](https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview).
+
+The library instrumentation APK targets API 34 (independently of library minSdk), avoiding
+a legacy-target warning dialog over subsequent suites. The reused CI emulator stays awake for benchmark smoke. Setup dismisses keyguard before
+launching the target; a missing scroll container fails with the current package and UI
+hierarchy attached to the assertion, so device-state failures remain diagnosable.

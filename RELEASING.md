@@ -1,6 +1,7 @@
 # Releasing Timeline
 
-The checkout matches published **2.1.2**. Local verification never publishes. Publishing
+The checkout prepares the unpublished **2.2.0** release; the latest published version is **2.1.2**.
+Local verification never publishes. Publishing
 requires explicitly dispatching **Publish tested release** for an existing stable tag.
 The workflow builds/tests that tag and publishes the exact staged Maven bytes it tested.
 
@@ -57,9 +58,9 @@ checked MR. Never retag or replace an already published version.
   verification includes diagnostic performance runs (informational timings, not frame-rate thresholds).
 
 Create and push the release tag only after reviewing the change. For example, after committing
-version 2.1.2: `git tag -a v2.1.2 -m "Timeline 2.1.2"`, then `git push origin v2.1.2`.
+version 2.2.0: `git tag -a v2.2.0 -m "Timeline 2.2.0"`, then `git push origin v2.2.0`.
 A tag push verifies the release but does not publish it. Dispatch **Publish tested release**
-from a trusted branch containing this workflow and provide `v2.1.2`.
+from a trusted branch containing this workflow and provide `v2.2.0`.
 
 For future releases, finalize the changelog date/status on the release branch before tagging
 and review consumer requirements in the migration notes. After successful public verification,
@@ -171,7 +172,7 @@ from `dev` only when preparing the actual release. Do not tag or publish during 
 2. Run the quality workflow manually for the candidate branch to include both device APIs
    and diagnostics. Require its aggregate status to succeed before approving a release.
 3. For a local device run, use `./integration/consumer/gradlew -p integration/consumer connectedReleaseAndroidTest
-   -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.1.2` after staging.
+   -PtimelineRepository="$PWD/build/repository" -PtimelineVersion=2.2.0` after staging.
    The release consumer uses a debug signing key solely to install the test APK.
 4. Confirm the repository's actual Pages source, environment rules and protected-branch
    checks using the repository settings. A successful local build cannot confirm these.
@@ -181,3 +182,12 @@ from `dev` only when preparing the actual release. Do not tag or publish during 
 
 Consumer runtime tests address the minified app only through Android framework APIs;
 they do not add keep-all rules that would hide missing library consumer rules.
+
+## Cross-platform verification
+
+The required Windows job runs wrapper and Python checks with `core.autocrlf=true` and
+compares every tracked `docs/maven` file directly with its Git blob. It is offline and
+never treats a checkout as a substitute for published-release provenance verification.
+The package rehearsal requires a nonempty, successful external geometry contract XML
+suite from `testReleaseUnitTest`, preventing an omitted or fully skipped suite from passing.
+API 34 reuses the main device job for benchmark harness smoke; timings remain diagnostic.

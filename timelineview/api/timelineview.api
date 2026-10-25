@@ -357,6 +357,10 @@ public final class com/dmitrypokrasov/timelineview/geometry/TimelineGeometryInpu
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class com/dmitrypokrasov/timelineview/geometry/TimelineGeometryIntrinsicWidth {
+	public abstract fun desiredWidth (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)I
+}
+
 public final class com/dmitrypokrasov/timelineview/geometry/TimelineGeometryLayout {
 	public fun <init> (Ljava/util/List;Lcom/dmitrypokrasov/timelineview/geometry/TimelineGeometryProgressIcon;Ljava/lang/Integer;)V
 	public final fun component1 ()Ljava/util/List;
@@ -643,6 +647,7 @@ public final class com/dmitrypokrasov/timelineview/math/TimelineGeometryMathAdap
 	public fun buildLayout ()Lcom/dmitrypokrasov/timelineview/math/data/TimelineLayout;
 	public fun buildPath (Landroid/graphics/Path;Landroid/graphics/Path;)V
 	public final fun geometryResult ()Lcom/dmitrypokrasov/timelineview/geometry/TimelineGeometryResult;
+	public fun getDesiredWidth ()I
 	public fun getGeometryBounds ()Lcom/dmitrypokrasov/timelineview/geometry/TimelineGeometryBounds;
 	public fun getHasRoundedGeometry ()Z
 	public fun getStartPosition ()F
@@ -923,6 +928,19 @@ public final class com/dmitrypokrasov/timelineview/render/TimelineUiRenderer$Def
 	public static fun setGeometryRounded (Lcom/dmitrypokrasov/timelineview/render/TimelineUiRenderer;Z)V
 }
 
+public final class com/dmitrypokrasov/timelineview/strategy/TimelineCachePolicy : java/lang/Enum {
+	public static final field CONFIGURATION Lcom/dmitrypokrasov/timelineview/strategy/TimelineCachePolicy;
+	public static final field CONFIGURATION_WITH_PROGRESS_REUSE Lcom/dmitrypokrasov/timelineview/strategy/TimelineCachePolicy;
+	public static final field NONE Lcom/dmitrypokrasov/timelineview/strategy/TimelineCachePolicy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/dmitrypokrasov/timelineview/strategy/TimelineCachePolicy;
+	public static fun values ()[Lcom/dmitrypokrasov/timelineview/strategy/TimelineCachePolicy;
+}
+
+public abstract interface class com/dmitrypokrasov/timelineview/strategy/TimelineCachePolicyProvider {
+	public abstract fun getCachePolicy ()Lcom/dmitrypokrasov/timelineview/strategy/TimelineCachePolicy;
+}
+
 public abstract interface class com/dmitrypokrasov/timelineview/strategy/TimelineMathProvider {
 	public abstract fun create (Lcom/dmitrypokrasov/timelineview/config/TimelineMathConfig;)Lcom/dmitrypokrasov/timelineview/math/TimelineMathEngine;
 	public abstract fun getKey-RZ6gGB0 ()Ljava/lang/String;
@@ -930,7 +948,9 @@ public abstract interface class com/dmitrypokrasov/timelineview/strategy/Timelin
 
 public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistrationKt {
 	public static final fun registerMath-snggAAM (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public static final fun registerMath-yPPq-pw (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/strategy/TimelineCachePolicy;Lkotlin/jvm/functions/Function1;)V
 	public static final fun registerUi-snggAAM (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public static final fun registerUi-yPPq-pw (Lcom/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract;Ljava/lang/String;Lcom/dmitrypokrasov/timelineview/strategy/TimelineCachePolicy;Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistry : com/dmitrypokrasov/timelineview/strategy/TimelineStrategyRegistryContract {

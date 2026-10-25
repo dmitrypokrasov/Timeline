@@ -3,11 +3,13 @@ package com.dmitrypokrasov.timelineview.math
 import android.graphics.Paint
 import android.graphics.Path
 import com.dmitrypokrasov.timelineview.config.TimelineMathConfig
+import com.dmitrypokrasov.timelineview.geometry.TimelineSnakeCoordinates
 import com.dmitrypokrasov.timelineview.math.data.TimelineLayout
-import com.dmitrypokrasov.timelineview.math.data.TimelineLayoutStep
 import com.dmitrypokrasov.timelineview.math.data.TimelineProgressIcon
 import com.dmitrypokrasov.timelineview.model.TimelineStepData
 import com.dmitrypokrasov.timelineview.model.indexOfStep
+import com.dmitrypokrasov.timelineview.render.toAndroid
+import com.dmitrypokrasov.timelineview.render.toGeometry
 
 /** Serpentine rows whose paths, progress and badges share the same measured geometry. */
 class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMathEngine, TimelineTextBoundary {
@@ -26,15 +28,19 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
         require(radius.isFinite() && radius >= 0f)
         cornerRadius = radius
         geometry = null
+        cachedCoordinates = null
     }
 
     private var width = 0
     private var origin = 0f
     private var rowOffsets = floatArrayOf()
+    private var cachedCoordinates: TimelineSnakeCoordinates? = null
+    private val coordinates get() = cachedCoordinates ?: TimelineSnakeCoordinates(mathConfig, width, rowOffsets).also { cachedCoordinates = it }
 
     override fun setConfig(config: TimelineMathConfig) {
         mathConfig = config.copy(steps = config.steps.toList())
         geometry = null
+        cachedCoordinates = null
         rowOffsets = floatArrayOf()
     }
 
@@ -43,48 +49,33 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
     override fun replaceSteps(steps: List<TimelineStepData>) {
         mathConfig = mathConfig.copy(steps = steps.toList())
         geometry = null
+        cachedCoordinates = null
         rowOffsets = floatArrayOf()
     }
 
     override fun setStepExtents(extents: List<Float>) {
         require(extents.all { it.isFinite() && it >= 0f }) { "Row extents must be finite and non-negative" }
         geometry = null
+        cachedCoordinates = null
         rowOffsets = FloatArray(extents.size + 1)
         extents.forEachIndexed { index, extent -> rowOffsets[index + 1] = rowOffsets[index] + extent }
     }
 
     override fun setMeasuredWidth(measuredWidth: Int) {
         geometry = null
+        cachedCoordinates = null
         width = measuredWidth.coerceAtLeast(0)
-        origin =
-            when (mathConfig.startPosition) {
-                TimelineMathConfig.StartPosition.START -> edge()
-                TimelineMathConfig.StartPosition.CENTER -> width / 2f
-                TimelineMathConfig.StartPosition.END -> width - edge()
-            }
+        cachedCoordinates = null
+        origin = coordinates.origin
     }
 
     override fun getStartPosition(): Float = origin
 
     override fun getSteps(): List<TimelineStepData> = mathConfig.steps
 
-    private fun edge(): Float = mathConfig.spacing.marginHorizontalStroke.coerceAtMost(width / 2f)
+    private fun rowTop(index: Int): Float = coordinates.rowTop(index)
 
-    private fun rowTop(index: Int): Float =
-        mathConfig.spacing.stepYFirst +
-            (rowOffsets.getOrNull(index) ?: (mathConfig.spacing.stepY * index))
-
-    private fun anchor(index: Int): TimelinePoint =
-        TimelinePoint(
-            (if (index % 2 == 0) edge() else width - edge()) - origin,
-            rowTop(index) + mathConfig.spacing.stepY / 2f,
-        )
-
-    private fun segment(index: Int): List<TimelinePoint> {
-        val end = anchor(index)
-        val start = if (index == 0) TimelinePoint(0f, 0f) else anchor(index - 1)
-        return listOf(start, TimelinePoint(start.x, rowTop(index)), TimelinePoint(end.x, rowTop(index)), end)
-    }
+    private fun segment(index: Int): List<TimelinePoint> = coordinates.segment(index).map { TimelinePoint(it.x, it.y) }
 
     private fun segments(): List<TimelinePathGeometry> =
         geometry ?: mathConfig.steps.indices.map {
@@ -110,40 +101,20 @@ class SnakeTimelineMath(private var mathConfig: TimelineMathConfig) : TimelineMa
     override fun getTopCoordinates(step: TimelineStepData): Float =
         getVerticalOffset(mathConfig.steps.indexOfStep(step))
 
-    override fun getIconXCoordinates(align: Paint.Align): Float =
-        when (align) {
-            Paint.Align.LEFT -> mathConfig.spacing.marginHorizontalImage - origin
-            Paint.Align.RIGHT -> width - mathConfig.spacing.marginHorizontalImage - mathConfig.sizes.sizeImageLvl - origin
-            Paint.Align.CENTER -> width / 2f - mathConfig.sizes.sizeImageLvl / 2f - origin
-        }
+    override fun getIconXCoordinates(align: Paint.Align): Float = coordinates.iconX(align.toGeometry())
 
-    override fun getTitleXCoordinates(align: Paint.Align): Float =
-        when (align) {
-            Paint.Align.LEFT -> mathConfig.spacing.marginHorizontalText.coerceAtMost(width.toFloat()) - origin
-            Paint.Align.RIGHT -> width - mathConfig.spacing.marginHorizontalText.coerceAtMost(width.toFloat()) - origin
-            Paint.Align.CENTER -> width / 2f - origin
-        }
+    override fun getTitleXCoordinates(align: Paint.Align): Float = coordinates.titleX(align.toGeometry())
 
-    override fun getIconYCoordinates(i: Int): Float = anchor(i).y - mathConfig.sizes.sizeImageLvl / 2f
+    override fun getIconYCoordinates(i: Int): Float = coordinates.iconY(i)
 
-    override fun getTitleYCoordinates(i: Int): Float = rowTop(i) + mathConfig.spacing.marginTopTitle
+    override fun getTitleYCoordinates(i: Int): Float = coordinates.titleY(i)
 
     override fun getTextTopBoundary(index: Int): Float = rowTop(index)
 
-    override fun getDescriptionYCoordinates(i: Int): Float = getTitleYCoordinates(i) + mathConfig.spacing.marginTopDescription
+    override fun getDescriptionYCoordinates(i: Int): Float = coordinates.descriptionY(i)
 
     override fun buildLayout(): TimelineLayout {
-        val steps =
-            mathConfig.steps.mapIndexed { index, step ->
-                val align = if (index % 2 == 0) Paint.Align.LEFT else Paint.Align.RIGHT
-                val x = getTitleXCoordinates(align)
-                val textWidth = TimelineTextWidthResolver.resolve(width, origin, x, align)
-                TimelineLayoutStep(
-                    step, x, getTitleYCoordinates(index), textWidth,
-                    x, getDescriptionYCoordinates(index), textWidth,
-                    getIconXCoordinates(align), getIconYCoordinates(index), align,
-                )
-            }
+        val steps = coordinates.layout().toAndroid().steps
         val active = mathConfig.steps.indexOfFirst { it.progress < 100 }.takeIf { it >= 0 }
         return TimelineLayout(
             steps,

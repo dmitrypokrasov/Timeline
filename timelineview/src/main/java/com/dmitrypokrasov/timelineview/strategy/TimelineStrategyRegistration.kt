@@ -10,9 +10,17 @@ import com.dmitrypokrasov.timelineview.render.TimelineUiRenderer
 fun TimelineStrategyRegistryContract.registerMath(
     key: StrategyKey,
     factory: (TimelineMathConfig) -> TimelineMathEngine,
+) = registerMath(key, TimelineCachePolicy.NONE, factory)
+
+/** Регистрирует math с явными гарантиями детерминизма и повторного использования текста. */
+fun TimelineStrategyRegistryContract.registerMath(
+    key: StrategyKey,
+    policy: TimelineCachePolicy,
+    factory: (TimelineMathConfig) -> TimelineMathEngine,
 ) {
     registerMath(
-        object : TimelineMathProvider {
+        object : TimelineMathProvider, TimelineCachePolicyProvider {
+            override val cachePolicy = policy
             override val key: StrategyKey = key
 
             override fun create(config: TimelineMathConfig): TimelineMathEngine = factory(config)
@@ -24,9 +32,17 @@ fun TimelineStrategyRegistryContract.registerMath(
 fun TimelineStrategyRegistryContract.registerUi(
     key: StrategyKey,
     factory: (TimelineUiConfig) -> TimelineUiRenderer,
+) = registerUi(key, TimelineCachePolicy.NONE, factory)
+
+/** Регистрирует renderer с явным согласием на кэширование рассчитанного frame. */
+fun TimelineStrategyRegistryContract.registerUi(
+    key: StrategyKey,
+    policy: TimelineCachePolicy,
+    factory: (TimelineUiConfig) -> TimelineUiRenderer,
 ) {
     registerUi(
-        object : TimelineUiProvider {
+        object : TimelineUiProvider, TimelineCachePolicyProvider {
+            override val cachePolicy = policy
             override val key: StrategyKey = key
 
             override fun create(config: TimelineUiConfig): TimelineUiRenderer = factory(config)
