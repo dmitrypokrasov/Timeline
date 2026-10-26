@@ -1,0 +1,210 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.github.dmitrypokrasov",
+    "module": "timelineview",
+    "version": "2.2.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.8.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.4.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "timelineview-2.2.0.aar",
+          "url": "timelineview-2.2.0.aar",
+          "size": 315740,
+          "sha512": "6da2e5d8d86a30159eaacd1d485bff3add37db5a7e46b031940f1ec6d4bb7283a585d15a41715663c04e49c10fb6a03402d24b6f8f70bbb5dfec8e7ea723300d",
+          "sha256": "109b457b14f219c205ffaa7393986c48b9f04abd96c842d88d57bfa2fb812fb7",
+          "sha1": "31b434a3f3b697ab9aedda4e333794b9d9159bca",
+          "md5": "ac8d34123f1a10560dd70553f4112749"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "androidx.core",
+          "module": "core-ktx",
+          "version": {
+            "requires": "1.13.1"
+          }
+        },
+        {
+          "group": "androidx.appcompat",
+          "module": "appcompat",
+          "version": {
+            "requires": "1.7.0"
+          }
+        },
+        {
+          "group": "androidx.customview",
+          "module": "customview",
+          "version": {
+            "requires": "1.2.0"
+          }
+        },
+        {
+          "group": "com.airbnb.android",
+          "module": "lottie",
+          "version": {
+            "requires": "6.7.1"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.4.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "timelineview-2.2.0.aar",
+          "url": "timelineview-2.2.0.aar",
+          "size": 315740,
+          "sha512": "6da2e5d8d86a30159eaacd1d485bff3add37db5a7e46b031940f1ec6d4bb7283a585d15a41715663c04e49c10fb6a03402d24b6f8f70bbb5dfec8e7ea723300d",
+          "sha256": "109b457b14f219c205ffaa7393986c48b9f04abd96c842d88d57bfa2fb812fb7",
+          "sha1": "31b434a3f3b697ab9aedda4e333794b9d9159bca",
+          "md5": "ac8d34123f1a10560dd70553f4112749"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseSourcePublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "timelineview-2.2.0-sources.jar",
+          "url": "timelineview-2.2.0-sources.jar",
+          "size": 74523,
+          "sha512": "1f6021b325c31011124e4d640e36f452c3500a2468a61b765c3d40f098a2951ceb2422b783d587d513946a07fc518f1feba2aeee88aa68574248e2cd1b2169be",
+          "sha256": "f51ff13c0ab3000155a7835cee13c2b95aaa7d98a6ec846e5e9d6a9a6f26667e",
+          "sha1": "829e65688725a14f90ecdb69f5df93ed4e751e33",
+          "md5": "68c253cb97a61d086807df8669024913"
+        }
+      ]
+    },
+    {
+      "name": "releaseTestFixturesVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.dmitrypokrasov",
+          "module": "timelineview",
+          "version": {
+            "requires": "2.2.0"
+          }
+        },
+        {
+          "group": "junit",
+          "module": "junit",
+          "version": {
+            "requires": "4.13.2"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "timelineview-2.2.0-test-fixtures.aar",
+          "url": "timelineview-2.2.0-test-fixtures.aar",
+          "size": 5352,
+          "sha512": "1eca6a5dc44c8b413666db03a3ed32e5943fd32679a31d90d6a8eef587fd5402984ff3bac31575ff6ddf3a1fead3c95f73715a4b8e0380bf7fe542d6d23384cc",
+          "sha256": "ffc05f5a5e388f859f4ef472d200557176e0d314950f60571428e955deec2d93",
+          "sha1": "4813828d02dbd42c996344f9aeabe1c89692f6d9",
+          "md5": "9de08541e5097737849eb7a05d2d2a57"
+        }
+      ],
+      "capabilities": [
+        {
+          "group": "com.github.dmitrypokrasov",
+          "name": "timelineview-test-fixtures",
+          "version": "2.2.0"
+        }
+      ]
+    },
+    {
+      "name": "releaseTestFixturesVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.github.dmitrypokrasov",
+          "module": "timelineview",
+          "version": {
+            "requires": "2.2.0"
+          }
+        },
+        {
+          "group": "junit",
+          "module": "junit",
+          "version": {
+            "requires": "4.13.2"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "timelineview-2.2.0-test-fixtures.aar",
+          "url": "timelineview-2.2.0-test-fixtures.aar",
+          "size": 5352,
+          "sha512": "1eca6a5dc44c8b413666db03a3ed32e5943fd32679a31d90d6a8eef587fd5402984ff3bac31575ff6ddf3a1fead3c95f73715a4b8e0380bf7fe542d6d23384cc",
+          "sha256": "ffc05f5a5e388f859f4ef472d200557176e0d314950f60571428e955deec2d93",
+          "sha1": "4813828d02dbd42c996344f9aeabe1c89692f6d9",
+          "md5": "9de08541e5097737849eb7a05d2d2a57"
+        }
+      ],
+      "capabilities": [
+        {
+          "group": "com.github.dmitrypokrasov",
+          "name": "timelineview-test-fixtures",
+          "version": "2.2.0"
+        }
+      ]
+    }
+  ]
+}

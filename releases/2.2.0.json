@@ -1,0 +1,31 @@
+{
+  "commit": "bc5409cacd98a30b8a20c99338560b0b37fc6d14",
+  "files": {
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-sources.jar": "f51ff13c0ab3000155a7835cee13c2b95aaa7d98a6ec846e5e9d6a9a6f26667e",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-sources.jar.md5": "b30d3b48c7691b4a90bda82aeb8f6717da6f0f3ca3d9b050f1bf847e26383f31",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-sources.jar.sha1": "0331953be4301c14185e50a776a289ec1dc67c9c8dae43bc4d4b8f4b7faf94ac",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-sources.jar.sha256": "2f206197c42a2c8fe4297acabbe927ca3e6bcafc58182ef7ac828ad676c7bd40",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-sources.jar.sha512": "a4eb139a194f6578171a8e2a87ff0b942deeddab255f29d0758e3ba92b35e2a3",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-test-fixtures.aar": "ffc05f5a5e388f859f4ef472d200557176e0d314950f60571428e955deec2d93",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-test-fixtures.aar.md5": "d71f817d9cbaf64e637b7c7d45a53302bb107c8cd4da360a01489daca22c2c46",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-test-fixtures.aar.sha1": "3cefce7cd98233302e02bbe0423e9c1aba07b82faa9f38f1b8e4556b21c3d0e1",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-test-fixtures.aar.sha256": "e012afb74b47c51ab56aa1f615f8616846859b7b270814cc555632ac26dd2895",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0-test-fixtures.aar.sha512": "add6c88088419e11c69aa51cf13813e7f89cc2710cee3452216efc3e40a784ff",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.aar": "109b457b14f219c205ffaa7393986c48b9f04abd96c842d88d57bfa2fb812fb7",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.aar.md5": "4740f46e9ad306469e8e4d4eb8afcfdf94e62de1920db7b142c54036634213d4",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.aar.sha1": "1177f02cdc71327ac3a99ac6e4060ac6326f6b14334f7f0648879c239446c8c1",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.aar.sha256": "fd3e1776a8435aeb654ab9e9679f2ecedb2ba82990ad0c7bdfec915448d42942",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.aar.sha512": "eed377845b0b1162f2330a3ec656986fa74c2da0ade997364e1225c7b7bc9fc8",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.module": "add3a42bcf39f18fa19f3a6e5b885b4c36bbca66311d5902d345976d8b1fd5c5",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.module.md5": "493c798913d249b636b7325a4167204d6b84b4d6daebed95725165af1cfe86e4",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.module.sha1": "72be6beb9a162181a2fbdd11edab0123fd4a99019af957386ae8458e013d0dc6",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.module.sha256": "e68c726904aecbea335433df6e6c4919f770fa489603edb165386211d4255f2f",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.module.sha512": "580a6ef991a32cdedc9843b55db69750b4c92cb76e49b8a36c992ef36285cd9a",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.pom": "0601beca081d93dde06961ba18cf8e9c632da0c00b79bf0a6a77c7c1820e8bb9",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.pom.md5": "ba697951bfe27dee4be4436a3b7ddf745b0969f43cfebe4b5f52eaaef3b92d93",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.pom.sha1": "3af46a672c20454f3fbd46ca5a6bda7cedb445ff54ee006800a6ba2379df7779",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.pom.sha256": "f0e15c706d347b38cb912087f785387c0f6a809c05df1712ff046d43281d5567",
+    "com/github/dmitrypokrasov/timelineview/2.2.0/timelineview-2.2.0.pom.sha512": "995253117e13cd613c00b0cbcae51392e52cc038e2ff6981fb0d1298ed7e35f1"
+  },
+  "version": "2.2.0"
+}

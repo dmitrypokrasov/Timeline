@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>com.dmitrypokrasov.timelineview.geometry</title>
+    <link href="../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../index.html" tabindex="1">
+                    timelineview
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+2.2.0        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":timelineview/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":timelineview/main"
+                                       data-filter=":timelineview/main"/>
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    timelineview
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="package" id="content" pageIds="timelineview::com.dmitrypokrasov.timelineview.geometry////PointingToDeclaration//1761984387">
+  <div class="breadcrumbs"><a href="../../index.html">timelineview</a><span class="delimiter">/</span><span class="current">com.dmitrypokrasov.timelineview.geometry</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="558444781%2FClasslikes%2F1761984387" anchor-label="TimelineGeometryBounds" id="558444781%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-geometry-bounds/index.html"><span>Timeline</span><wbr></wbr><span>Geometry</span><wbr></wbr><span><span>Bounds</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="558444781%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-timeline-geometry-bounds/index.html">TimelineGeometryBounds</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>left<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>top<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>right<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>bottom<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Границы содержимого в локальных пикселях, включая путь и иконки.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1097536586%2FClasslikes%2F1761984387" anchor-label="TimelineGeometryInput" id="-1097536586%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-geometry-input/index.html"><span>Timeline</span><wbr></wbr><span>Geometry</span><wbr></wbr><span><span>Input</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1097536586%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-timeline-geometry-input/index.html">TimelineGeometryInput</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>config<span class="token operator">: </span><a href="../com.dmitrypokrasov.timelineview.config/-timeline-math-config/index.html">TimelineMathConfig</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>width<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>cornerRadius<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>textMetrics<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="-timeline-text-metrics/index.html">TimelineTextMetrics</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptyList()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Вход геометрии в пикселях. Пустые textMetrics означают предварительный проход для определения ширин.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="680473697%2FClasslikes%2F1761984387" anchor-label="TimelineGeometryIntrinsicWidth" id="680473697%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-geometry-intrinsic-width/index.html"><span>Timeline</span><wbr></wbr><span>Geometry</span><wbr></wbr><span>Intrinsic</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="680473697%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">fun </span><span class="token keyword">interface </span><a href="-timeline-geometry-intrinsic-width/index.html">TimelineGeometryIntrinsicWidth</a></div><div class="brief "><p class="paragraph">Необязательная ширина содержимого в пикселях для измерения без ограничения родителя.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1329310232%2FClasslikes%2F1761984387" anchor-label="TimelineGeometryLayout" id="1329310232%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-geometry-layout/index.html"><span>Timeline</span><wbr></wbr><span>Geometry</span><wbr></wbr><span><span>Layout</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1329310232%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-timeline-geometry-layout/index.html">TimelineGeometryLayout</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>steps<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="-timeline-geometry-step/index.html">TimelineGeometryStep</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>progressIcon<span class="token operator">: </span><a href="-timeline-geometry-progress-icon/index.html">TimelineGeometryProgressIcon</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>progressStepIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Снимок геометрии: список шагов, активная иконка и индекс её шага.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-978397008%2FClasslikes%2F1761984387" anchor-label="TimelineGeometryPoint" id="-978397008%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-geometry-point/index.html"><span>Timeline</span><wbr></wbr><span>Geometry</span><wbr></wbr><span><span>Point</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-978397008%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-timeline-geometry-point/index.html">TimelineGeometryPoint</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>x<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>y<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Точка чистого алгоритма; координаты заданы в локальных пикселях.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1799657540%2FClasslikes%2F1761984387" anchor-label="TimelineGeometryProgressIcon" id="-1799657540%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-geometry-progress-icon/index.html"><span>Timeline</span><wbr></wbr><span>Geometry</span><wbr></wbr><span>Progress</span><wbr></wbr><span><span>Icon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1799657540%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-timeline-geometry-progress-icon/index.html">TimelineGeometryProgressIcon</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>left<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>top<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Левый верхний угол активной иконки в локальных пикселях.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2022720645%2FClasslikes%2F1761984387" anchor-label="TimelineGeometryResult" id="2022720645%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-geometry-result/index.html"><span>Timeline</span><wbr></wbr><span>Geometry</span><wbr></wbr><span><span>Result</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2022720645%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-timeline-geometry-result/index.html">TimelineGeometryResult</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>layout<span class="token operator">: </span><a href="-timeline-geometry-layout/index.html">TimelineGeometryLayout</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>completed<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="-timeline-path-command/index.html">TimelinePathCommand</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>remaining<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="-timeline-path-command/index.html">TimelinePathCommand</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>bounds<span class="token operator">: </span><a href="-timeline-geometry-bounds/index.html">TimelineGeometryBounds</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>startPosition<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span><span class="token constant">0.0f</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Единый снимок layout, команд пути и границ в локальных координатах до startPosition и padding.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1424775414%2FClasslikes%2F1761984387" anchor-label="TimelineGeometryStep" id="1424775414%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-geometry-step/index.html"><span>Timeline</span><wbr></wbr><span>Geometry</span><wbr></wbr><span><span>Step</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1424775414%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-timeline-geometry-step/index.html">TimelineGeometryStep</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>step<span class="token operator">: </span><a href="../com.dmitrypokrasov.timelineview.model/-timeline-step-data/index.html">TimelineStepData</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>titleX<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>titleY<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>titleWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>descriptionX<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>descriptionY<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>descriptionWidth<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>iconX<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>iconY<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>textAlign<span class="token operator">: </span><a href="-timeline-text-alignment/index.html">TimelineTextAlignment</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Размещение шага в локальных пикселях. titleY и descriptionY задают baseline; ширины положительны.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-626457169%2FClasslikes%2F1761984387" anchor-label="TimelineGeometryStrategy" id="-626457169%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-geometry-strategy/index.html"><span>Timeline</span><wbr></wbr><span>Geometry</span><wbr></wbr><span><span>Strategy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-626457169%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">fun </span><span class="token keyword">interface </span><a href="-timeline-geometry-strategy/index.html">TimelineGeometryStrategy</a></div><div class="brief "><p class="paragraph">Рассчитывает геометрию без Android и не изменяет входные данные. Повторный вызов с тем же входом должен возвращать равный результат. Предварительный и текстовый проходы сохраняют порядок шагов и ширины текстовых блоков.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1889736136%2FClasslikes%2F1761984387" anchor-label="TimelinePathCommand" id="1889736136%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-path-command/index.html"><span>Timeline</span><wbr></wbr><span>Path</span><wbr></wbr><span><span>Command</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1889736136%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">sealed </span><span class="token keyword">interface </span><a href="-timeline-path-command/index.html">TimelinePathCommand</a></div><div class="brief "><p class="paragraph">Команды пути в локальных пикселях; Android Path создаёт адаптер UI.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1854448068%2FClasslikes%2F1761984387" anchor-label="TimelineRoundedPath" id="-1854448068%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-rounded-path/index.html"><span>Timeline</span><wbr></wbr><span>Rounded</span><wbr></wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1854448068%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="-timeline-rounded-path/index.html">TimelineRoundedPath</a></div><div class="brief "><p class="paragraph">Скругление полилинии, общее для встроенных и пользовательских стратегий.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-770083656%2FClasslikes%2F1761984387" anchor-label="TimelineTextAlignment" id="-770083656%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-text-alignment/index.html"><span>Timeline</span><wbr></wbr><span>Text</span><wbr></wbr><span><span>Alignment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-770083656%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-timeline-text-alignment/index.html">TimelineTextAlignment</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="-timeline-text-alignment/index.html">TimelineTextAlignment</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">Физическое выравнивание текста, независимое от Android.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="930745432%2FClasslikes%2F1761984387" anchor-label="TimelineTextMetrics" id="930745432%2FClasslikes%2F1761984387" data-filterable-set=":timelineview/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":timelineview/main" data-filterable-set=":timelineview/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-timeline-text-metrics/index.html"><span>Timeline</span><wbr></wbr><span>Text</span><wbr></wbr><span><span>Metrics</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="930745432%2FClasslikes%2F1761984387"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":timelineview/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-timeline-text-metrics/index.html">TimelineTextMetrics</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>titleHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>descriptionHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Измеренные UI высоты текстовых блоков в порядке шагов layout.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
